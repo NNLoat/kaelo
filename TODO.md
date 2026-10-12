@@ -30,8 +30,13 @@ Done:
 
 - [ ] Implement the `accounts` tasks (`.kiro/specs/accounts/tasks.md`).
 - [ ] Spec #2 `paper-search` (can stub the reproducibility score to ship first).
-- [ ] Spec #3 `reproducibility-scoring`, then #4 `code-generation`, then #5
-  `writer-workspace` — per the build order in the README.
+- [x] Spec #3 `reproducibility-scoring` drafted end to end (requirements →
+  design → tasks) under `.kiro/specs/reproducibility-scoring/`. Captured
+  `docs/adr/0004` (rule-based score) and new `GLOSSARY.md` signal terms.
+- [ ] Implement the `reproducibility-scoring` tasks (depends on `paper-search`
+  for the `Paper`; can land after a stub-scored search).
+- [ ] Spec #4 `code-generation`, then #5 `writer-workspace` — per the build
+  order in the README.
 
 ## The workflow (for reference)
 

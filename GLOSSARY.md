@@ -75,3 +75,28 @@ _Avoid_: Attachment
 **Source**:
 An external index we pull Papers from. Currently OpenAlex and arXiv.
 _Avoid_: Provider, database
+
+**Score Signal**:
+One independent input to the Reproducibility Score — currently *repo existence*,
+*repo quality* (README / license / tests / recent activity, from the Git host
+API), and *Experiment Setup completeness*. Each signal carries its own value and
+an availability status (`ok` / `unavailable`) so a flaky external call never
+blocks the whole score.
+
+**Repo-Quality Signal**:
+The Score Signal derived from a Paper's code repository via the Git host API:
+presence of a README, a license, tests, and recent commit activity. GitHub is
+the only host inspected for host-specific heuristics; other hosts contribute only
+the "repo exists" part of the signal.
+
+**Setup-Completeness Signal**:
+The Score Signal measuring how complete the extracted Experiment Setup is,
+scored as the fraction of a fixed checklist the LLM could extract
+(hyperparameters, datasets, environment/dependencies, hardware, training/eval
+procedure).
+
+**Partial Score**:
+A Reproducibility Score computed from only the Score Signals that were available,
+when one or more signals could not be gathered. The breakdown records which
+signals were skipped and the explanation says so; the score is never failed
+outright for a single unavailable signal.
