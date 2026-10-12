@@ -16,12 +16,28 @@
 - **Local dev:** everything runs in containers (`docker compose up --watch`); host needs only Docker.
 - **Versions:** pin to the stack above; use the latest stable patch within those majors.
 
-## To decide here (team)
+## Settled team decisions
 
-Critical choices that outlive any one feature — settle them in this file:
+The critical, feature-outliving choices below were settled during the
+`/grill-with-docs` session and recorded as ADRs under `docs/adr/`:
 
-- **Paper data source** — which index/API feeds search (e.g. OpenAlex, Semantic
-  Scholar, arXiv)? We store only index/links, not full text (see `product.md`).
-- **AI/LLM provider** — model + provider for search assist, scoring, and code generation.
-- **Auth** — do Reader/Writer accounts need login? If so, what provider.
-- **Secrets** — all config via env (`.env`), never committed.
+- **Paper data sources** — OpenAlex + arXiv, scoped to Computer Science and
+  Medicine; results merged and de-duplicated into a unified `Paper`. We store
+  only index/links for indexed Papers (see `product.md`).
+  See `docs/adr/0001-paper-data-sources-openalex-and-arxiv.md`.
+- **AI/LLM provider** — Amazon Bedrock, accessed through LangChain, called from
+  the backend, for search assist, scoring, and code generation.
+  See `docs/adr/0002-llm-via-bedrock-and-langchain.md`.
+- **Auth** — lightweight username + password accounts (one `User`; Reader and
+  Writer are modes available to every account, not separate account types).
+  Session via a signed, HTTP-only cookie (no broker/store in the stack). See the
+  `accounts` spec under `.kiro/specs/accounts/`.
+- **Writer-owned content is persisted** — the one carve-out from the index-only
+  rule: a Writer's uploaded manuscript text and source code are stored in
+  Postgres. See `docs/adr/0003-writer-uploads-are-persisted.md`.
+
+## Secrets
+
+- All config via env (`.env`), never committed. `.env.example` carries
+  placeholders only. New secrets (e.g. a session signing secret, Bedrock/AWS
+  credentials) are documented in `.env.example` and supplied via `.env`.
