@@ -194,8 +194,14 @@ hand-apply any upstream changes worth taking.
 The product was grilled (`/grill-with-docs`) into shared understanding before any
 spec was written. See `GLOSSARY.md` and `docs/adr/0001..0006` for the settled
 vocabulary and decisions. The work is split into focused specs rather than one
-mega-spec; build them in dependency order. **Not yet created** — run
-`/spec new <name>` per feature when ready.
+mega-spec; build them in dependency order.
+
+**All five specs are now drafted** (requirements → design → tasks, under
+`.kiro/specs/`): `accounts`, `paper-search`, `reproducibility-scoring`,
+`code-generation`, and `writer-workspace`. None is implemented yet — run
+`/spec run <name>` in the build order below when ready. The specs were drafted
+out of dependency order, so each stands on documented assumptions about its
+not-yet-implemented inputs (noted per spec); implement in the build order.
 
 ### Cross-cutting decisions (apply to every spec)
 
