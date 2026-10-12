@@ -188,3 +188,107 @@ hand-apply any upstream changes worth taking.
 > Note: `ponytail`'s slash commands (`/ponytail-review`, `/ponytail-audit`, …)
 > are not available in Kiro, which only loads the always-on ruleset. The core
 > `ponytail` skill works as documented above.
+
+## Planned specs
+
+The product was grilled (`/grill-with-docs`) into shared understanding before any
+spec was written. See `GLOSSARY.md` and `docs/adr/0001..0003` for the settled
+vocabulary and decisions. The work is split into focused specs rather than one
+mega-spec; build them in dependency order. **Not yet created** — run
+`/spec new <name>` per feature when ready.
+
+### Cross-cutting decisions (apply to every spec)
+
+- **Sources:** OpenAlex + arXiv, scoped to Computer Science and Medicine; results
+  merged and de-duplicated into a unified `Paper` (ADR-0001).
+- **LLM:** Amazon Bedrock via LangChain, called from the backend (ADR-0002).
+- **Writer-owned content is persisted** (manuscript text + source), the one
+  carve-out from the index-only rule (ADR-0003). Reader/search side stays
+  link-only.
+- **Storage:** everything in Postgres (no S3/Redis); schema via Alembic.
+- **Async work:** FastAPI `BackgroundTasks`, no broker.
+- **Auth:** username + password; every `User` can use both Reader and Writer
+  modes.
+
+### Shared schema (8 tables, via Alembic)
+
+`User`, `Paper`, `ReproducibilityScore`, `ExperimentSetup`, `PaperClaim`,
+`WriterManuscript`, `WriterSourceFile`, `GeneratedCode`. Writer content hangs off
+`PaperClaim`; source files stored as (relative path, content) rows.
+
+### Spec 1 — `accounts` (foundation)
+
+Lightweight auth: username + password registration/login, session handling. One
+account; both Reader and Writer modes available to it. Introduces the `User`
+table.
+
+- **Depends on:** nothing.
+- **Blocks:** `writer-workspace` (needs `User` to own a `PaperClaim`).
+
+### Spec 2 — `paper-search` (Reader entry point)
+
+Natural-language/keyword search box → merged, de-duplicated results from OpenAlex
++ arXiv → scored result cards (title, authors, source badges, all component
+scores, short AI relevance blurb) → `Paper` detail view (score breakdown,
+Experiment Setup, repo link, conditional code-gen action).
+
+- Bedrock expands the query **and** writes per-result relevance; ranking is a
+  **non-AI blend**: `Final Score = 0.7·relevance + 0.3·reproducibility` (weight
+  in config). All component scores shown; results sorted by Final Score.
+- Papers cached in Postgres; scores computed **async** and attached as they
+  complete (score shows `pending` first). Searches themselves not persisted.
+- Introduces `Paper`.
+- **Depends on:** `reproducibility-scoring` for the repro component (can stub the
+  score to ship search first).
+- **Blocks:** nothing hard; it is the main demo surface.
+
+### Spec 3 — `reproducibility-scoring`
+
+Compute a `Reproducibility Score` for a `Paper` from: repo existence +
+repo-quality heuristics (README / license / tests / recent activity, via the Git
+host API) **plus** completeness of the LLM-extracted `Experiment Setup`
+(hyperparameters, datasets, environment) from the manuscript/source. Number is
+rule-based over these signals; the LLM extracts the Experiment Setup and can
+explain the score, but does not invent the number.
+
+- Introduces `ReproducibilityScore` and `ExperimentSetup`.
+- Runs async (BackgroundTasks); results cached on the `Paper`.
+- **Depends on:** `paper-search` for the `Paper` it scores.
+- **Blocks:** meaningful ranking in `paper-search`; `code-generation` (uses the
+  Experiment Setup).
+
+### Spec 4 — `code-generation` (opt-in, off by default, never executed)
+
+Three cases:
+
+1. **Reader, no repo** — generate source code from scratch grounded in the
+   Experiment Setup, plus a README overview.
+2. **Reader, has repo** — align/annotate the *existing* source so it matches the
+   Experiment Setup and README (not generated from scratch).
+3. **Writer** — generate code from the Writer's uploaded manuscript + source.
+
+Display and download only; we never run or verify the output.
+
+- Introduces `GeneratedCode`.
+- **Depends on:** `reproducibility-scoring` (Experiment Setup) and
+  `paper-search` (Reader cases); case 3 depends on `writer-workspace`.
+
+### Spec 5 — `writer-workspace`
+
+Writer claims a paper and uploads material to evaluate/generate against:
+
+- Claim a paper by link/DOI/arXiv-id and/or upload.
+- **Uploads:** PDF manuscript (server-side text extraction) + source as
+  **zip/tarball or public Git URL** (option C). Writer-owned manuscript text and
+  source **are persisted** (ADR-0003), in Postgres.
+- Reuses `reproducibility-scoring` and `code-generation` (case 3) over the
+  Writer's own paper.
+- Introduces `PaperClaim`, `WriterManuscript`, `WriterSourceFile`.
+- **Depends on:** `accounts` (`User` ownership), `reproducibility-scoring`,
+  `code-generation`.
+
+### Suggested build order
+
+`accounts` → `paper-search` (with a stubbed repro score) →
+`reproducibility-scoring` (unstub ranking) → `code-generation` →
+`writer-workspace`.
