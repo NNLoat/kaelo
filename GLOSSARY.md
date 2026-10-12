@@ -50,8 +50,32 @@ source full text.
 _Avoid_: Config, parameters
 
 **Code-Quality Score**:
-A rating of the quality of a Paper's associated code repository. An input to the
-Reproducibility Score.
+A rating of code quality. Two distinct subjects share the name and must not be
+conflated:
+- **Repository Code-Quality Score** — rates a Paper's associated *existing* code
+  repository. An input to the Reproducibility Score.
+- **Artifact Code-Quality Score** — rates the *generated/aligned* code a
+  Generation produces. It lives on the Generation only and never feeds back into
+  any Paper's Reproducibility Score, because generated code is unverified and
+  unexecuted. See `docs/adr/0004-generated-code-never-feeds-paper-repro-score.md`.
+
+**Generation**:
+A persisted, derived artifact a Code Generation action produces for one User: a
+set of generated files (code plus a README) with an Artifact Code-Quality Score
+and an "unverified, not executed" disclaimer. A Generation references a Paper by
+its index identifier and never stores external full text or external repository
+contents. Owned by and visible only to the User who created it. A re-run produces
+a new Generation that supersedes the prior one as "latest"; superseded
+Generations are retained until the owning User deletes them.
+
+**Generation Job**:
+The unit of work that produces a Generation. Started on explicit, per-action
+opt-in by a User, it runs asynchronously and ends in exactly one terminal state:
+**succeeded** (a Generation was produced), **failed** (a backend/LLM error, no
+artifact), or **refused** (a precondition was missing — e.g. no Experiment Setup,
+Align requested on a Paper with no repository, or Writer generation with nothing
+uploaded). At most one in-flight Job exists per (User, Paper, case); a duplicate
+request returns the in-flight Job.
 
 **Code Generation**:
 Producing candidate code for a Paper, opt-in and off by default. We never
@@ -69,8 +93,37 @@ A manuscript (PDF, via server-side text extraction) and/or source code (zip or
 tarball, or a public Git URL) a Writer provides for a paper they claim.
 Uploaded manuscript text and source code **are persisted for Writers** (the User
 owns the work). This is the deliberate exception to the index-only rule, which
-still holds for Reader-side indexed Papers.
+still holds for Reader-side indexed Papers. Ingestion is synchronous
+(`docs/adr/0005`); a Git URL is fetched as an HTTP archive, not cloned
+(`docs/adr/0006`).
 _Avoid_: Attachment
+
+## Writer workspace
+
+**Paper Claim**:
+A User's self-asserted claim to a specific paper, created from a Paper Reference
+(a link, DOI, or arXiv id) and owning that paper's uploaded Writer Manuscript and
+Writer Source Files. Owned by and visible only to its creating User. A claim may
+exist with no uploads yet. At most one Claim exists per (User, normalized Paper
+Reference); the same paper reached via two different identifier schemes is, for
+now, two Claims (cross-identifier resolution is deferred to paper search).
+_Avoid_: Ownership, authorship record
+
+**Paper Reference**:
+The identifier a Writer supplies to create a Paper Claim — a link, DOI, or arXiv
+id — normalized to a canonical per-scheme form for de-duplication within a User's
+Claims.
+
+**Writer Manuscript**:
+The persisted plain text extracted from a Writer's uploaded PDF manuscript for a
+Paper Claim, with its original filename. At most one per Claim; re-uploading
+replaces it. The raw PDF bytes are not retained after extraction.
+
+**Writer Source File**:
+One persisted file of a Writer's uploaded source for a Paper Claim, stored as a
+(relative path, content) pair. Only decodable **text** files are kept; binary
+files in an upload are skipped. The raw archive and any fetched repository
+working copy are not retained after unpacking.
 
 **Source**:
 An external index we pull Papers from. Currently OpenAlex and arXiv.
