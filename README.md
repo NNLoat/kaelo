@@ -192,14 +192,16 @@ hand-apply any upstream changes worth taking.
 ## Planned specs
 
 The product was grilled (`/grill-with-docs`) into shared understanding before any
-spec was written. See `GLOSSARY.md` and `docs/adr/0001..0003` for the settled
+spec was written. See `GLOSSARY.md` and `docs/adr/0001..0006` for the settled
 vocabulary and decisions. The work is split into focused specs rather than one
 mega-spec; build them in dependency order.
 
-**Specs drafted so far** (requirements → design → tasks, under `.kiro/specs/`):
-`accounts`, `paper-search`, and `reproducibility-scoring`. The remaining specs
-(`code-generation`, `writer-workspace`) are **not yet created** — run
-`/spec new <name>` per feature when ready.
+**All five specs are now drafted** (requirements → design → tasks, under
+`.kiro/specs/`): `accounts`, `paper-search`, `reproducibility-scoring`,
+`code-generation`, and `writer-workspace`. None is implemented yet — run
+`/spec run <name>` in the build order below when ready. The specs were drafted
+out of dependency order, so each stands on documented assumptions about its
+not-yet-implemented inputs (noted per spec); implement in the build order.
 
 ### Cross-cutting decisions (apply to every spec)
 
@@ -214,11 +216,14 @@ mega-spec; build them in dependency order.
 - **Auth:** username + password; every `User` can use both Reader and Writer
   modes.
 
-### Shared schema (8 tables, via Alembic)
+### Shared schema (via Alembic)
 
-`User`, `Paper`, `ReproducibilityScore`, `ExperimentSetup`, `PaperClaim`,
-`WriterManuscript`, `WriterSourceFile`, `GeneratedCode`. Writer content hangs off
-`PaperClaim`; source files stored as (relative path, content) rows.
+Core tables by spec: `User` (accounts); `Paper`, `ReproducibilityScore`,
+`ExperimentSetup` (paper-search / reproducibility-scoring); `GenerationJob`,
+`Generation` (code-generation); `PaperClaim`, `WriterManuscript`,
+`WriterSourceFile` (writer-workspace). Writer content hangs off `PaperClaim`;
+both Writer source files and generated artifacts are stored as (relative path,
+content) rows / entries.
 
 ### Spec 1 — `accounts` (foundation)
 
@@ -274,7 +279,7 @@ explain the score, but does not invent the number.
   reproducibility breakdown reaches the UI via an additive, nullable
   `reproducibility_breakdown` field on `GET /api/papers/{id}`.
 
-### Spec 4 — `code-generation` (opt-in, off by default, never executed)
+### Spec 4 — `code-generation` (opt-in, off by default, never executed) — **drafted**
 
 Three cases:
 
@@ -286,23 +291,33 @@ Three cases:
 
 Display and download only; we never run or verify the output.
 
-- Introduces `GeneratedCode`.
+- Introduces `GeneratedCode` (`Generation` + `GenerationJob`).
 - **Depends on:** `reproducibility-scoring` (Experiment Setup) and
   `paper-search` (Reader cases); case 3 depends on `writer-workspace`.
+- **Spec:** `.kiro/specs/code-generation/`. Consumes the `Experiment Setup` and
+  Paper-level `Reproducibility Score` as existing inputs (does not extract or
+  compute them); the Artifact Code-Quality Score never feeds a Paper's repro
+  score (ADR-0004).
 
-### Spec 5 — `writer-workspace`
+### Spec 5 — `writer-workspace` — **drafted**
 
 Writer claims a paper and uploads material to evaluate/generate against:
 
 - Claim a paper by link/DOI/arXiv-id and/or upload.
 - **Uploads:** PDF manuscript (server-side text extraction) + source as
-  **zip/tarball or public Git URL** (option C). Writer-owned manuscript text and
-  source **are persisted** (ADR-0003), in Postgres.
+  **zip/tarball or public Git URL**. Writer-owned manuscript text and source
+  **are persisted** (ADR-0003), in Postgres.
 - Reuses `reproducibility-scoring` and `code-generation` (case 3) over the
-  Writer's own paper.
+  Writer's own paper; **produces** the persisted uploads those features consume.
 - Introduces `PaperClaim`, `WriterManuscript`, `WriterSourceFile`.
 - **Depends on:** `accounts` (`User` ownership), `reproducibility-scoring`,
   `code-generation`.
+- **Spec:** `.kiro/specs/writer-workspace/`. Grilled (`/grill-with-docs`); the
+  settled decisions are in `GLOSSARY.md` (Paper Claim, Paper Reference, Writer
+  Manuscript, Writer Source File) and two ADRs: **ADR-0005** (upload ingestion is
+  synchronous, not a background job) and **ADR-0006** (a public Git URL is fetched
+  as an HTTP codeload tarball, not cloned). Stored source is text-only (binaries
+  skipped); claims de-dupe per identifier scheme.
 
 ### Suggested build order
 
