@@ -28,10 +28,20 @@ Done:
 
 ## Next
 
+Specs drafted so far: `accounts`, `paper-search`, `reproducibility-scoring`
+(requirements → design → tasks, under `.kiro/specs/`). None implemented yet.
+
 - [ ] Implement the `accounts` tasks (`.kiro/specs/accounts/tasks.md`).
-- [ ] Spec #2 `paper-search` (can stub the reproducibility score to ship first).
-- [ ] Spec #3 `reproducibility-scoring`, then #4 `code-generation`, then #5
-  `writer-workspace` — per the build order in the README.
+- [x] Draft spec #2 `paper-search` (`.kiro/specs/paper-search/`) — reproducibility
+  stubbed behind a `score_reproducibility(paper_id)` seam so search ships first.
+- [ ] Implement the `paper-search` tasks.
+- [x] Draft spec #3 `reproducibility-scoring` (`.kiro/specs/reproducibility-scoring/`)
+  — GitHub-only first iteration; unstubs the `paper-search` seam. Aligned with
+  `paper-search` on the `experiment_setup` mirror and the additive
+  `reproducibility_breakdown` detail field.
+- [ ] Implement the `reproducibility-scoring` tasks (after `paper-search`).
+- [ ] Spec #4 `code-generation`, then #5 `writer-workspace` — run
+  `/spec new <name>` per the build order in the README.
 
 ## The workflow (for reference)
 
