@@ -3,8 +3,9 @@
 ## Project context + spec workflow — DONE (Phase 0 + first feature grilled)
 
 **Status:** The foundation steering files are complete and the product has been
-grilled into shared understanding. Three feature specs are drafted (`accounts`,
-`code-generation`, `writer-workspace`); none implemented yet.
+grilled into shared understanding. All five feature specs are drafted
+(`accounts`, `paper-search`, `reproducibility-scoring`, `code-generation`,
+`writer-workspace`); none implemented yet.
 
 Done:
 
@@ -24,17 +25,31 @@ Done:
    `docs/adr/0001-0003`.
 5. [x] **Planned the feature split** into five specs (see README "Planned
    specs").
-6. [x] **Specs #1 `accounts`, #4 `code-generation`, #5 `writer-workspace`**
-   drafted end to end (requirements → design → tasks) under `.kiro/specs/`.
-   `writer-workspace` was grilled with `/grill-with-docs` → ADR-0005, ADR-0006,
-   and four new glossary terms.
+6. [x] **All five specs drafted** end to end (requirements → design → tasks)
+   under `.kiro/specs/`: #1 `accounts`, #2 `paper-search`,
+   #3 `reproducibility-scoring`, #4 `code-generation`, #5 `writer-workspace`.
+   `paper-search` + `reproducibility-scoring` came in via `main` (merged into
+   this branch); `writer-workspace` was grilled with `/grill-with-docs` →
+   ADR-0005, ADR-0006, and four new glossary terms.
 
 ## Next
 
-- [ ] Implement the `accounts` tasks (`.kiro/specs/accounts/tasks.md`).
-- [ ] Spec #2 `paper-search` (can stub the reproducibility score to ship first).
-- [ ] Spec #3 `reproducibility-scoring`, then #4 `code-generation`, then #5
-  `writer-workspace` — per the build order in the README.
+All five specs are drafted; the remaining work is **implementation**, in the
+build order below (the specs were drafted out of dependency order). ADRs now run
+`docs/adr/0001..0006`.
+
+- [ ] Implement **#1 `accounts`** (`.kiro/specs/accounts/tasks.md`) — no deps.
+- [ ] Implement **#2 `paper-search`** — stub reproducibility behind the
+  `score_reproducibility(paper_id)` seam so search ships first.
+- [ ] Implement **#3 `reproducibility-scoring`** — GitHub-only first iteration;
+  unstubs the `paper-search` seam at the same signature.
+- [ ] Implement **#4 `code-generation`** — consumes the Experiment Setup + repro
+  score (ADR-0004: generated code never feeds a Paper's repro score).
+- [ ] Implement **#5 `writer-workspace`** — depends on `accounts`,
+  `reproducibility-scoring`, `code-generation`.
+
+**Build order:** `accounts` → `paper-search` (stubbed repro) →
+`reproducibility-scoring` (unstub) → `code-generation` → `writer-workspace`.
 
 ## The workflow (for reference)
 
