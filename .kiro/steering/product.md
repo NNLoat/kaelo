@@ -1,21 +1,33 @@
 # Product
 
-> **STUB — fill in with the team.** Created alongside `workflow.md`; the team
-> agreed to author the foundation steering files together.
-
 ## What we're building
 
-_One or two sentences: the product in plain language._
+An AI-assisted search engine for scientific papers that advances **open
+science**: making research more accessible, transparent, and reproducible. It
+finds papers, scores their reproducibility, and helps close the gap when a paper
+ships without usable code.
 
 ## Who it's for
 
-_Primary users / audience._
+Researchers (not reviewers), in two roles:
+
+- **Reader** — finds, reads, and evaluates others' papers.
+- **Writer** — evaluates the reproducibility of their own paper.
 
 ## Core objectives
 
-- _Objective 1_
-- _Objective 2_
+### Reader
+- AI-assisted paper search.
+- Reproducibility and code-quality scoring.
+- Code generation for papers without a repository (off by default; opt-in).
+
+### Writer
+- Reproducibility and code-quality scoring.
+- Code audit/generation for their paper's reproducibility.
 
 ## Out of scope (for now)
 
-- _Explicitly not doing X_
+- Not hosting full-text papers and code repository. Only stores index/link to them.
+- Scientific papers only — not a general web search engine.
+- Not executing or running generated code to verify it works.
+- Not a peer-review/publishing platform (yet)

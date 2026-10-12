@@ -1,7 +1,7 @@
 # Structure
 
-> **STUB — fill in with the team.** Seeded from the current repo layout; confirm
-> naming conventions and "where things go" together.
+Follow mainstream best practice for each stack so the layout stays predictable
+and easy to debug.
 
 ## Repo layout
 
@@ -19,14 +19,14 @@
 │   └── src/
 ├── compose.yaml        # Docker Compose orchestration + watch
 ├── .kiro/
-│   ├── steering/       # always-included team context (this file)
+│   ├── steering/       # always-included team context
 │   └── skills/         # vendored AI skills, shared via git
 └── .env.example
 ```
 
-## Conventions (fill in)
+## Conventions
 
-- **Where new backend models go:** `backend/app/models/`.
-- **Where new API routes go:** _decide + document._
-- **Where new frontend components go:** _decide + document._
-- **Naming:** _files, components, DB tables, etc._
+- **Backend models:** `backend/app/models/`.
+- **API routes:** `backend/app/routers/`, registered on the FastAPI app in `main.py`.
+- **Frontend components:** `frontend/src/components/`.
+- **Naming:** follow standard Python and React conventions.

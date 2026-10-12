@@ -1,8 +1,5 @@
 # Tech
 
-> **STUB — fill in with the team.** Seeded from the README; confirm and expand
-> hard constraints together.
-
 ## Stack
 
 | Layer     | Tech                                              |
@@ -14,15 +11,17 @@
 
 ## Hard constraints
 
-- **Migrations:** Alembic, **not** `create_all`. Commit migrations under
-  `backend/alembic/versions/`.
-- **Backend tests:** testcontainers against a real throwaway `postgres:17`, run
-  on the host via `uv run pytest`.
-- **Package managers:** `uv` (backend) and `pnpm` (frontend) — pinned. Don't
-  introduce others.
-- **Local dev:** everything runs in containers (`docker compose up --watch`);
-  the host needs only Docker.
+- **Migrations:** Alembic, not `create_all`. Commit under `backend/alembic/versions/`.
+- **Package managers:** `uv` (backend), `pnpm` (frontend) — pinned; don't add others.
+- **Local dev:** everything runs in containers (`docker compose up --watch`); host needs only Docker.
+- **Versions:** pin to the stack above; use the latest stable patch within those majors.
 
-## Add constraints here
+## To decide here (team)
 
-- _e.g. supported Python/Node versions, lint/format tools, forbidden deps._
+Critical choices that outlive any one feature — settle them in this file:
+
+- **Paper data source** — which index/API feeds search (e.g. OpenAlex, Semantic
+  Scholar, arXiv)? We store only index/links, not full text (see `product.md`).
+- **AI/LLM provider** — model + provider for search assist, scoring, and code generation.
+- **Auth** — do Reader/Writer accounts need login? If so, what provider.
+- **Secrets** — all config via env (`.env`), never committed.
