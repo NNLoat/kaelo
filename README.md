@@ -194,7 +194,11 @@ hand-apply any upstream changes worth taking.
 The product was grilled (`/grill-with-docs`) into shared understanding before any
 spec was written. See `GLOSSARY.md` and `docs/adr/0001..0003` for the settled
 vocabulary and decisions. The work is split into focused specs rather than one
-mega-spec; build them in dependency order. **Not yet created** — run
+mega-spec; build them in dependency order.
+
+**Specs drafted so far** (requirements → design → tasks, under `.kiro/specs/`):
+`accounts`, `paper-search`, and `reproducibility-scoring`. The remaining specs
+(`code-generation`, `writer-workspace`) are **not yet created** — run
 `/spec new <name>` per feature when ready.
 
 ### Cross-cutting decisions (apply to every spec)
@@ -225,7 +229,7 @@ table.
 - **Depends on:** nothing.
 - **Blocks:** `writer-workspace` (needs `User` to own a `PaperClaim`).
 
-### Spec 2 — `paper-search` (Reader entry point)
+### Spec 2 — `paper-search` (Reader entry point) — **drafted**
 
 Natural-language/keyword search box → merged, de-duplicated results from OpenAlex
 + arXiv → scored result cards (title, authors, source badges, all component
@@ -241,8 +245,11 @@ Experiment Setup, repo link, conditional code-gen action).
 - **Depends on:** `reproducibility-scoring` for the repro component (can stub the
   score to ship search first).
 - **Blocks:** nothing hard; it is the main demo surface.
+- **Spec:** `.kiro/specs/paper-search/` (requirements → design → tasks).
+  Reproducibility is stubbed behind a `score_reproducibility(paper_id)` seam that
+  `reproducibility-scoring` later replaces at the same signature.
 
-### Spec 3 — `reproducibility-scoring`
+### Spec 3 — `reproducibility-scoring` — **drafted**
 
 Compute a `Reproducibility Score` for a `Paper` from: repo existence +
 repo-quality heuristics (README / license / tests / recent activity, via the Git
@@ -256,6 +263,16 @@ explain the score, but does not invent the number.
 - **Depends on:** `paper-search` for the `Paper` it scores.
 - **Blocks:** meaningful ranking in `paper-search`; `code-generation` (uses the
   Experiment Setup).
+- **Spec:** `.kiro/specs/reproducibility-scoring/`. First iteration is
+  **GitHub-only** (behind a `RepoHost` interface) and scores Reader-side material
+  only (abstract + links); Writer-uploaded material comes with `writer-workspace`.
+  Replaces the `paper-search` repro stub at the same seam.
+- **Cross-spec alignment with `paper-search`:** the normalized `experiment_setups`
+  table is the source of truth and is **mirrored** into the existing
+  `papers.experiment_setup` JSON column (`{hyperparameters, datasets,
+  environment, available}`) so paper-search's detail read path is unchanged; the
+  reproducibility breakdown reaches the UI via an additive, nullable
+  `reproducibility_breakdown` field on `GET /api/papers/{id}`.
 
 ### Spec 4 — `code-generation` (opt-in, off by default, never executed)
 
