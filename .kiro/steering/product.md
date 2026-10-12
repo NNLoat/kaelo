@@ -27,7 +27,10 @@ Researchers (not reviewers), in two roles:
 
 ## Out of scope (for now)
 
-- Not hosting full-text papers and code repository. Only stores index/link to them.
+- Not hosting full-text papers and code repositories **from search/indexed
+  sources** — for those we store only index/links. **Exception:** a Writer's own
+  uploaded manuscript text and source code *are* stored (the User owns and
+  consents to it). See `docs/adr/0003-writer-uploads-are-persisted.md`.
 - Scientific papers only — not a general web search engine.
 - Not executing or running generated code to verify it works.
 - Not a peer-review/publishing platform (yet)
