@@ -3,7 +3,8 @@
 ## Project context + spec workflow — DONE (Phase 0 + first feature grilled)
 
 **Status:** The foundation steering files are complete and the product has been
-grilled into shared understanding. The first feature spec (`accounts`) exists.
+grilled into shared understanding. Three feature specs are drafted (`accounts`,
+`code-generation`, `writer-workspace`); none implemented yet.
 
 Done:
 
@@ -23,15 +24,42 @@ Done:
    `docs/adr/0001-0003`.
 5. [x] **Planned the feature split** into five specs (see README "Planned
    specs").
-6. [x] **Spec #1 `accounts`** drafted end to end (requirements → design →
-   tasks) under `.kiro/specs/accounts/`.
+6. [x] **Specs #1 `accounts`, #4 `code-generation`, #5 `writer-workspace`**
+   drafted end to end (requirements → design → tasks) under `.kiro/specs/`.
+   `writer-workspace` was grilled with `/grill-with-docs` → ADR-0005, ADR-0006,
+   and four new glossary terms.
 
 ## Next
 
+**Specs drafted so far** (requirements → design → tasks, under `.kiro/specs/`):
+`accounts`, `code-generation`, `writer-workspace`. **Still to spec:**
+`paper-search`, `reproducibility-scoring`. None implemented yet. ADRs now run
+`docs/adr/0001..0006`.
+
+Note: specs were drafted out of dependency order — `code-generation` and
+`writer-workspace` are drafted ahead of the `paper-search`/`reproducibility-scoring`
+inputs they consume. Each stands on documented assumptions (code-generation
+*consumes* the Experiment Setup + repro score; writer-workspace *produces* the
+persisted Writer uploads), so implement in the build order below.
+
 - [ ] Implement the `accounts` tasks (`.kiro/specs/accounts/tasks.md`).
-- [ ] Spec #2 `paper-search` (can stub the reproducibility score to ship first).
-- [ ] Spec #3 `reproducibility-scoring`, then #4 `code-generation`, then #5
-  `writer-workspace` — per the build order in the README.
+- [ ] Spec #2 `paper-search` — `/spec new paper-search` (can stub the
+  reproducibility score behind a `score_reproducibility(paper_id)` seam to ship
+  search first).
+- [ ] Spec #3 `reproducibility-scoring` — `/spec new reproducibility-scoring`
+  (GitHub-only first iteration; unstubs the `paper-search` seam at the same
+  signature).
+- [x] Spec #4 `code-generation` drafted (`.kiro/specs/code-generation/`).
+- [x] Spec #5 `writer-workspace` drafted (`.kiro/specs/writer-workspace/`),
+  grilled with `/grill-with-docs`: decisions captured in `GLOSSARY.md` (Paper
+  Claim, Paper Reference, Writer Manuscript, Writer Source File) and two ADRs —
+  `docs/adr/0005` (upload ingestion is synchronous) and `docs/adr/0006` (public
+  Git fetched as an HTTP codeload tarball, not cloned). Source is text-only
+  (binaries skipped); claims de-dupe per identifier scheme.
+
+**Build order** (implement in this order regardless of draft order):
+`accounts` → `paper-search` (stubbed repro) → `reproducibility-scoring` (unstub)
+→ `code-generation` → `writer-workspace`.
 
 ## The workflow (for reference)
 
