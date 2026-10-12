@@ -51,13 +51,14 @@ an automatic image rebuild.
    migrations automatically.
 5. Open a new Kiro session so it discovers the skills in `.kiro/skills/`.
 
-> Not yet done (see [`TODO.md`](TODO.md)): the team will create the foundation
-> steering files (`.kiro/steering/product.md`, `tech.md`, `structure.md`) and a
-> `workflow.md` together. Until then, there is no shared steering baseline.
+> The team authored the foundation steering files in `.kiro/steering/`:
+> `workflow.md` (the dev loop) is complete; `product.md`, `tech.md`, and
+> `structure.md` exist as stubs to fill in together (see [`TODO.md`](TODO.md)).
+> An advisory spec-nudge hook lives at `.kiro/hooks/spec-nudge.json`.
 
 ### Developing a feature
 
-The per-feature loop (to be formalized with the team — see [`TODO.md`](TODO.md)):
+The per-feature loop (formalized in [`.kiro/steering/workflow.md`](.kiro/steering/workflow.md)):
 
 1. **Grill the requirements.** Run `/grill-with-docs` to interrogate the feature
    until it's fully understood; it captures glossary terms and ADRs as you go.

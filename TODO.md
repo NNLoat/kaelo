@@ -2,21 +2,21 @@
 
 ## Define the team steering + spec workflow (do together with the team)
 
-Deferred on purpose: we want to build out each phase *with* the whole team so
-everyone shares the same mental model, rather than one person authoring it.
+**Status:** `workflow.md` and the foundation steering files now exist. `product.md`,
+`tech.md`, and `structure.md` are **stubs** — `tech.md`/`structure.md` are seeded
+from the README/repo, `product.md` is blank. Fill them in together.
 
-When we sit down together, create:
+Done:
 
 1. **Foundation steering files** in `.kiro/steering/` (always-included):
-   - `product.md` — what we're building, for whom, core objectives.
-   - `tech.md` — stack + hard constraints (FastAPI/SQLModel/Postgres,
-     Vite/React/Tailwind, Alembic for migrations, testcontainers for tests,
-     pnpm pinned).
-   - `structure.md` — repo layout, naming, where things go.
-2. **A `workflow.md` steering file** that encodes our dev loop so every
-   teammate's agent nudges them through it.
-3. Decide: advisory-only, or add a hook that enforces "feature code has a spec".
-   (Leaning advisory-only for the hackathon.)
+   - [ ] `product.md` — created as a **stub**; fill in with the team.
+   - [ ] `tech.md` — created, **seeded** from the README; confirm + expand.
+   - [ ] `structure.md` — created, **seeded** from the repo; confirm conventions.
+2. [x] **A `workflow.md` steering file** encoding the dev loop (litmus test,
+   "feature code has a spec", two modes, full spec loop, verification gates).
+3. [x] Decided: **advisory** for the hackathon. An advisory nudge hook lives at
+   `.kiro/hooks/spec-nudge.json` (asks on feature-sized work without a spec;
+   does not hard-block).
 
 ### The workflow we sketched (to formalize later)
 
