@@ -225,6 +225,21 @@ Two deliberate deviations from the design docs: the `code-generation` and
 gates hardcode the backend's default limits (keep them in sync if those
 `Settings` change).
 
+## Business logic status (first iteration)
+
+The framework-agnostic business-logic layer (`backend/app/services/` and
+`core/security.py`) is implemented and verified by its offline test gate (pytest
++ Hypothesis; external Sources and the LLM are mocked, never called for real).
+
+| Spec | Business logic (`backend/app/`) | Verified by |
+| --- | --- | --- |
+| `accounts` | `core/security.py` — Argon2 hashing, verification, credential-format validation | `tests/test_security_properties.py` (6 passed) |
+| `paper-search` | `services/{ranking,merge,reproducibility}.py`, `services/sources/*`, `services/llm.py` | `tests/{test_ranking_properties,test_merge_properties,test_sources}.py` (13 passed) |
+
+Run the gate on the host: `cd backend && uv run pytest`. The ranking/merge/source
+tests need no Docker; the full suite (API + migrations) needs a reachable Docker
+daemon for testcontainers.
+
 ## Planned specs
 
 The product was grilled (`/grill-with-docs`) into shared understanding before any

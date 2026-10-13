@@ -34,6 +34,9 @@ Done:
 
 ## Next
 
+Specs drafted so far: `accounts`, `paper-search`, `reproducibility-scoring`
+(requirements → design → tasks, under `.kiro/specs/`). None implemented yet.
+
 All five specs are drafted; the remaining work is **implementation**, in the
 build order below (the specs were drafted out of dependency order). ADRs now run
 `docs/adr/0001..0006`.
