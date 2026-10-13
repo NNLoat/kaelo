@@ -276,15 +276,15 @@ the pieces together, so there is no orphaned code.
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 9. Frontend — detail-view breakdown, Experiment Setup, explanation (manual verification)
-  - [ ] 9.1 Extend the `PaperDetail` type and client for the breakdown
+- [x] 9. Frontend — detail-view breakdown, Experiment Setup, explanation (manual verification)
+  - [x] 9.1 Extend the `PaperDetail` type and client for the breakdown
     - In `frontend/src/api/papers.ts` extend `PaperDetail` with the agreed
       `experimentSetup` object shape and the nullable `reproducibilityBreakdown`
       (`codeQuality`, `setupCompleteness` ScoreCells, `repoExists`, `explanation`).
       No new route/client.
     - _Requirements: 8.1, 8.4, 8.6_
 
-  - [ ] 9.2 Populate the reproducibility breakdown in `PaperDetail`
+  - [x] 9.2 Populate the reproducibility breakdown in `PaperDetail`
     - In `frontend/src/components/PaperDetail.tsx` show the Reproducibility Score
       with its contributing Code-Quality Score and Setup_Completeness, each
       labeled, replacing the stubbed value; render pending/unavailable via the
@@ -292,7 +292,7 @@ the pieces together, so there is no orphaned code.
       fall back to the plain reproducibility ScoreCell.
     - _Requirements: 8.1, 8.2, 8.3_
 
-  - [ ] 9.3 Populate the Experiment Setup section and explanation
+  - [x] 9.3 Populate the Experiment Setup section and explanation
     - Render the Experiment Setup (hyperparameters/datasets/environment), marking
       each absent field "not provided" (R8.4); when `available=false` show a
       "could not be extracted" indicator (R8.5); show the explanation alongside

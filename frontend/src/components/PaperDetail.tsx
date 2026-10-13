@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { paper as fetchPaper, type PaperDetail as Detail } from "../api/papers";
+import {
+  paper as fetchPaper,
+  type PaperDetail as Detail,
+  type ReproducibilityBreakdown,
+} from "../api/papers";
 import ScoreBar from "./ScoreBar";
 import SourceBadges from "./SourceBadges";
 
@@ -89,6 +93,10 @@ function Body({ paper }: { paper: Detail }) {
           <ScoreBar label="Final score" cell={paper.final} emphasis />
         </div>
         {paper.blurb && <p className="mt-3 text-sm leading-relaxed text-ink">{paper.blurb}</p>}
+
+        {paper.reproducibility_breakdown && (
+          <ReproBreakdown breakdown={paper.reproducibility_breakdown} />
+        )}
       </section>
 
       <section className="grid gap-6 sm:grid-cols-2">
@@ -137,6 +145,8 @@ function Body({ paper }: { paper: Detail }) {
             <Setup term="Datasets" value={paper.experiment_setup.datasets} />
             <Setup term="Environment" value={paper.experiment_setup.environment} />
           </dl>
+        ) : paper.experiment_setup ? (
+          <p className="text-sm text-muted">The experiment setup couldn't be extracted for this paper.</p>
         ) : (
           <p className="text-sm text-muted">Not yet available.</p>
         )}
@@ -156,11 +166,31 @@ function Body({ paper }: { paper: Detail }) {
   );
 }
 
+function ReproBreakdown({ breakdown }: { breakdown: ReproducibilityBreakdown }) {
+  return (
+    <div className="mt-4 rounded-lg border border-hairline bg-white p-5 shadow-sm">
+      <h3 className="mb-3 text-sm font-semibold text-ink">How the reproducibility score was reached</h3>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <ScoreBar label="Code quality" cell={breakdown.codeQuality} />
+        <ScoreBar label="Setup completeness" cell={breakdown.setupCompleteness} />
+      </div>
+      {!breakdown.repoExists && (
+        <p className="mt-3 text-sm text-muted">
+          No code repository was found, which lowered the code-quality contribution.
+        </p>
+      )}
+      {breakdown.explanation && (
+        <p className="mt-3 text-sm leading-relaxed text-ink">{breakdown.explanation}</p>
+      )}
+    </div>
+  );
+}
+
 function Setup({ term, value }: { term: string; value: string | null }) {
   return (
     <div>
       <dt className="text-muted">{term}</dt>
-      <dd>{value ?? "—"}</dd>
+      <dd>{value ?? "Not provided"}</dd>
     </div>
   );
 }
