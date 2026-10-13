@@ -141,3 +141,47 @@ def test_settings_rejects_non_https_github_api_base(monkeypatch) -> None:
 
     with pytest.raises(pydantic.ValidationError):
         Settings(_env_file=None, github_api_base="http://api.github.com")
+
+
+def test_generation_tables_and_partial_unique_indexes() -> None:
+    """After upgrade, both generation tables exist with the two hand-added
+    partial unique indexes; the upgrade -> downgrade -> upgrade cycle is
+    repeatable (R8.1, R8.4, R5.6)."""
+    with PostgresContainer(
+        "postgres:17",
+        username="test",
+        password="test",
+        dbname="test",
+        driver="psycopg",
+    ) as container:
+        db_url = container.get_connection_url()
+        cfg = _alembic_config(db_url)
+        engine = create_engine(db_url)
+
+        command.upgrade(cfg, "head")
+        inspector = inspect(engine)
+        tables = inspector.get_table_names()
+        assert "generation_jobs" in tables
+        assert "generations" in tables
+
+        job_indexes = {ix["name"] for ix in inspector.get_indexes("generation_jobs")}
+        gen_indexes = {ix["name"] for ix in inspector.get_indexes("generations")}
+        assert "uq_generation_jobs_inflight" in job_indexes
+        assert "uq_generations_latest" in gen_indexes
+        # Both are unique.
+        assert any(
+            ix["name"] == "uq_generation_jobs_inflight" and ix["unique"]
+            for ix in inspector.get_indexes("generation_jobs")
+        )
+        assert any(
+            ix["name"] == "uq_generations_latest" and ix["unique"]
+            for ix in inspector.get_indexes("generations")
+        )
+
+        command.downgrade(cfg, "base")
+        assert "generation_jobs" not in inspect(engine).get_table_names()
+
+        command.upgrade(cfg, "head")
+        assert "generations" in inspect(engine).get_table_names()
+
+        engine.dispose()

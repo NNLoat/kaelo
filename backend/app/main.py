@@ -7,7 +7,7 @@ from sqlmodel import Session, select
 from app.core.config import get_settings
 from app.db.session import get_session
 from app.models.item import Item, ItemCreate, ItemRead
-from app.routers import auth, papers
+from app.routers import auth, codegen, papers
 
 settings = get_settings()
 
@@ -40,6 +40,7 @@ def health() -> dict[str, str]:
 
 
 app.include_router(auth.router)
+app.include_router(codegen.router)
 
 
 @app.get("/api/items", response_model=list[ItemRead], tags=["items"])
