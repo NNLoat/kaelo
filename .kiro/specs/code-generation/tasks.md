@@ -204,15 +204,17 @@ there is no orphaned code. It depends on the `accounts` spec for the
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 7. Frontend — `Codegen_UI` (manual verification; no automated test gate)
-  - [ ] 7.1 Add any required frontend dependencies via pnpm
+- [x] 7. Frontend — `Codegen_UI` (manual verification; no automated test gate)
+  - [x] 7.1 Add any required frontend dependencies via pnpm
     - If the UI needs packages beyond the existing stack (e.g. a client-side zip
       helper is **not** needed — the archive comes from the API), add them from
       `frontend/` with `pnpm add <pkg>` (pinned). If none are needed, note that
       and skip. Do not switch package managers.
+    - None needed: existing React/TS/Tailwind + `fetch` covers it; the archive
+      download uses a Blob + anchor, no zip library. Skipped.
     - _Requirements: 1.1, 2.1, 3.1_
 
-  - [ ] 7.2 Implement the typed API client `api/codegen.ts`
+  - [x] 7.2 Implement the typed API client `api/codegen.ts`
     - Create `frontend/src/api/codegen.ts` with `Case`, `JobState`, `JobRead`,
       `GenFile`, `GenerationRead` types and `startJob`, `getJob`,
       `getGeneration`, `downloadArchive`, `listGenerations`, `deleteGeneration`.
@@ -220,7 +222,7 @@ there is no orphaned code. It depends on the `accounts` spec for the
       `AbortController` for the 30s timeout.
     - _Requirements: 1.5, 1.7, 2.1, 3.3, 3.4_
 
-  - [ ] 7.3 Implement `GenerateButton`
+  - [x] 7.3 Implement `GenerateButton`
     - Create `frontend/src/components/GenerateButton.tsx`: the per-action opt-in
       trigger, never pre-activated; parent passes the resolved `Case` (Reader+no
       repo → generate, Reader+repo → align, Writer → writer) and label
@@ -229,7 +231,7 @@ there is no orphaned code. It depends on the `accounts` spec for the
       view on success, show a start-failed message on timeout/network/5xx.
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7_
 
-  - [ ] 7.4 Implement `JobStatusView` with polling
+  - [x] 7.4 Implement `JobStatusView` with polling
     - Create `frontend/src/components/JobStatusView.tsx`: poll `getJob` while
       `pending`/`running` (interval with backoff cap) showing a calm inline
       progress line; on `succeeded` load and render the `Generation`; on `failed`
@@ -237,7 +239,7 @@ there is no orphaned code. It depends on the `accounts` spec for the
       server reason and no retry for the same precondition.
     - _Requirements: 2.1, 2.5, 2.6_
 
-  - [ ] 7.5 Implement `ArtifactView`
+  - [x] 7.5 Implement `ArtifactView`
     - Create `frontend/src/components/ArtifactView.tsx`: two-pane read-only view
       (file-tree rail + viewer), the `Artifact_Code_Quality_Score` + rationale,
       the persistent amber `Disclaimer` band, and a **Download code** control
@@ -245,14 +247,14 @@ there is no orphaned code. It depends on the `accounts` spec for the
       `Reproducibility_Score`, show it read-only with no mutating control.
     - _Requirements: 2.2, 2.3, 2.4, 2.7_
 
-  - [ ] 7.6 Implement `GenerationsList`
+  - [x] 7.6 Implement `GenerationsList`
     - Create `frontend/src/components/GenerationsList.tsx`: list only the current
       User's generations (newest first), mark the latest per `(paper, case)`,
       offer **Delete** per item; on success remove the row, on timeout/error keep
       it and show a deletion-failed message.
     - _Requirements: 3.1, 3.2, 3.3, 3.4_
 
-  - [ ] 7.7 Wire `Codegen_UI` into the app
+  - [x] 7.7 Wire `Codegen_UI` into the app
     - Mount the generation trigger on the Paper/Writer view and route into
       `JobStatusView` → `ArtifactView`; surface `GenerationsList` for the signed-in
       User. Follow the visual direction in `design.md` (teal `signal` accent,
