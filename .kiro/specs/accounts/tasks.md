@@ -198,21 +198,23 @@ code.
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 7. Frontend — `Auth_UI` (manual verification; no automated test gate)
-  - [ ] 7.1 Add any required frontend dependencies via pnpm
+- [x] 7. Frontend — `Auth_UI` (manual verification; no automated test gate)
+  - [x] 7.1 Add any required frontend dependencies via pnpm
     - If the UI needs packages beyond the existing stack, add them from
       `frontend/` with `pnpm add <pkg>` (pinned). If none are needed, note that
       explicitly and skip. Do not switch package managers.
+    - None needed: the existing React/TS/Tailwind + `fetch` stack covers the UI.
+      Skipped.
     - _Requirements: 1.1, 2.1, 3.1_
 
-  - [ ] 7.2 Implement the typed API client `api/auth.ts`
+  - [x] 7.2 Implement the typed API client `api/auth.ts`
     - Create `frontend/src/api/auth.ts` with `UserRead`/`FieldError` types and
       `register`, `login` (30s timeout), `logout` (10s timeout), and `me`.
     - Every call uses `credentials: "include"` and a per-request
       `AbortController` for timeouts.
     - _Requirements: 1.3, 1.4, 1.8, 2.3, 2.6, 3.3, 3.5, 5.5_
 
-  - [ ] 7.3 Implement `AuthProvider` + `useAuth`
+  - [x] 7.3 Implement `AuthProvider` + `useAuth`
     - Create `frontend/src/components/AuthProvider.tsx` holding
       `UserRead | null` and the active mode (`"reader" | "writer"`); call `me()`
       on mount to restore state; expose `register`, `login`, `logout`, `setMode`.
@@ -220,28 +222,28 @@ code.
       unauthenticated expose only login/register views (no modes/username/logout).
     - _Requirements: 3.2, 3.6, 5.5_
 
-  - [ ] 7.4 Implement `RegisterForm`
+  - [x] 7.4 Implement `RegisterForm`
     - Create `frontend/src/components/RegisterForm.tsx`: username+password+submit;
       submit disabled while a field is empty or a request is in flight (progress
       indicator); client-side length gate (3..32 / 8..128); handle 201 success,
       409 conflict (retain username), 422 field errors, timeout/network error.
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8_
 
-  - [ ] 7.5 Implement `LoginForm`
+  - [x] 7.5 Implement `LoginForm`
     - Create `frontend/src/components/LoginForm.tsx`: username+password+enabled
       submit; "both required" when a field is empty; disable during request;
       handle success, 401 (retain username, clear password, generic message),
       timeout/unreachable retry message.
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
 
-  - [ ] 7.6 Implement `AuthBar` with logout and mode toggle
+  - [x] 7.6 Implement `AuthBar` with logout and mode toggle
     - Create `frontend/src/components/AuthBar.tsx`: show signed-in username +
       logout control on every authenticated view; Reader/Writer mode toggle;
       disable logout during request; on success discard session + show login
       view; on failure/timeout keep authenticated state + re-enable + error.
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
 
-  - [ ] 7.7 Wire Auth_UI into `App.tsx`
+  - [x] 7.7 Wire Auth_UI into `App.tsx`
     - Wrap the app in `AuthProvider`; render login/register views when
       unauthenticated and `AuthBar` + authenticated content when authenticated.
       This integrates the frontend end-to-end.
