@@ -57,6 +57,13 @@ class Settings(BaseSettings):
     repro_repo_weight: float = 0.5
     repro_setup_weight: float = 0.5
 
+    # writer-workspace extraction/unpack limits (not secrets; safe defaults).
+    max_manuscript_bytes: int = 25 * 1024 * 1024  # 25 MiB
+    max_source_archive_bytes: int = 50 * 1024 * 1024  # 50 MiB
+    max_source_total_bytes: int = 100 * 1024 * 1024  # 100 MiB unpacked
+    max_source_files: int = 5000
+    git_fetch_timeout_seconds: int = 60
+
     @field_validator("github_api_base")
     @classmethod
     def _github_api_base_https(cls, v: str) -> str:

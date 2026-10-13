@@ -38,21 +38,21 @@ code. It depends on the `accounts` spec for the `current_user` dependency and th
 
 ## Tasks
 
-- [ ] 1. Business logic — `Extraction_Helper` (`core/extraction.py`)
-  - [ ] 1.1 Add the PDF text-extraction dependency via uv
+- [x] 1. Business logic — `Extraction_Helper` (`core/extraction.py`)
+  - [x] 1.1 Add the PDF text-extraction dependency via uv
     - From `backend/`, run `uv add pypdf` (a pure-Python PDF text extractor) so
       manuscript text extraction is available; confirm it lands in
       `pyproject.toml` and `uv.lock`. Do not switch package managers.
     - _Requirements: 10.1_
 
-  - [ ] 1.2 Add extraction/unpack limits to `Settings`
+  - [x] 1.2 Add extraction/unpack limits to `Settings`
     - In `backend/app/core/config.py` add `max_manuscript_bytes` (default 25 MiB),
       `max_source_archive_bytes` (50 MiB), `max_source_total_bytes` (100 MiB),
       `max_source_files` (5000), and `git_fetch_timeout_seconds` (60), all with
       safe defaults (not secrets). Document them in `.env.example` for tuning.
     - _Requirements: 6.4, 7.5, 10.7_
 
-  - [ ] 1.3 Implement the `Extraction_Helper`
+  - [x] 1.3 Implement the `Extraction_Helper`
     - Create `backend/app/core/extraction.py` with no FastAPI/SQLModel imports.
     - Define `SourceFile(path, content)`, `ExtractionError`, `UnpackError`,
       `LimitExceeded`.
@@ -71,7 +71,7 @@ code. It depends on the `accounts` spec for the `current_user` dependency and th
     - Never execute, build, or run any content.
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8_
 
-  - [ ] 1.4 Add Hypothesis to the dev dependency group
+  - [x] 1.4 Add Hypothesis to the dev dependency group
     - From `backend/`, run `uv add --group dev hypothesis`; confirm it lands in
       the `pyproject.toml` dev group and `uv.lock`.
     - _Requirements: 10.1_
@@ -81,26 +81,29 @@ code. It depends on the `accounts` spec for the `current_user` dependency and th
       the router module; import the pure `normalize_reference` function).
     - **Property 3: Reference normalization is deterministic and canonical**
     - **Validates: Requirements 5.1, 5.2**
+    - Deferred: `normalize_reference` lives in the Writer_API router (task 5.1,
+      Backend role), which is not yet implemented — this test belongs with that
+      task.
 
-  - [ ]* 1.6 Write property test — PDF extraction round-trips readable PDFs and rejects the rest
+  - [x]* 1.6 Write property test — PDF extraction round-trips readable PDFs and rejects the rest
     - Build small valid/invalid PDFs (tiny writer or fixtures); keep
       `max_examples` modest since PDF parsing is heavier.
     - **Property 4: PDF extraction round-trips readable PDFs and rejects the rest**
     - **Validates: Requirements 10.1, 10.2**
 
-  - [ ]* 1.7 Write property test — archive unpack returns only safe, regular-file entries
+  - [x]* 1.7 Write property test — archive unpack returns only safe, regular-file entries
     - Generate in-memory zip/tar archives including `..`, absolute paths, and
       symlink/directory entries.
     - **Property 5: Archive unpack returns only safe, regular-file entries**
     - **Validates: Requirements 10.3, 10.4, 10.6**
 
-  - [ ]* 1.8 Write property test — unpack enforces count/size caps without a partial result
+  - [x]* 1.8 Write property test — unpack enforces count/size caps without a partial result
     - Generate oversized and bomb-like archives; assert `LimitExceeded`/
       `UnpackError` and no partial return.
     - **Property 6: Unpack enforces count and size caps without a partial result**
     - **Validates: Requirements 10.5, 10.7**
 
-- [ ] 2. Checkpoint — Extraction_Helper
+- [x] 2. Checkpoint — Extraction_Helper
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
