@@ -32,6 +32,16 @@ class Settings(BaseSettings):
     aws_region: str = "us-east-1"
     llm_timeout_seconds: float = 20.0
 
+    # Signs session cookies. REQUIRED — no default, so a missing value fails
+    # startup rather than reading a secret from committed source (R7.6).
+    session_secret: str
+
+    # Session cookie max-age; defaults to one day.
+    session_ttl_seconds: int = 60 * 60 * 24
+
+    # Mark the session cookie Secure (HTTPS-only); enable in production.
+    cookie_secure: bool = False
+
 
 @lru_cache
 def get_settings() -> Settings:
