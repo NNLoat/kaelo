@@ -29,12 +29,21 @@ export interface ExperimentSetup {
   available: boolean;
 }
 
+export interface ReproducibilityBreakdown {
+  codeQuality: ScoreCell;
+  setupCompleteness: ScoreCell;
+  repoExists: boolean;
+  explanation: string | null;
+}
+
 export interface PaperDetail extends PaperCard {
   abstract: string | null;
   published_date: string | null;
   source_links: { source: string; url: string }[];
   repo_url: string | null;
   experiment_setup: ExperimentSetup | null;
+  // null until reproducibility-scoring has run; existing reads unaffected (R8.1)
+  reproducibility_breakdown: ReproducibilityBreakdown | null;
 }
 
 type ScoreUpdate = Pick<PaperCard, "relevance" | "reproducibility" | "final" | "blurb">;
