@@ -4,8 +4,12 @@ import {
   type PaperDetail as Detail,
   type ReproducibilityBreakdown,
 } from "../api/papers";
+import type { Case, JobRead } from "../api/codegen";
+import { useAuth } from "./AuthProvider";
 import ScoreBar from "./ScoreBar";
 import SourceBadges from "./SourceBadges";
+import GenerateButton from "./GenerateButton";
+import JobStatusView from "./JobStatusView";
 
 type State =
   | { kind: "loading" }
@@ -152,17 +156,30 @@ function Body({ paper }: { paper: Detail }) {
         )}
       </section>
 
-      <section>
-        <button
-          disabled
-          title="Code generation is opt-in and handled by a separate feature."
-          className="rounded-md border border-hairline px-4 py-2 text-sm text-muted disabled:cursor-not-allowed"
-        >
-          {paper.repo_url ? "Generate code review" : "Generate code"}
-        </button>
-        <p className="mt-1 text-xs text-muted">Off by default. Opt in from the code-generation tools.</p>
-      </section>
+      <CodegenSection paper={paper} />
     </article>
+  );
+}
+
+function CodegenSection({ paper }: { paper: Detail }) {
+  const { mode } = useAuth();
+  const [job, setJob] = useState<JobRead | null>(null);
+
+  const genCase: Case = mode === "writer" ? "writer" : paper.repo_url ? "align" : "generate";
+
+  return (
+    <section>
+      <h2 className="mb-2 text-sm font-semibold text-ink">Code generation</h2>
+      {job ? (
+        <JobStatusView job={job} onRetry={() => setJob(null)} />
+      ) : (
+        <GenerateButton
+          paperRef={String(paper.id)}
+          genCase={genCase}
+          onStarted={setJob}
+        />
+      )}
+    </section>
   );
 }
 
