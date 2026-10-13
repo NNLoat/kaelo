@@ -17,6 +17,16 @@ class Settings(BaseSettings):
     # Echo SQL to the logs — handy during development.
     db_echo: bool = False
 
+    # Signs session cookies. REQUIRED — no default, so a missing value fails
+    # startup rather than reading a secret from committed source (R7.6).
+    session_secret: str
+
+    # Session cookie max-age; defaults to one day.
+    session_ttl_seconds: int = 60 * 60 * 24
+
+    # Mark the session cookie Secure (HTTPS-only); enable in production.
+    cookie_secure: bool = False
+
 
 @lru_cache
 def get_settings() -> Settings:
