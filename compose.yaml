@@ -26,6 +26,11 @@ services:
       DATABASE_URL: >-
         postgresql+psycopg://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-app}@db:5432/${POSTGRES_DB:-app}
       CORS_ORIGINS: '["http://localhost:${FRONTEND_PORT:-5173}"]'
+      # Amazon Bedrock via LangChain (paper-search). No default for the model id.
+      BEDROCK_MODEL_ID: ${BEDROCK_MODEL_ID}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     depends_on:
