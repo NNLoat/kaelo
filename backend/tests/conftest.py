@@ -17,6 +17,10 @@ import os
 # cleanup instead. Set before importing testcontainers so it takes effect.
 os.environ.setdefault("TESTCONTAINERS_RYUK_DISABLED", "true")
 
+# bedrock_model_id has no committed default (R9.6); supply one for the test
+# session so the app imports. The LLM is mocked in tests — never called for real.
+os.environ.setdefault("BEDROCK_MODEL_ID", "test-model")
+
 from collections.abc import Generator  # noqa: E402
 
 import pytest  # noqa: E402
