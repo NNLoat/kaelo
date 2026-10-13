@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { PaperCard } from "./api/papers";
+import type { GenerationRead } from "./api/codegen";
 import { AuthProvider, useAuth } from "./components/AuthProvider";
 import AuthBar from "./components/AuthBar";
 import LoginForm from "./components/LoginForm";
@@ -7,8 +8,14 @@ import RegisterForm from "./components/RegisterForm";
 import SearchBox from "./components/SearchBox";
 import ResultList from "./components/ResultList";
 import PaperDetail from "./components/PaperDetail";
+import GenerationsList from "./components/GenerationsList";
+import ArtifactView from "./components/ArtifactView";
 
-type View = { name: "search" } | { name: "detail"; id: number };
+type View =
+  | { name: "search" }
+  | { name: "detail"; id: number }
+  | { name: "generations" }
+  | { name: "artifact"; generation: GenerationRead };
 
 export default function App() {
   return (
@@ -83,16 +90,61 @@ function Reader() {
     );
   }
 
+  if (view.name === "generations") {
+    return (
+      <div className="min-h-screen bg-paper text-ink">
+        <div className="mx-auto max-w-3xl px-6 py-12">
+          <AuthBar />
+          <div className="mb-6 flex items-center justify-between">
+            <h1 className="text-xl font-semibold text-ink">Your generations</h1>
+            <button
+              onClick={() => setView({ name: "search" })}
+              className="text-sm text-accent hover:underline"
+            >
+              Back to search
+            </button>
+          </div>
+          <GenerationsList onOpen={(g) => setView({ name: "artifact", generation: g })} />
+        </div>
+      </div>
+    );
+  }
+
+  if (view.name === "artifact") {
+    return (
+      <div className="min-h-screen bg-paper text-ink">
+        <div className="mx-auto max-w-3xl px-6 py-12">
+          <AuthBar />
+          <button
+            onClick={() => setView({ name: "generations" })}
+            className="mb-6 text-sm text-accent hover:underline"
+          >
+            Back to your generations
+          </button>
+          <ArtifactView generation={view.generation} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-paper text-ink">
       <div className="mx-auto max-w-3xl px-6 py-12">
         <AuthBar />
 
-        <header className="mb-8">
-          <p className="font-serif text-3xl text-ink">Kaelo</p>
-          <p className="mt-1 text-muted">
-            Search scientific papers and see how reproducible they are.
-          </p>
+        <header className="mb-8 flex items-start justify-between gap-4">
+          <div>
+            <p className="font-serif text-3xl text-ink">Kaelo</p>
+            <p className="mt-1 text-muted">
+              Search scientific papers and see how reproducible they are.
+            </p>
+          </div>
+          <button
+            onClick={() => setView({ name: "generations" })}
+            className="shrink-0 text-sm text-accent hover:underline"
+          >
+            Your generations
+          </button>
         </header>
 
         <SearchBox onResults={setPapers} />
