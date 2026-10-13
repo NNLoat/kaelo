@@ -270,14 +270,16 @@ and ends by wiring the pieces together, so there is no orphaned code.
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 9. Frontend — `Search_UI` (manual verification; no automated test gate)
-  - [ ] 9.1 Add any required frontend dependencies via pnpm
+- [x] 9. Frontend — `Search_UI` (manual verification; no automated test gate)
+  - [x] 9.1 Add any required frontend dependencies via pnpm
     - If the UI needs packages beyond the existing stack (e.g. a router), add them
       from `frontend/` with `pnpm add <pkg>` (pinned). If none are needed, note
       that explicitly and skip. Do not switch package managers.
+    - None needed: the existing React/TS/Tailwind + `fetch` stack covers the UI;
+      search/detail view switching uses local state, no router. Skipped.
     - _Requirements: 1.1, 2.6, 3.1_
 
-  - [ ] 9.2 Implement the typed API client `api/papers.ts`
+  - [x] 9.2 Implement the typed API client `api/papers.ts`
     - Create `frontend/src/api/papers.ts` with the `ScoreStatus`/`ScoreCell`/
       `PaperCard`/`PaperDetail` types and `search` (30s timeout, abandons the
       previous in-flight call), `scores(ids)`, and `paper(id)` (30s timeout).
@@ -285,14 +287,14 @@ and ends by wiring the pieces together, so there is no orphaned code.
       `AbortController`.
     - _Requirements: 1.2, 1.3, 1.6, 1.7, 2.7, 3.1, 3.7, 5.5_
 
-  - [ ] 9.3 Implement `SearchBox`
+  - [x] 9.3 Implement `SearchBox`
     - Create `frontend/src/components/SearchBox.tsx`: search input + submit;
       submit disabled while empty/whitespace; loading indicator + disabled submit
       during the request; empty-result message; error/retry on timeout/network,
       retaining the query; a new submit abandons the previous request.
     - _Requirements: 1.1, 1.3, 1.4, 1.5, 1.6, 1.7_
 
-  - [ ] 9.4 Implement `ResultList` + `ResultCard`
+  - [x] 9.4 Implement `ResultList` + `ResultCard`
     - Create `frontend/src/components/ResultList.tsx` and `ResultCard.tsx`: render
       cards in the API's returned order; each card shows title, authors, a Source
       badge per contributing Source, the three labeled component scores,
@@ -300,7 +302,7 @@ and ends by wiring the pieces together, so there is no orphaned code.
       navigates to the detail view on activation.
     - _Requirements: 1.4, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
 
-  - [ ] 9.5 Implement `useScorePolling` for live score updates
+  - [x] 9.5 Implement `useScorePolling` for live score updates
     - Create `frontend/src/components/useScorePolling.ts`: while any rendered card
       has a `pending` component, poll `scores(ids)` on an interval, replace each
       pending cell with its value or `unavailable`, re-sort when a Final Score
@@ -308,7 +310,7 @@ and ends by wiring the pieces together, so there is no orphaned code.
       attempts — no resubmission by the Reader.
     - _Requirements: 2.7, 5.5_
 
-  - [ ] 9.6 Implement `PaperDetail`
+  - [x] 9.6 Implement `PaperDetail`
     - Create `frontend/src/components/PaperDetail.tsx`: fetch by id; render title,
       authors, abstract, publication date, every Source badge, external source
       links, the full score breakdown with each Score_Status, the repo link or
@@ -319,7 +321,7 @@ and ends by wiring the pieces together, so there is no orphaned code.
       retry on timeout/failure.
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7_
 
-  - [ ] 9.7 Wire Search_UI into `App.tsx`
+  - [x] 9.7 Wire Search_UI into `App.tsx`
     - Render the search view (`SearchBox` + `ResultList`) and the `PaperDetail`
       view, switching between them on card activation / back. This integrates the
       frontend end-to-end.
