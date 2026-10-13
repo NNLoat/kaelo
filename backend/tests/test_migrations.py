@@ -37,6 +37,12 @@ def test_migrations_upgrade_and_downgrade() -> None:
         command.upgrade(cfg, "head")
         assert "items" in inspect(engine).get_table_names()
 
+        # The papers table and its de-dup / search indexes exist after upgrade.
+        tables = inspect(engine).get_table_names()
+        assert "papers" in tables
+        index_names = {ix["name"] for ix in inspect(engine).get_indexes("papers")}
+        assert {"ix_papers_title", "ix_papers_doi", "ix_papers_arxiv_id"} <= index_names
+
         # All the way back down: items should be gone.
         command.downgrade(cfg, "base")
         assert "items" not in inspect(engine).get_table_names()
@@ -44,8 +50,22 @@ def test_migrations_upgrade_and_downgrade() -> None:
         # And back up again, to be sure it's repeatable.
         command.upgrade(cfg, "head")
         assert "items" in inspect(engine).get_table_names()
+        assert "papers" in inspect(engine).get_table_names()
 
         engine.dispose()
+
+
+def test_settings_requires_bedrock_model_id(monkeypatch) -> None:
+    """Constructing Settings without BEDROCK_MODEL_ID must fail (no committed
+    default, R9.6)."""
+    import pydantic
+    import pytest
+
+    from app.core.config import Settings
+
+    monkeypatch.delenv("BEDROCK_MODEL_ID", raising=False)
+    with pytest.raises(pydantic.ValidationError):
+        Settings(_env_file=None)
 
 
 def test_users_table_and_unique_username_index() -> None:

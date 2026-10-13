@@ -17,6 +17,21 @@ class Settings(BaseSettings):
     # Echo SQL to the logs — handy during development.
     db_echo: bool = False
 
+    # Ranking weights for the non-AI Final Score blend (R5.7, R8.5).
+    relevance_weight: float = 0.7
+    reproducibility_weight: float = 0.3
+
+    # Source scope + limits (R7.2).
+    source_domains: list[str] = ["computer science", "medicine"]
+    source_result_limit: int = 25
+    source_timeout_seconds: float = 10.0
+
+    # Bedrock / LangChain (R8.6, R9.6). bedrock_model_id has NO default, so the
+    # app fails to start if it is absent rather than reading a committed value.
+    bedrock_model_id: str
+    aws_region: str = "us-east-1"
+    llm_timeout_seconds: float = 20.0
+
     # Signs session cookies. REQUIRED — no default, so a missing value fails
     # startup rather than reading a secret from committed source (R7.6).
     session_secret: str

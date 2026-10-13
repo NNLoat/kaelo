@@ -7,7 +7,7 @@ from sqlmodel import Session, select
 from app.core.config import get_settings
 from app.db.session import get_session
 from app.models.item import Item, ItemCreate, ItemRead
-from app.routers import auth
+from app.routers import auth, papers
 
 settings = get_settings()
 
@@ -29,6 +29,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+app.include_router(papers.router)
 
 
 @app.get("/health", tags=["meta"])

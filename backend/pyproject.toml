@@ -10,6 +10,8 @@ dependencies = [
     "psycopg[binary]>=3.2.0",
     "pydantic-settings>=2.5.0",
     "alembic>=1.13.0",
+    "langchain>=1.4.5",
+    "langchain-aws>=1.8.2",
     "pwdlib[argon2]>=0.3.1",
     "itsdangerous>=2.2.0",
 ]
