@@ -19,6 +19,19 @@ class ScoreCell(BaseModel):
     value: float | None
 
 
+class ReproducibilityBreakdown(BaseModel):
+    """Detail-view breakdown from the reproducibility_scores row (R8.1/8.6/8.7).
+
+    Additive and nullable: ``null`` when reproducibility-scoring hasn't run, so
+    paper-search's existing detail reads are unaffected.
+    """
+
+    code_quality: ScoreCell
+    setup_completeness: ScoreCell
+    repo_exists: bool | None
+    explanation: str | None
+
+
 class PaperBase(SQLModel):
     title: str = Field(index=True, max_length=1024)
     authors: list[str] = Field(default_factory=list, sa_column=Column(JSON))
@@ -58,3 +71,4 @@ class PaperRead(PaperBase):
     final: ScoreCell
     blurb: str | None
     experiment_setup: dict | None
+    reproducibility_breakdown: ReproducibilityBreakdown | None = None

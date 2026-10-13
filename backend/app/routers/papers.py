@@ -2,10 +2,11 @@
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from pydantic import BaseModel, field_validator
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from app.db.session import get_session
-from app.models.paper import Paper, PaperRead, ScoreCell, ScoreStatus
+from app.models.paper import Paper, PaperRead, ReproducibilityBreakdown, ScoreCell, ScoreStatus
+from app.models.reproducibility import ReproducibilityScore
 from app.services import ranking, scoring
 
 router = APIRouter(prefix="/api/papers", tags=["papers"])
@@ -119,6 +120,18 @@ def get_paper(paper_id: int, session: Session = Depends(get_session)) -> PaperRe
     if paper is None:
         raise HTTPException(status_code=404, detail="paper not found")
 
+    row = session.exec(
+        select(ReproducibilityScore).where(ReproducibilityScore.paper_id == paper_id)
+    ).first()
+    breakdown = None
+    if row is not None:
+        breakdown = ReproducibilityBreakdown(
+            code_quality=_cell(row.code_quality_score, row.status),
+            setup_completeness=_cell(row.setup_completeness, row.status),
+            repo_exists=row.repo_exists,
+            explanation=row.explanation,
+        )
+
     return PaperRead(
         **paper.model_dump(
             include={
@@ -139,4 +152,5 @@ def get_paper(paper_id: int, session: Session = Depends(get_session)) -> PaperRe
         reproducibility=_cell(paper.reproducibility_score, paper.reproducibility_status),
         final=_cell(paper.final_score, paper.final_status),
         blurb=paper.relevance_blurb,
+        reproducibility_breakdown=breakdown,
     )

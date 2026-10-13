@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -41,6 +42,24 @@ class Settings(BaseSettings):
 
     # Mark the session cookie Secure (HTTPS-only); enable in production.
     cookie_secure: bool = False
+
+    # GitHub repo inspection (R1.6). github_token is a SECRET — env only, no
+    # committed default; absence degrades to unauthenticated access.
+    github_api_base: str = "https://api.github.com"
+    github_token: str | None = None
+    repo_recency_days: int = 365
+    repo_inspect_timeout_seconds: float = 10.0
+
+    # Reproducibility blend weights (non-AI, R4.2).
+    repro_repo_weight: float = 0.5
+    repro_setup_weight: float = 0.5
+
+    @field_validator("github_api_base")
+    @classmethod
+    def _github_api_base_https(cls, v: str) -> str:
+        if not v.startswith("https://"):
+            raise ValueError("github_api_base must be HTTPS")
+        return v
 
 
 @lru_cache

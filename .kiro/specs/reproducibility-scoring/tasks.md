@@ -47,8 +47,8 @@ the pieces together, so there is no orphaned code.
 
 ## Tasks
 
-- [ ] 1. Business logic — rule-based scorers (pure, no LLM)
-  - [ ] 1.1 Define the shared signal/data shapes
+- [x] 1. Business logic — rule-based scorers (pure, no LLM)
+  - [x] 1.1 Define the shared signal/data shapes
     - Create `backend/app/services/repro/__init__.py` and
       `backend/app/services/repro/types.py` with the `RepoSignals` dataclass
       (`exists`, `has_readme`, `has_license`, `has_tests`, `recent_activity`,
@@ -57,53 +57,53 @@ the pieces together, so there is no orphaned code.
       `ReproducibilityUnavailable` exception.
     - _Requirements: 1.2, 3.1, 4.4_
 
-  - [ ] 1.2 Implement `Code_Quality_Scorer` (`repro/code_quality.py`)
+  - [x] 1.2 Implement `Code_Quality_Scorer` (`repro/code_quality.py`)
     - `code_quality(signals) -> float`: repo absent/not inspectable → `0.0`
       (R2.2); else a deterministic weighted, normalized `[0,1]` score over
       `{readme, license, tests, recent_activity}`, non-decreasing in each positive
       signal (R2.1). No LLM import.
     - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
-  - [ ] 1.3 Implement `Setup_Completeness` (`repro/completeness.py`)
+  - [x] 1.3 Implement `Setup_Completeness` (`repro/completeness.py`)
     - `completeness(setup) -> float`: `None`/unavailable → `0.0`; else
       populated-field fraction over `(hyperparameters, datasets, environment)`
       (R4.1). No LLM import.
     - _Requirements: 4.1_
 
-  - [ ] 1.4 Implement `Reproducibility_Scorer` (`repro/scorer.py`)
+  - [x] 1.4 Implement `Reproducibility_Scorer` (`repro/scorer.py`)
     - `reproducibility(code_quality, repo_exists, setup_completeness, *, w_repo, w_setup) -> float`:
       deterministic blend in `[0,1]`, non-decreasing in `code_quality` and
       `setup_completeness`, weights from config (R4.2, R4.6); a non-inspectable
       repo still scores from the setup contribution (R4.3). No LLM import.
     - _Requirements: 4.2, 4.3, 4.5, 4.6_
 
-  - [ ]* 1.5 Write property test — code-quality deterministic + monotonic
+  - [x]* 1.5 Write property test — code-quality deterministic + monotonic
     - Create `backend/tests/test_repro_scorers_properties.py`.
     - **Property 1: Code-Quality Score is deterministic and monotonic in positive signals**
     - **Validates: Requirements 2.1, 2.4**
 
-  - [ ]* 1.6 Write property test — repo-absent yields minimum code-quality
+  - [x]* 1.6 Write property test — repo-absent yields minimum code-quality
     - **Property 2: Repository-absent yields the minimum code-quality score**
     - **Validates: Requirements 2.2**
 
-  - [ ]* 1.7 Write property test — setup completeness = populated fraction
+  - [x]* 1.7 Write property test — setup completeness = populated fraction
     - **Property 3: Setup completeness equals the populated-field fraction**
     - **Validates: Requirements 4.1**
 
-  - [ ]* 1.8 Write property test — reproducibility deterministic, in range, monotonic
+  - [x]* 1.8 Write property test — reproducibility deterministic, in range, monotonic
     - **Property 4: Reproducibility Score is deterministic, in range, and monotonic**
     - **Validates: Requirements 4.2, 4.6**
 
-  - [ ]* 1.9 Write property test — no repo but a setup is still scored
+  - [x]* 1.9 Write property test — no repo but a setup is still scored
     - **Property 5: A paper with no repo but a setup is still scored**
     - **Validates: Requirements 4.3**
 
-- [ ] 2. Checkpoint — rule-based scorers
+- [x] 2. Checkpoint — rule-based scorers
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 3. Business logic — GitHub inspector and LLM extractor/explainer (external — mocked in tests)
-  - [ ] 3.1 Implement the `RepoHost` interface and `GitHubRepoHost` (`repro/inspector.py`)
+- [x] 3. Business logic — GitHub inspector and LLM extractor/explainer (external — mocked in tests)
+  - [x] 3.1 Implement the `RepoHost` interface and `GitHubRepoHost` (`repro/inspector.py`)
     - Define a `RepoHost` Protocol (`inspect(repo_url, *, timeout) -> RepoSignals`)
       and `inspect_repo(repo_url | None) -> RepoSignals` that returns
       not-inspectable for absent/malformed/non-GitHub URLs (R1.3).
@@ -118,7 +118,7 @@ the pieces together, so there is no orphaned code.
       validate `github_api_base` is HTTPS. Token never persisted/returned/prompted.
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6_
 
-  - [ ] 3.2 Implement `Setup_Extractor` (`repro/extractor.py`, Bedrock via LangChain)
+  - [x] 3.2 Implement `Setup_Extractor` (`repro/extractor.py`, Bedrock via LangChain)
     - `extract_setup(title, abstract) -> ExperimentSetupData`: extract from
       Reader-side index material only (R3.1, R3.4); each field absent when
       unsupported, never fabricated (R3.2); raise on failure/timeout so the seam
@@ -126,7 +126,7 @@ the pieces together, so there is no orphaned code.
       or scoring logic.
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
 
-  - [ ] 3.3 Implement `Score_Explainer` (`repro/explainer.py`, Bedrock via LangChain)
+  - [x] 3.3 Implement `Score_Explainer` (`repro/explainer.py`, Bedrock via LangChain)
     - `explain(score, signals, completeness) -> str`: short prose referencing the
       signals (R5.1); `score` is a fixed input, never recomputed (R5.2); the
       prompt and output are built from paper metadata + computed signals only and
@@ -134,7 +134,7 @@ the pieces together, so there is no orphaned code.
       failure (R5.3).
     - _Requirements: 5.1, 5.2, 5.3_
 
-  - [ ]* 3.4 Write example/edge tests — inspection outcomes + LLM failure handling
+  - [x]* 3.4 Write example/edge tests — inspection outcomes + LLM failure handling
     - Create `backend/tests/test_repro_inspector.py` with a faked GitHub `RepoHost`
       / mocked `httpx`: assert `404` → `exists=false, inspectable=true`; timeout /
       `403` rate-limit → `failed=true`; non-GitHub/malformed URL →
@@ -142,20 +142,20 @@ the pieces together, so there is no orphaned code.
       `explain` failure is swallowed (LLM mocked — never called for real).
     - _Requirements: 1.1, 1.3, 1.4, 3.3, 5.3_
 
-  - [ ]* 3.5 Write property test — inspection distinguishes absent from failed
+  - [x]* 3.5 Write property test — inspection distinguishes absent from failed
     - **Property 9: Inspection distinguishes "signal absent" from "inspection failed"**
     - **Validates: Requirements 1.1, 1.4**
 
-  - [ ]* 3.6 Write property test — non-GitHub/malformed URLs not inspectable
+  - [x]* 3.6 Write property test — non-GitHub/malformed URLs not inspectable
     - **Property 10: Non-GitHub or malformed repo URLs are not inspectable**
     - **Validates: Requirements 1.3**
 
-- [ ] 4. Checkpoint — inspector and LLM
+- [x] 4. Checkpoint — inspector and LLM
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 5. Data model, configuration, and migration
-  - [ ] 5.1 Implement the `ReproducibilityScore` and `ExperimentSetup` models
+- [x] 5. Data model, configuration, and migration
+  - [x] 5.1 Implement the `ReproducibilityScore` and `ExperimentSetup` models
     - Create `backend/app/models/reproducibility.py` reusing `ScoreStatus` from
       `app.models.paper`: `ReproducibilityScore` on `reproducibility_scores`
       (`paper_id` FK→papers.id unique+indexed; `score`/`status`;
@@ -168,7 +168,7 @@ the pieces together, so there is no orphaned code.
       Alembic autogenerate.
     - _Requirements: 7.1, 7.2, 7.4_
 
-  - [ ] 5.2 Extend `Settings` with GitHub + reproducibility config
+  - [x] 5.2 Extend `Settings` with GitHub + reproducibility config
     - In `backend/app/core/config.py` add `github_api_base` (default
       `https://api.github.com`, validated HTTPS), `github_token: str | None = None`
       (secret; env only, no real default), `repo_recency_days: int = 365`,
@@ -180,7 +180,7 @@ the pieces together, so there is no orphaned code.
       `github_api_base` at startup.
     - _Requirements: 1.6, 3.5, 7.6_
 
-  - [ ] 5.3 Generate and review the Alembic migration
+  - [x] 5.3 Generate and review the Alembic migration
     - Generate: `docker compose exec backend uv run alembic revision --autogenerate -m "create reproducibility tables"`.
     - Review so it creates `reproducibility_scores` and `experiment_setups` with
       the unique `paper_id` FKs/indexes; commit under
@@ -188,22 +188,22 @@ the pieces together, so there is no orphaned code.
       `create_all`.
     - _Requirements: 7.3_
 
-  - [ ]* 5.4 Write migration smoke test
+  - [x]* 5.4 Write migration smoke test
     - Extend `backend/tests/test_migrations.py` asserting both new tables and
       their unique `paper_id` indexes exist after upgrade → downgrade → upgrade.
     - _Requirements: 7.3_
 
-  - [ ]* 5.5 Write config smoke test
+  - [x]* 5.5 Write config smoke test
     - Assert a non-HTTPS `github_api_base` is rejected at startup; assert the
       Bedrock-missing startup failure still holds (inherited from paper-search).
     - _Requirements: 1.6, 7.6_
 
-- [ ] 6. Checkpoint — model, config, migration
+- [x] 6. Checkpoint — model, config, migration
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 7. Backend — the `score_reproducibility` seam (unstub paper-search)
-  - [ ] 7.1 Implement the seam pipeline (`services/reproducibility.py`)
+- [x] 7. Backend — the `score_reproducibility` seam (unstub paper-search)
+  - [x] 7.1 Implement the seam pipeline (`services/reproducibility.py`)
     - Replace the paper-search stub body, keeping the signature
       `score_reproducibility(paper_id: int) -> float`. Open an own `Session`; load
       the `Paper` (`repo_url`, `title`, `abstract`); run inspect → code_quality,
@@ -212,7 +212,7 @@ the pieces together, so there is no orphaned code.
       not inspectable **and** the setup is unavailable (R4.4, R6.4).
     - _Requirements: 6.2, 6.3, 6.4, 6.7, 4.3, 4.4_
 
-  - [ ] 7.2 Persist results and mirror onto the Paper (same transaction)
+  - [x] 7.2 Persist results and mirror onto the Paper (same transaction)
     - Upsert the `ReproducibilityScore` row (score, status, code-quality,
       repo_exists, repo_inspectable, setup_completeness, explanation) and the
       `ExperimentSetup` row (fields + `available`) by `paper_id` — update, don't
@@ -223,7 +223,7 @@ the pieces together, so there is no orphaned code.
       orchestrator recomputes the Final Score (R6.3, R6.6, R7.1, R7.2, R7.5).
     - _Requirements: 6.3, 6.6, 7.1, 7.2, 7.4, 7.5_
 
-  - [ ] 7.3 Extend the paper detail response with `reproducibility_breakdown`
+  - [x] 7.3 Extend the paper detail response with `reproducibility_breakdown`
     - In `backend/app/routers/papers.py` (paper-search), add the additive,
       nullable `reproducibility_breakdown` field to the `GET /api/papers/{id}`
       response, sourced from the `reproducibility_scores` row: `codeQuality` and
@@ -231,40 +231,40 @@ the pieces together, so there is no orphaned code.
       no row exists, so existing reads are unaffected.
     - _Requirements: 8.1, 8.6, 8.7_
 
-  - [ ]* 7.4 Write property test — no signals means no score, not fabricated
+  - [x]* 7.4 Write property test — no signals means no score, not fabricated
     - Create `backend/tests/test_repro_seam_properties.py` driving the seam
       against the testcontainer DB with faked inspector + mocked LLM.
     - **Property 6: No signals at all means no score, not a fabricated one**
     - **Validates: Requirements 4.4, 6.4**
 
-  - [ ]* 7.5 Write property test — the score number never comes from the LLM
+  - [x]* 7.5 Write property test — the score number never comes from the LLM
     - Vary faked `extract_setup`/`explain` outputs; assert computed scores
       unchanged.
     - **Property 7: The score number never comes from the LLM**
     - **Validates: Requirements 2.3, 4.5, 5.2, 6.7**
 
-  - [ ]* 7.6 Write property test — extraction/explanation failures degrade gracefully
+  - [x]* 7.6 Write property test — extraction/explanation failures degrade gracefully
     - **Property 8: Extraction and explanation failures degrade gracefully**
     - **Validates: Requirements 3.3, 5.3**
 
-  - [ ]* 7.7 Write property test — recompute updates in place, never duplicates
+  - [x]* 7.7 Write property test — recompute updates in place, never duplicates
     - **Property 11: Recompute updates in place, never duplicates**
     - **Validates: Requirements 7.4**
 
-  - [ ]* 7.8 Write property test — the GitHub token never leaks
+  - [x]* 7.8 Write property test — the GitHub token never leaks
     - Run scoring with a sentinel `GITHUB_TOKEN`; assert it appears in no response
       body, no persisted row, no captured log output, and no LLM prompt.
     - **Property 12: The GitHub token never leaks**
     - **Validates: Requirements 1.6, 7.5**
 
-  - [ ]* 7.9 Write property/contract test — the seam preserves the paper-search contract
+  - [x]* 7.9 Write property/contract test — the seam preserves the paper-search contract
     - Assert the signature matches and the Score_Status resolves to `ready`/
       `unavailable`; drive a paper-search search end-to-end with the real seam and
       a faked inspector/LLM and assert the Final Score recomputes.
     - **Property 13: The seam preserves the paper-search contract**
     - **Validates: Requirements 6.1, 6.3, 6.5, 6.6**
 
-  - [ ]* 7.10 Write example/edge tests
+  - [x]* 7.10 Write example/edge tests
     - Create `backend/tests/test_repro_seam.py`: no repo + extraction fails →
       `unavailable`; no repo + setup present → real score; GitHub 404 vs timeout
       mapping through the seam; explainer failure → score persists without
@@ -272,7 +272,7 @@ the pieces together, so there is no orphaned code.
       end-to-end with mirror onto `papers` + breakdown on the detail response.
     - _Requirements: 4.3, 4.4, 5.3, 6.3, 7.4_
 
-- [ ] 8. Checkpoint — backend seam
+- [x] 8. Checkpoint — backend seam
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 

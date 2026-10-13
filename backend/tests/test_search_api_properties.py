@@ -149,11 +149,16 @@ def _committed_paper(engine: Engine) -> int:
 
 
 def _cleanup(engine: Engine, pid: int) -> None:
+    from app.models.reproducibility import ExperimentSetup, ReproducibilityScore
+
     with Session(engine) as s:
+        for model in (ReproducibilityScore, ExperimentSetup):
+            for child in s.exec(select(model).where(model.paper_id == pid)).all():
+                s.delete(child)
         obj = s.get(Paper, pid)
         if obj:
             s.delete(obj)
-            s.commit()
+        s.commit()
 
 
 # Property 10: Score lifecycle terminates — no component stays pending.
@@ -189,14 +194,28 @@ def test_score_lifecycle_terminates(engine: Engine, monkeypatch, llm_fails):
         _cleanup(engine, pid)
 
 
-# Property 11: The reproducibility stub produces a full score lifecycle.
-# Validates: Requirements 5.6
+# Property 11: The reproducibility seam produces a full score lifecycle.
+# Validates: Requirements 5.6 (paper-search) / 6.3, 6.6 (reproducibility-scoring)
 def test_reproducibility_stub_full_lifecycle(engine: Engine, monkeypatch):
     monkeypatch.setattr(
         scoring,
         "assess_relevance",
         lambda paper, query: RelevanceResult(score=0.5, blurb="b"),
     )
+    # The stub is now the real seam; fake its inspector + LLM so the lifecycle
+    # resolves deterministically to ``ready`` without touching GitHub/Bedrock.
+    from app.services import reproducibility as seam
+    from app.services.repro.types import ExperimentSetupData, RepoSignals
+
+    monkeypatch.setattr(seam, "engine", engine)
+    monkeypatch.setattr(
+        seam.inspector,
+        "inspect_repo",
+        lambda url: RepoSignals(True, True, True, True, True, True, False),
+    )
+    monkeypatch.setattr(seam, "extract_setup", lambda t, a: ExperimentSetupData("a", "b", "c"))
+    monkeypatch.setattr(seam, "explain", lambda *a: "ok")
+
     pid = _committed_paper(engine)
     monkeypatch.setattr(scoring, "engine", engine)
     try:

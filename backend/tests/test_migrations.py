@@ -96,3 +96,48 @@ def test_users_table_and_unique_username_index() -> None:
         assert "users" in inspect(engine).get_table_names()
 
         engine.dispose()
+
+
+def test_reproducibility_tables_and_unique_indexes() -> None:
+    """After upgrade, both repro tables exist with unique paper_id indexes; the
+    full upgrade -> downgrade -> upgrade cycle is repeatable (R7.3, R7.4)."""
+    with PostgresContainer(
+        "postgres:17",
+        username="test",
+        password="test",
+        dbname="test",
+        driver="psycopg",
+    ) as container:
+        db_url = container.get_connection_url()
+        cfg = _alembic_config(db_url)
+        engine = create_engine(db_url)
+
+        command.upgrade(cfg, "head")
+        inspector = inspect(engine)
+        tables = inspector.get_table_names()
+        assert "reproducibility_scores" in tables
+        assert "experiment_setups" in tables
+        for table in ("reproducibility_scores", "experiment_setups"):
+            paper_id_indexes = [
+                ix for ix in inspector.get_indexes(table) if ix["column_names"] == ["paper_id"]
+            ]
+            assert any(ix["unique"] for ix in paper_id_indexes)
+
+        command.downgrade(cfg, "base")
+        assert "reproducibility_scores" not in inspect(engine).get_table_names()
+
+        command.upgrade(cfg, "head")
+        assert "reproducibility_scores" in inspect(engine).get_table_names()
+
+        engine.dispose()
+
+
+def test_settings_rejects_non_https_github_api_base(monkeypatch) -> None:
+    """A non-HTTPS github_api_base is rejected at startup (R1.6)."""
+    import pydantic
+    import pytest
+
+    from app.core.config import Settings
+
+    with pytest.raises(pydantic.ValidationError):
+        Settings(_env_file=None, github_api_base="http://api.github.com")
