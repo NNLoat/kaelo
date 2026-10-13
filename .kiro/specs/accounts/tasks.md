@@ -25,13 +25,13 @@ code.
 
 ## Tasks
 
-- [ ] 1. Business logic — `Credential_Helper` (`core/security.py`)
-  - [ ] 1.1 Add backend hashing dependency via uv
+- [x] 1. Business logic — `Credential_Helper` (`core/security.py`)
+  - [x] 1.1 Add backend hashing dependency via uv
     - From `backend/`, run `uv add "pwdlib[argon2]"` so Argon2 hashing is
       available; confirm it lands in `pyproject.toml` and `uv.lock`.
     - _Requirements: 8.1, 4.5_
 
-  - [ ] 1.2 Implement `Credential_Helper` pure functions
+  - [x] 1.2 Implement `Credential_Helper` pure functions
     - Create `backend/app/core/security.py` with no FastAPI/SQLModel imports.
     - Define `USERNAME_MIN/MAX = 3/32`, `PASSWORD_MIN/MAX = 8/128`,
       `CredentialError`, and `FieldViolation` (`{field, rule}`).
@@ -44,44 +44,44 @@ code.
       the format rules, else one `FieldViolation` per violated rule.
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8_
 
-  - [ ] 1.3 Add Hypothesis to the dev dependency group
+  - [x] 1.3 Add Hypothesis to the dev dependency group
     - From `backend/`, run `uv add --group dev hypothesis`; confirm it lands in
       `pyproject.toml` dev group and `uv.lock`.
     - _Requirements: 8.1_
 
-  - [ ]* 1.4 Write property test — hash/verify round-trip and hash ≠ plaintext
+  - [x]* 1.4 Write property test — hash/verify round-trip and hash ≠ plaintext
     - Create `backend/tests/test_security_properties.py`.
     - **Property 1: Hash/verify round-trip, and hash is not the plaintext**
     - **Validates: Requirements 8.1, 8.3, 4.5, 7.1**
     - Cap generated password length at 128; `max_examples=100` (Argon2 is
       CPU-heavy).
 
-  - [ ]* 1.5 Write property test — same password yields distinct, verifiable hashes
+  - [x]* 1.5 Write property test — same password yields distinct, verifiable hashes
     - **Property 2: Hashing the same password twice yields distinct, verifiable hashes**
     - **Validates: Requirements 8.6**
 
-  - [ ]* 1.6 Write property test — verification rejects non-corresponding passwords
+  - [x]* 1.6 Write property test — verification rejects non-corresponding passwords
     - **Property 3: Verification rejects non-corresponding passwords**
     - **Validates: Requirements 8.4**
 
-  - [ ]* 1.7 Write property test — password-length validation on hashing
+  - [x]* 1.7 Write property test — password-length validation on hashing
     - **Property 4: Password-length validation on hashing**
     - **Validates: Requirements 8.2**
 
-  - [ ]* 1.8 Write property test — malformed hashes fail verification safely
+  - [x]* 1.8 Write property test — malformed hashes fail verification safely
     - **Property 5: Malformed hashes fail verification safely**
     - **Validates: Requirements 8.5**
 
-  - [ ]* 1.9 Write property test — credential validation reports exactly the violated rules
+  - [x]* 1.9 Write property test — credential validation reports exactly the violated rules
     - **Property 6: Credential validation reports exactly the violated rules**
     - **Validates: Requirements 8.7, 8.8, 4.4**
 
-- [ ] 2. Checkpoint — Credential_Helper
+- [x] 2. Checkpoint — Credential_Helper
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 3. Data model, configuration, and migration (`User`, `Settings`)
-  - [ ] 3.1 Implement the `User` SQLModel
+- [x] 3. Data model, configuration, and migration (`User`, `Settings`)
+  - [x] 3.1 Implement the `User` SQLModel
     - Create `backend/app/models/user.py` following the Base/Create/Read split
       from `item.py`: `UserBase` (username unique+indexed, 3..32),
       `User(table=True)` on `users` with `id` PK, `password_hash` (not null),
@@ -89,7 +89,7 @@ code.
       `UserRead` (`id` + `username`, **no** password/hash field).
     - _Requirements: 7.1, 7.4, 7.5, 4.2_
 
-  - [ ] 3.2 Extend `Settings` with session config
+  - [x] 3.2 Extend `Settings` with session config
     - In `backend/app/core/config.py` add `session_secret: str` with **no
       default**, `session_ttl_seconds: int` (default 1 day), and
       `cookie_secure: bool = False`.
@@ -97,35 +97,35 @@ code.
       real value in `.env` (gitignored).
     - _Requirements: 7.6_
 
-  - [ ] 3.3 Generate and review the Alembic migration for the `users` table
+  - [x] 3.3 Generate and review the Alembic migration for the `users` table
     - Generate: `docker compose exec backend uv run alembic revision --autogenerate -m "create users table"`.
     - Review the draft so it creates `users` with the **unique index on
       `username`**; commit it under `backend/alembic/versions/`. The schema is
       applied by `alembic upgrade head` (entrypoint), **not** `create_all`.
     - _Requirements: 7.2, 7.4_
 
-  - [ ]* 3.4 Write migration smoke test
+  - [x]* 3.4 Write migration smoke test
     - Extend `backend/tests/test_migrations.py` with an upgrade → downgrade →
       upgrade run asserting the `users` table and its unique `username` index
       exist after upgrade (single run, not PBT).
     - _Requirements: 7.2_
 
-  - [ ]* 3.5 Write config smoke test
+  - [x]* 3.5 Write config smoke test
     - Assert constructing `Settings` without `SESSION_SECRET` in the environment
       raises at startup (no committed default).
     - _Requirements: 7.6_
 
-- [ ] 4. Checkpoint — model, config, migration
+- [x] 4. Checkpoint — model, config, migration
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 5. Session helpers and `Auth_API` router (backend)
-  - [ ] 5.1 Add the session-signing dependency via uv
+- [x] 5. Session helpers and `Auth_API` router (backend)
+  - [x] 5.1 Add the session-signing dependency via uv
     - From `backend/`, run `uv add itsdangerous` (skip only if already a pinned
       direct dep); confirm `pyproject.toml` and `uv.lock`.
     - _Requirements: 5.5, 5.6_
 
-  - [ ] 5.2 Implement session cookie helpers and `current_user` dependency
+  - [x] 5.2 Implement session cookie helpers and `current_user` dependency
     - Create `backend/app/core/session.py` built on
       `itsdangerous.URLSafeTimedSerializer` keyed by `settings.session_secret`:
       `issue_session(user_id) -> str`, `read_session(token) -> int | None`
@@ -135,7 +135,7 @@ code.
       `read_session`, loads the `User`, or raises `401`.
     - _Requirements: 5.5, 5.6, 6.4_
 
-  - [ ] 5.3 Implement `routers/auth.py` endpoints
+  - [x] 5.3 Implement `routers/auth.py` endpoints
     - Create `backend/app/routers/auth.py` with `APIRouter(prefix="/api/auth")`
       using the existing `get_session` dependency and the `Credential_Helper`.
     - `POST /register`: validate via `validate_credentials` → `422` with
@@ -152,67 +152,69 @@ code.
     - `GET /me`: via `current_user` → `200 UserRead` or `401`.
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 6.1, 6.2, 6.3, 6.4, 6.5, 7.3_
 
-  - [ ] 5.4 Register the auth router in `main.py`
+  - [x] 5.4 Register the auth router in `main.py`
     - Add `app.include_router(auth.router)` in `backend/app/main.py`; leave
       `/health` and `/api/items` routes untouched. This wires the backend
       together.
     - _Requirements: 4.1, 5.1, 6.1_
 
-  - [ ]* 5.5 Write property test — register-then-login succeeds and never leaks the hash
+  - [x]* 5.5 Write property test — register-then-login succeeds and never leaks the hash
     - Create `backend/tests/test_auth_api_properties.py` driving endpoints via
       `TestClient` against the testcontainer DB.
     - **Property 7: Register-then-login succeeds and the response never leaks the hash**
     - **Validates: Requirements 4.1, 4.2, 5.1**
 
-  - [ ]* 5.6 Write property test — login failures are non-disclosing
+  - [x]* 5.6 Write property test — login failures are non-disclosing
     - **Property 9: Login failures are non-disclosing**
     - **Validates: Requirements 5.2, 5.3**
 
-  - [ ]* 5.7 Write property test — session cookie round-trip identifies the acting user
+  - [x]* 5.7 Write property test — session cookie round-trip identifies the acting user
     - Test `issue_session`/`read_session` directly plus a cookie-carrying request.
     - **Property 10: Session cookie round-trip identifies the acting user**
     - **Validates: Requirements 5.5**
 
-  - [ ]* 5.8 Write property test — absent/tampered/expired sessions never authenticate
+  - [x]* 5.8 Write property test — absent/tampered/expired sessions never authenticate
     - **Property 11: Absent, tampered, or expired sessions never authenticate**
     - **Validates: Requirements 5.6, 6.4**
 
-  - [ ]* 5.9 Write property test — logout invalidates the session
+  - [x]* 5.9 Write property test — logout invalidates the session
     - **Property 12: Logout invalidates the session**
     - **Validates: Requirements 6.1, 6.2, 6.3**
 
-  - [ ]* 5.10 Write example/edge tests for endpoints
+  - [x]* 5.10 Write example/edge tests for endpoints
     - Create `backend/tests/test_auth_api.py`: R5.4 login with missing/empty
       field → `422`, no cookie; R6.5 logout twice is idempotent; R6.4 logout
       with no/expired/tampered cookie → `401`, no state change; happy-path
       register/login/logout smoke.
     - _Requirements: 5.4, 6.4, 6.5_
 
-  - [ ]* 5.11 Write property test — username uniqueness (optional concurrency race)
+  - [x]* 5.11 Write property test — username uniqueness (optional concurrency race)
     - **Property 8: Username uniqueness — at most one record per username**
     - Includes a targeted test issuing two near-simultaneous inserts of the same
       username and asserting exactly one row persists via the unique constraint.
     - **Validates: Requirements 4.3, 7.3, 7.4**
 
-- [ ] 6. Checkpoint — backend Auth_API
+- [x] 6. Checkpoint — backend Auth_API
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 7. Frontend — `Auth_UI` (manual verification; no automated test gate)
-  - [ ] 7.1 Add any required frontend dependencies via pnpm
+- [x] 7. Frontend — `Auth_UI` (manual verification; no automated test gate)
+  - [x] 7.1 Add any required frontend dependencies via pnpm
     - If the UI needs packages beyond the existing stack, add them from
       `frontend/` with `pnpm add <pkg>` (pinned). If none are needed, note that
       explicitly and skip. Do not switch package managers.
+    - None needed: the existing React/TS/Tailwind + `fetch` stack covers the UI.
+      Skipped.
     - _Requirements: 1.1, 2.1, 3.1_
 
-  - [ ] 7.2 Implement the typed API client `api/auth.ts`
+  - [x] 7.2 Implement the typed API client `api/auth.ts`
     - Create `frontend/src/api/auth.ts` with `UserRead`/`FieldError` types and
       `register`, `login` (30s timeout), `logout` (10s timeout), and `me`.
     - Every call uses `credentials: "include"` and a per-request
       `AbortController` for timeouts.
     - _Requirements: 1.3, 1.4, 1.8, 2.3, 2.6, 3.3, 3.5, 5.5_
 
-  - [ ] 7.3 Implement `AuthProvider` + `useAuth`
+  - [x] 7.3 Implement `AuthProvider` + `useAuth`
     - Create `frontend/src/components/AuthProvider.tsx` holding
       `UserRead | null` and the active mode (`"reader" | "writer"`); call `me()`
       on mount to restore state; expose `register`, `login`, `logout`, `setMode`.
@@ -220,28 +222,28 @@ code.
       unauthenticated expose only login/register views (no modes/username/logout).
     - _Requirements: 3.2, 3.6, 5.5_
 
-  - [ ] 7.4 Implement `RegisterForm`
+  - [x] 7.4 Implement `RegisterForm`
     - Create `frontend/src/components/RegisterForm.tsx`: username+password+submit;
       submit disabled while a field is empty or a request is in flight (progress
       indicator); client-side length gate (3..32 / 8..128); handle 201 success,
       409 conflict (retain username), 422 field errors, timeout/network error.
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8_
 
-  - [ ] 7.5 Implement `LoginForm`
+  - [x] 7.5 Implement `LoginForm`
     - Create `frontend/src/components/LoginForm.tsx`: username+password+enabled
       submit; "both required" when a field is empty; disable during request;
       handle success, 401 (retain username, clear password, generic message),
       timeout/unreachable retry message.
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
 
-  - [ ] 7.6 Implement `AuthBar` with logout and mode toggle
+  - [x] 7.6 Implement `AuthBar` with logout and mode toggle
     - Create `frontend/src/components/AuthBar.tsx`: show signed-in username +
       logout control on every authenticated view; Reader/Writer mode toggle;
       disable logout during request; on success discard session + show login
       view; on failure/timeout keep authenticated state + re-enable + error.
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
 
-  - [ ] 7.7 Wire Auth_UI into `App.tsx`
+  - [x] 7.7 Wire Auth_UI into `App.tsx`
     - Wrap the app in `AuthProvider`; render login/register views when
       unauthenticated and `AuthBar` + authenticated content when authenticated.
       This integrates the frontend end-to-end.

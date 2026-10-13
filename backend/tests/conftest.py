@@ -17,6 +17,14 @@ import os
 # cleanup instead. Set before importing testcontainers so it takes effect.
 os.environ.setdefault("TESTCONTAINERS_RYUK_DISABLED", "true")
 
+# bedrock_model_id has no committed default (R9.6); supply one for the test
+# session so the app imports. The LLM is mocked in tests — never called for real.
+os.environ.setdefault("BEDROCK_MODEL_ID", "test-model")
+
+# The app requires SESSION_SECRET (no default) to construct Settings. Provide a
+# throwaway value for the test process before app.main is imported below.
+os.environ.setdefault("SESSION_SECRET", "test-session-secret")
+
 from collections.abc import Generator  # noqa: E402
 
 import pytest  # noqa: E402
@@ -32,7 +40,7 @@ from app.main import app  # noqa: E402
 
 
 @pytest.fixture(scope="session")
-def postgres_container() -> Generator[PostgresContainer, None, None]:
+def postgres_container() -> Generator[PostgresContainer]:
     """Start one disposable postgres:17 container for the whole test session."""
     with PostgresContainer(
         "postgres:17",
@@ -45,7 +53,7 @@ def postgres_container() -> Generator[PostgresContainer, None, None]:
 
 
 @pytest.fixture(scope="session")
-def engine(postgres_container: PostgresContainer) -> Generator[Engine, None, None]:
+def engine(postgres_container: PostgresContainer) -> Generator[Engine]:
     """SQLModel engine bound to the test container, with schema created once.
 
     Tests use ``create_all`` for speed. Alembic migrations are exercised
@@ -58,15 +66,18 @@ def engine(postgres_container: PostgresContainer) -> Generator[Engine, None, Non
 
 
 @pytest.fixture
-def session(engine: Engine) -> Generator[Session, None, None]:
+def session(engine: Engine) -> Generator[Session]:
     """A session wrapped in an outer transaction that is rolled back per test.
 
-    The connection opens a transaction, the Session joins it, and on teardown
-    the transaction is rolled back — discarding everything the test wrote.
+    The connection opens a transaction and the Session joins it in
+    ``create_savepoint`` mode: the endpoint under test may ``commit()`` or
+    ``rollback()`` freely (those act on a SAVEPOINT), while the outer
+    transaction is rolled back on teardown — discarding everything the test
+    wrote and keeping tests isolated.
     """
     connection = engine.connect()
     transaction = connection.begin()
-    sess = Session(bind=connection)
+    sess = Session(bind=connection, join_transaction_mode="create_savepoint")
 
     yield sess
 
@@ -76,10 +87,10 @@ def session(engine: Engine) -> Generator[Session, None, None]:
 
 
 @pytest.fixture
-def client(session: Session) -> Generator[TestClient, None, None]:
+def client(session: Session) -> Generator[TestClient]:
     """FastAPI TestClient with the DB dependency overridden to the test session."""
 
-    def override_get_session() -> Generator[Session, None, None]:
+    def override_get_session() -> Generator[Session]:
         yield session
 
     app.dependency_overrides[get_session] = override_get_session

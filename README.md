@@ -189,17 +189,57 @@ hand-apply any upstream changes worth taking.
 > are not available in Kiro, which only loads the always-on ruleset. The core
 > `ponytail` skill works as documented above.
 
+## Frontend status (first iteration)
+
+The React frontend (`Reader` + `Writer` UI) is implemented for **all five specs**
+and merged to `main`, one spec per PR (#5–#9). Each was built with the `ponytail`
+and `frontend-design` skills; frontend-only, with the backend layers still to
+come.
+
+| Spec | UI | Key components (`frontend/src/`) |
+| --- | --- | --- |
+| `accounts` | Auth gate, login/register, mode toggle | `components/{AuthProvider,AuthBar,LoginForm,RegisterForm,Field}.tsx`, `api/auth.ts` |
+| `paper-search` | Reader search → ranked cards (live score polling) → paper detail | `components/{SearchBox,ResultList,ResultCard,ScoreBar,SourceBadges,PaperDetail}.tsx`, `components/useScorePolling.ts`, `api/papers.ts` |
+| `reproducibility-scoring` | Detail-view score breakdown, Experiment Setup, explanation | `components/PaperDetail.tsx` (extended), `api/papers.ts` (extended) |
+| `code-generation` | Opt-in generate action, job polling, two-pane artifact view + download, generations list | `components/{GenerateButton,JobStatusView,ArtifactView,GenerationsList}.tsx`, `api/codegen.ts` |
+| `writer-workspace` | Writer-mode workspace: claim, manuscript/source upload, delete controls | `components/writer/*`, `api/writer.ts` |
+
+**Shared design system.** A small token set lives in `frontend/src/index.css`
+(`ink`, `paper`, `accent` teal, `caution` amber, `hairline`, `muted`); the UI is
+one cohesive surface — an auth gate wraps a Reader search experience and a Writer
+workspace, switched by the `accounts` mode toggle. Amber `caution` is reserved
+for destructive confirmations and failure/unverified states (never decoration).
+
+**How it's wired.** Every API client uses `credentials: "include"` (the session
+cookie) and per-request `AbortController` timeouts. The app is a single
+`App.tsx` view-state machine (no router dependency).
+
+**Verification caveat.** The frontend is verified by type-check only
+(`pnpm lint` → `tsc --noEmit`), the project's only frontend gate — there is no
+automated frontend test suite (the team tests the UI manually). The UIs call
+`/api/*` endpoints that **do not exist until each spec's backend lands**, so the
+end-to-end manual walkthroughs (each spec's final checkpoint) are still pending.
+Two deliberate deviations from the design docs: the `code-generation` and
+`writer-workspace` docs name IBM Plex fonts, but the implementation uses the CSS
+`monospace` generic to avoid a web-font dependency; and client-side upload size
+gates hardcode the backend's default limits (keep them in sync if those
+`Settings` change).
+
 ## Planned specs
 
 The product was grilled (`/grill-with-docs`) into shared understanding before any
-spec was written. See `GLOSSARY.md` and `docs/adr/0001..0003` for the settled
+spec was written. See `GLOSSARY.md` and `docs/adr/0001..0006` for the settled
 vocabulary and decisions. The work is split into focused specs rather than one
 mega-spec; build them in dependency order.
 
-**Specs drafted so far** (requirements → design → tasks, under `.kiro/specs/`):
-`accounts`, `paper-search`, and `reproducibility-scoring`. The remaining specs
-(`code-generation`, `writer-workspace`) are **not yet created** — run
-`/spec new <name>` per feature when ready.
+**All five specs are drafted** (requirements → design → tasks, under
+`.kiro/specs/`): `accounts`, `paper-search`, `reproducibility-scoring`,
+`code-generation`, and `writer-workspace`. The **frontend layer of all five is
+implemented and merged** for this first iteration (see
+[Frontend status](#frontend-status-first-iteration) below); the backend and
+business-logic layers are still pending. The specs were drafted out of dependency
+order, so each stands on documented assumptions about its not-yet-implemented
+inputs (noted per spec); implement the remaining layers in the build order.
 
 ### Cross-cutting decisions (apply to every spec)
 
@@ -214,13 +254,19 @@ mega-spec; build them in dependency order.
 - **Auth:** username + password; every `User` can use both Reader and Writer
   modes.
 
-### Shared schema (8 tables, via Alembic)
+### Shared schema (via Alembic)
 
-`User`, `Paper`, `ReproducibilityScore`, `ExperimentSetup`, `PaperClaim`,
-`WriterManuscript`, `WriterSourceFile`, `GeneratedCode`. Writer content hangs off
-`PaperClaim`; source files stored as (relative path, content) rows.
+Core tables by spec: `User` (accounts); `Paper`, `ReproducibilityScore`,
+`ExperimentSetup` (paper-search / reproducibility-scoring); `GenerationJob`,
+`Generation` (code-generation); `PaperClaim`, `WriterManuscript`,
+`WriterSourceFile` (writer-workspace). Writer content hangs off `PaperClaim`;
+both Writer source files and generated artifacts are stored as (relative path,
+content) rows / entries.
 
-### Spec 1 — `accounts` (foundation)
+> **Status key:** each spec below is **drafted** (spec written) and **frontend
+> done** (UI implemented + merged); backend and business-logic layers are pending.
+
+### Spec 1 — `accounts` (foundation) — **frontend done**
 
 Lightweight auth: username + password registration/login, session handling. One
 account; both Reader and Writer modes available to it. Introduces the `User`
@@ -229,7 +275,7 @@ table.
 - **Depends on:** nothing.
 - **Blocks:** `writer-workspace` (needs `User` to own a `PaperClaim`).
 
-### Spec 2 — `paper-search` (Reader entry point) — **drafted**
+### Spec 2 — `paper-search` (Reader entry point) — **frontend done**
 
 Natural-language/keyword search box → merged, de-duplicated results from OpenAlex
 + arXiv → scored result cards (title, authors, source badges, all component
@@ -249,7 +295,7 @@ Experiment Setup, repo link, conditional code-gen action).
   Reproducibility is stubbed behind a `score_reproducibility(paper_id)` seam that
   `reproducibility-scoring` later replaces at the same signature.
 
-### Spec 3 — `reproducibility-scoring` — **drafted**
+### Spec 3 — `reproducibility-scoring` — **frontend done**
 
 Compute a `Reproducibility Score` for a `Paper` from: repo existence +
 repo-quality heuristics (README / license / tests / recent activity, via the Git
@@ -274,7 +320,7 @@ explain the score, but does not invent the number.
   reproducibility breakdown reaches the UI via an additive, nullable
   `reproducibility_breakdown` field on `GET /api/papers/{id}`.
 
-### Spec 4 — `code-generation` (opt-in, off by default, never executed)
+### Spec 4 — `code-generation` (opt-in, off by default, never executed) — **frontend done**
 
 Three cases:
 
@@ -286,23 +332,33 @@ Three cases:
 
 Display and download only; we never run or verify the output.
 
-- Introduces `GeneratedCode`.
+- Introduces `GeneratedCode` (`Generation` + `GenerationJob`).
 - **Depends on:** `reproducibility-scoring` (Experiment Setup) and
   `paper-search` (Reader cases); case 3 depends on `writer-workspace`.
+- **Spec:** `.kiro/specs/code-generation/`. Consumes the `Experiment Setup` and
+  Paper-level `Reproducibility Score` as existing inputs (does not extract or
+  compute them); the Artifact Code-Quality Score never feeds a Paper's repro
+  score (ADR-0004).
 
-### Spec 5 — `writer-workspace`
+### Spec 5 — `writer-workspace` — **frontend done**
 
 Writer claims a paper and uploads material to evaluate/generate against:
 
 - Claim a paper by link/DOI/arXiv-id and/or upload.
 - **Uploads:** PDF manuscript (server-side text extraction) + source as
-  **zip/tarball or public Git URL** (option C). Writer-owned manuscript text and
-  source **are persisted** (ADR-0003), in Postgres.
+  **zip/tarball or public Git URL**. Writer-owned manuscript text and source
+  **are persisted** (ADR-0003), in Postgres.
 - Reuses `reproducibility-scoring` and `code-generation` (case 3) over the
-  Writer's own paper.
+  Writer's own paper; **produces** the persisted uploads those features consume.
 - Introduces `PaperClaim`, `WriterManuscript`, `WriterSourceFile`.
 - **Depends on:** `accounts` (`User` ownership), `reproducibility-scoring`,
   `code-generation`.
+- **Spec:** `.kiro/specs/writer-workspace/`. Grilled (`/grill-with-docs`); the
+  settled decisions are in `GLOSSARY.md` (Paper Claim, Paper Reference, Writer
+  Manuscript, Writer Source File) and two ADRs: **ADR-0005** (upload ingestion is
+  synchronous, not a background job) and **ADR-0006** (a public Git URL is fetched
+  as an HTTP codeload tarball, not cloned). Stored source is text-only (binaries
+  skipped); claims de-dupe per identifier scheme.
 
 ### Suggested build order
 

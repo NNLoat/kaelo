@@ -1,133 +1,214 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import type { PaperCard } from "./api/papers";
+import type { GenerationRead } from "./api/codegen";
+import { AuthProvider, useAuth } from "./components/AuthProvider";
+import AuthBar from "./components/AuthBar";
+import LoginForm from "./components/LoginForm";
+import RegisterForm from "./components/RegisterForm";
+import SearchBox from "./components/SearchBox";
+import ResultList from "./components/ResultList";
+import PaperDetail from "./components/PaperDetail";
+import GenerationsList from "./components/GenerationsList";
+import ArtifactView from "./components/ArtifactView";
+import type { ClaimRead } from "./api/writer";
+import ClaimForm from "./components/writer/ClaimForm";
+import ClaimsList from "./components/writer/ClaimsList";
+import ClaimWorkspace from "./components/writer/ClaimWorkspace";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
-
-interface Item {
-  id: number;
-  name: string;
-  description: string | null;
-  created_at: string;
-}
+type View =
+  | { name: "search" }
+  | { name: "detail"; id: number }
+  | { name: "generations" }
+  | { name: "artifact"; generation: GenerationRead };
 
 export default function App() {
-  const [items, setItems] = useState<Item[]>([]);
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  return (
+    <AuthProvider>
+      <Shell />
+    </AuthProvider>
+  );
+}
 
-  async function loadItems() {
-    try {
-      const res = await fetch(`${API_URL}/api/items`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setItems(await res.json());
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load items");
-    } finally {
-      setLoading(false);
-    }
+function Shell() {
+  const { user, loading } = useAuth();
+  const [showRegister, setShowRegister] = useState(false);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-paper text-ink">
+        <div className="mx-auto max-w-2xl px-6 py-12">
+          <p className="text-muted">Loading…</p>
+        </div>
+      </div>
+    );
   }
 
-  useEffect(() => {
-    void loadItems();
-  }, []);
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-paper text-ink">
+        <div className="mx-auto grid min-h-screen max-w-5xl items-center gap-12 px-6 py-16 lg:grid-cols-2">
+          <section className="max-w-md">
+            <p className="font-serif text-4xl text-ink">Kaelo</p>
+            <p className="mt-4 text-lg leading-relaxed text-ink">
+              Find scientific papers, see how reproducible they are, and close the gap when the
+              code is missing.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted">
+              Sign in as a Reader to search and evaluate others' work, or as a Writer to check the
+              reproducibility of your own.
+            </p>
+          </section>
 
-  async function addItem(e: React.FormEvent) {
-    e.preventDefault();
-    if (!name.trim()) return;
-    try {
-      const res = await fetch(`${API_URL}/api/items`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, description: description || null }),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setName("");
-      setDescription("");
-      await loadItems();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create item");
-    }
+          <section className="w-full max-w-sm justify-self-end">
+            <h1 className="mb-5 text-xl font-semibold text-ink">
+              {showRegister ? "Create your account" : "Sign in"}
+            </h1>
+            <div className="rounded-lg border border-hairline bg-white p-6 shadow-sm">
+              {showRegister ? (
+                <RegisterForm onSwitch={() => setShowRegister(false)} />
+              ) : (
+                <LoginForm onSwitch={() => setShowRegister(true)} />
+              )}
+            </div>
+          </section>
+        </div>
+      </div>
+    );
   }
 
-  async function removeItem(id: number) {
-    try {
-      const res = await fetch(`${API_URL}/api/items/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      await loadItems();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete item");
-    }
+  return <Authed />;
+}
+
+function Authed() {
+  const { mode } = useAuth();
+  return mode === "writer" ? <Writer /> : <Reader />;
+}
+
+function Writer() {
+  const [selected, setSelected] = useState<ClaimRead | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  return (
+    <div className="min-h-screen bg-paper text-ink">
+      <div className="mx-auto max-w-3xl px-6 py-12">
+        <AuthBar />
+
+        {selected ? (
+          <ClaimWorkspace
+            claimId={selected.id}
+            onBack={() => {
+              setSelected(null);
+              setRefreshKey((k) => k + 1);
+            }}
+            onDeleted={() => {
+              setSelected(null);
+              setRefreshKey((k) => k + 1);
+            }}
+          />
+        ) : (
+          <>
+            <header className="mb-8">
+              <p className="font-serif text-3xl text-ink">Your workspace</p>
+              <p className="mt-1 text-muted">
+                Claim your papers and upload the manuscript and code to evaluate them.
+              </p>
+            </header>
+
+            <div className="mb-8">
+              <ClaimForm
+                onClaimed={(c) => {
+                  setSelected(c);
+                  setRefreshKey((k) => k + 1);
+                }}
+              />
+            </div>
+
+            <ClaimsList refreshKey={refreshKey} onOpen={setSelected} />
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Reader() {
+  const [papers, setPapers] = useState<PaperCard[]>([]);
+  const [view, setView] = useState<View>({ name: "search" });
+
+  if (view.name === "detail") {
+    return (
+      <div className="min-h-screen bg-paper text-ink">
+        <div className="mx-auto max-w-3xl px-6 pt-6">
+          <AuthBar />
+        </div>
+        <PaperDetail id={view.id} onBack={() => setView({ name: "search" })} />
+      </div>
+    );
+  }
+
+  if (view.name === "generations") {
+    return (
+      <div className="min-h-screen bg-paper text-ink">
+        <div className="mx-auto max-w-3xl px-6 py-12">
+          <AuthBar />
+          <div className="mb-6 flex items-center justify-between">
+            <h1 className="text-xl font-semibold text-ink">Your generations</h1>
+            <button
+              onClick={() => setView({ name: "search" })}
+              className="text-sm text-accent hover:underline"
+            >
+              Back to search
+            </button>
+          </div>
+          <GenerationsList onOpen={(g) => setView({ name: "artifact", generation: g })} />
+        </div>
+      </div>
+    );
+  }
+
+  if (view.name === "artifact") {
+    return (
+      <div className="min-h-screen bg-paper text-ink">
+        <div className="mx-auto max-w-3xl px-6 py-12">
+          <AuthBar />
+          <button
+            onClick={() => setView({ name: "generations" })}
+            className="mb-6 text-sm text-accent hover:underline"
+          >
+            Back to your generations
+          </button>
+          <ArtifactView generation={view.generation} />
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="mx-auto max-w-2xl px-6 py-12">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">muit-hackathon</h1>
-          <p className="text-slate-500">
-            FastAPI + SQLModel + Postgres · Vite + React + Tailwind
-          </p>
+    <div className="min-h-screen bg-paper text-ink">
+      <div className="mx-auto max-w-3xl px-6 py-12">
+        <AuthBar />
+
+        <header className="mb-8 flex items-start justify-between gap-4">
+          <div>
+            <p className="font-serif text-3xl text-ink">Kaelo</p>
+            <p className="mt-1 text-muted">
+              Search scientific papers and see how reproducible they are.
+            </p>
+          </div>
+          <button
+            onClick={() => setView({ name: "generations" })}
+            className="shrink-0 text-sm text-accent hover:underline"
+          >
+            Your generations
+          </button>
         </header>
 
-        <form
-          onSubmit={addItem}
-          className="mb-8 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row"
-        >
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Name"
-            className="flex-1 rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-          />
-          <input
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Description (optional)"
-            className="flex-1 rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-          />
-          <button
-            type="submit"
-            className="rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white transition hover:bg-indigo-700 active:bg-indigo-800"
-          >
-            Add
-          </button>
-        </form>
+        <SearchBox onResults={setPapers} />
 
-        {error && (
-          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
-            {error}
+        {papers.length > 0 && (
+          <div className="mt-8">
+            <ResultList papers={papers} onOpen={(id) => setView({ name: "detail", id })} />
           </div>
-        )}
-
-        {loading ? (
-          <p className="text-slate-500">Loading…</p>
-        ) : items.length === 0 ? (
-          <p className="text-slate-500">No items yet. Add one above.</p>
-        ) : (
-          <ul className="flex flex-col gap-2">
-            {items.map((item) => (
-              <li
-                key={item.id}
-                className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm"
-              >
-                <div>
-                  <p className="font-medium">{item.name}</p>
-                  {item.description && (
-                    <p className="text-sm text-slate-500">{item.description}</p>
-                  )}
-                </div>
-                <button
-                  onClick={() => removeItem(item.id)}
-                  className="rounded-md px-2 py-1 text-sm text-slate-400 transition hover:bg-red-50 hover:text-red-600"
-                  aria-label={`Delete ${item.name}`}
-                >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
         )}
       </div>
     </div>

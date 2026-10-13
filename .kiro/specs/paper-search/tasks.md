@@ -31,8 +31,8 @@ and ends by wiring the pieces together, so there is no orphaned code.
 
 ## Tasks
 
-- [ ] 1. Business logic — ranking, merge, and the reproducibility stub (pure)
-  - [ ] 1.1 Implement the non-AI `Final Score` blend (`services/ranking.py`)
+- [x] 1. Business logic — ranking, merge, and the reproducibility stub (pure)
+  - [x] 1.1 Implement the non-AI `Final Score` blend (`services/ranking.py`)
     - Create `backend/app/services/ranking.py` with no LLM/HTTP/DB imports.
     - `final_score(relevance, reproducibility, *, w_rel, w_repro)`: return
       `w_rel*relevance + w_repro*reproducibility` when both components are
@@ -42,7 +42,7 @@ and ends by wiring the pieces together, so there is no orphaned code.
       `pending` Final Scores ordered last.
     - _Requirements: 4.3, 4.4, 5.7, 8.5_
 
-  - [ ] 1.2 Implement the common pre-merge record shape and `Merge_Dedup`
+  - [x] 1.2 Implement the common pre-merge record shape and `Merge_Dedup`
     - Create `backend/app/services/sources/base.py` with the `SourceRecord`
       dataclass (title, authors, abstract, published_date, doi, arxiv_id,
       source_links, repo_url, source) and a `SourceAdapter` Protocol
@@ -54,52 +54,52 @@ and ends by wiring the pieces together, so there is no orphaned code.
       contributing source and keeping the richer non-empty value per field.
     - _Requirements: 7.1, 7.3, 7.4, 7.6_
 
-  - [ ] 1.3 Implement the reproducibility stub seam (`services/reproducibility.py`)
+  - [x] 1.3 Implement the reproducibility stub seam (`services/reproducibility.py`)
     - Create `backend/app/services/reproducibility.py` with
       `score_reproducibility(paper_id) -> float` returning a fixed in-range value
       (e.g. 0.5). This is the single seam `reproducibility-scoring` will replace;
       keep it in its own module so that later spec swaps one file.
     - _Requirements: 5.6_
 
-  - [ ] 1.4 Add Hypothesis to the dev dependency group
+  - [x] 1.4 Add Hypothesis to the dev dependency group
     - From `backend/`, run `uv add --group dev hypothesis`; confirm it lands in
       `pyproject.toml` dev group and `uv.lock`.
     - _Requirements: 5.7_
 
-  - [ ]* 1.5 Write property test — Final Score is the exact configured non-AI blend
+  - [x]* 1.5 Write property test — Final Score is the exact configured non-AI blend
     - Create `backend/tests/test_ranking_properties.py`.
     - **Property 1: Final Score is the exact configured non-AI blend**
     - **Validates: Requirements 5.7, 8.5**
 
-  - [ ]* 1.6 Write property test — Final Score pending exactly when a component is pending
+  - [x]* 1.6 Write property test — Final Score pending exactly when a component is pending
     - **Property 2: Final Score is pending exactly when a component is pending**
     - **Validates: Requirements 2.3, 4.4, 5.3**
 
-  - [ ]* 1.7 Write property test — sorted by Final Score, pending last
+  - [x]* 1.7 Write property test — sorted by Final Score, pending last
     - **Property 3: Results are sorted by Final Score, pending last**
     - **Validates: Requirements 4.3, 4.4**
 
-  - [ ]* 1.8 Write property test — de-dup merges same-publication records, keeps all sources
+  - [x]* 1.8 Write property test — de-dup merges same-publication records, keeps all sources
     - Create `backend/tests/test_merge_properties.py`.
     - **Property 4: De-duplication merges same-publication records and keeps all sources**
     - **Validates: Requirements 7.3, 7.4**
 
-  - [ ]* 1.9 Write property test — merge keeps the richer value, no full text
+  - [x]* 1.9 Write property test — merge keeps the richer value, no full text
     - **Property 5: Merge keeps the richer value and never fabricates full text**
     - **Validates: Requirements 7.3, 7.6, 9.1**
 
-- [ ] 2. Checkpoint — ranking, merge, stub
+- [x] 2. Checkpoint — ranking, merge, stub
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 3. Source adapters and LLM assist (business logic, external — mocked in tests)
-  - [ ] 3.1 Add the HTTP and LangChain/Bedrock dependencies via uv
+- [x] 3. Source adapters and LLM assist (business logic, external — mocked in tests)
+  - [x] 3.1 Add the HTTP and LangChain/Bedrock dependencies via uv
     - From `backend/`, run `uv add httpx` and the LangChain + Bedrock packages
       (e.g. `uv add langchain langchain-aws`); confirm `pyproject.toml` and
       `uv.lock`. Pin to current stable; do not switch package managers.
     - _Requirements: 7.1, 8.1_
 
-  - [ ] 3.2 Implement the OpenAlex Source_Adapter
+  - [x] 3.2 Implement the OpenAlex Source_Adapter
     - Create `backend/app/services/sources/openalex.py` implementing
       `SourceAdapter`: query the keyless OpenAlex REST API with `httpx`, map works
       to `SourceRecord`, restrict to the CS + Medicine domains via OpenAlex
@@ -107,14 +107,14 @@ and ends by wiring the pieces together, so there is no orphaned code.
       only — never full text. Raise `SourceError` on failure/timeout.
     - _Requirements: 7.1, 7.2, 7.5, 7.6_
 
-  - [ ] 3.3 Implement the arXiv Source_Adapter
+  - [x] 3.3 Implement the arXiv Source_Adapter
     - Create `backend/app/services/sources/arxiv.py` implementing `SourceAdapter`:
       query the arXiv API with `httpx`, map entries to `SourceRecord`, restrict to
       CS categories (and Medicine-adjacent where applicable). Index metadata/links
       only. Raise `SourceError` on failure/timeout.
     - _Requirements: 7.1, 7.2, 7.5, 7.6_
 
-  - [ ] 3.4 Implement `Query_Assist` and `Relevance_Assessment` (`services/llm.py`)
+  - [x] 3.4 Implement `Query_Assist` and `Relevance_Assessment` (`services/llm.py`)
     - Create `backend/app/services/llm.py` using Amazon Bedrock via LangChain
       (model id + region from `Settings`): `expand_query(raw) -> str` (caller
       falls back to `raw` on failure/timeout) and
@@ -123,7 +123,7 @@ and ends by wiring the pieces together, so there is no orphaned code.
       clamp the score to `[0,1]`). No ranking logic in this module.
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.6_
 
-  - [ ]* 3.5 Write example/edge tests for adapters and LLM failure handling
+  - [x]* 3.5 Write example/edge tests for adapters and LLM failure handling
     - Create `backend/tests/test_sources.py`: with mocked `httpx` responses,
       assert each adapter maps a sample record to `SourceRecord`, applies the
       domain scope, and raises `SourceError` on a simulated failure/timeout.
@@ -131,12 +131,12 @@ and ends by wiring the pieces together, so there is no orphaned code.
       LLM error (LLM client mocked — never called for real).
     - _Requirements: 7.2, 7.5, 8.2, 8.4_
 
-- [ ] 4. Checkpoint — adapters and LLM
+- [x] 4. Checkpoint — adapters and LLM
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 5. Data model, configuration, and migration (`Paper`, `Settings`)
-  - [ ] 5.1 Implement the `Paper` SQLModel
+- [x] 5. Data model, configuration, and migration (`Paper`, `Settings`)
+  - [x] 5.1 Implement the `Paper` SQLModel
     - Create `backend/app/models/paper.py` following the Base/Create/Read split
       from `item.py`: `ScoreStatus` enum (`pending`/`ready`/`unavailable`);
       `PaperBase` (title indexed, authors/sources/source_links as JSON columns,
@@ -149,7 +149,7 @@ and ends by wiring the pieces together, so there is no orphaned code.
       `SQLModel.metadata` (tests' `create_all`) and Alembic autogenerate.
     - _Requirements: 9.1, 9.3, 9.5, 6.3, 6.4_
 
-  - [ ] 5.2 Extend `Settings` with ranking weights, source scope, and Bedrock config
+  - [x] 5.2 Extend `Settings` with ranking weights, source scope, and Bedrock config
     - In `backend/app/core/config.py` add `relevance_weight: float = 0.7`,
       `reproducibility_weight: float = 0.3`, `source_domains`,
       `source_result_limit`, `source_timeout_seconds`, `llm_timeout_seconds`,
@@ -158,7 +158,7 @@ and ends by wiring the pieces together, so there is no orphaned code.
       `.env.example` (placeholders only); set real values in `.env` (gitignored).
     - _Requirements: 5.7, 7.2, 8.6, 9.6_
 
-  - [ ] 5.3 Generate and review the Alembic migration for the `papers` table
+  - [x] 5.3 Generate and review the Alembic migration for the `papers` table
     - Generate: `docker compose exec backend uv run alembic revision --autogenerate -m "create papers table"`.
     - Review the draft so it creates `papers` with indexes on `title`, `doi`, and
       `arxiv_id` and the JSON columns; commit it under
@@ -166,23 +166,23 @@ and ends by wiring the pieces together, so there is no orphaned code.
       (entrypoint), **not** `create_all`.
     - _Requirements: 9.1, 9.2_
 
-  - [ ]* 5.4 Write migration smoke test
+  - [x]* 5.4 Write migration smoke test
     - Extend `backend/tests/test_migrations.py` with an upgrade → downgrade →
       upgrade run asserting the `papers` table and its `title`/`doi`/`arxiv_id`
       indexes exist after upgrade (single run, not PBT).
     - _Requirements: 9.2_
 
-  - [ ]* 5.5 Write config smoke test
+  - [x]* 5.5 Write config smoke test
     - Assert constructing `Settings` without `BEDROCK_MODEL_ID` in the
       environment raises at startup (no committed default).
     - _Requirements: 9.6_
 
-- [ ] 6. Checkpoint — model, config, migration
+- [x] 6. Checkpoint — model, config, migration
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 7. Scoring orchestration and `Search_API` router (backend)
-  - [ ] 7.1 Implement the async scoring orchestrator (`services/scoring.py`)
+- [x] 7. Scoring orchestration and `Search_API` router (backend)
+  - [x] 7.1 Implement the async scoring orchestrator (`services/scoring.py`)
     - Create `backend/app/services/scoring.py`:
       `schedule_scoring(paper_ids, query, tasks)` queues one `BackgroundTasks`
       job per paper; `run_scoring_for_paper(paper_id, query)` opens its own
@@ -193,7 +193,7 @@ and ends by wiring the pieces together, so there is no orphaned code.
       job runs.
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.6, 5.7, 8.4_
 
-  - [ ] 7.2 Implement the search fetch/merge/cache pipeline helper
+  - [x] 7.2 Implement the search fetch/merge/cache pipeline helper
     - In `services/scoring.py` (or a small `services/pipeline.py`): given a raw
       query, call `expand_query` (fall back to raw on failure), fan out to the
       configured adapters with the configured timeout/limit, collect records and
@@ -203,7 +203,7 @@ and ends by wiring the pieces together, so there is no orphaned code.
       duplicate. Return the cached paper ids and `failed_sources`.
     - _Requirements: 4.1, 4.2, 7.5, 9.1, 9.4, 9.5_
 
-  - [ ] 7.3 Implement `routers/papers.py` endpoints
+  - [x] 7.3 Implement `routers/papers.py` endpoints
     - Create `backend/app/routers/papers.py` with `APIRouter(prefix="/api/papers")`
       using the existing `get_session` dependency.
     - `POST /search`: validate query (non-empty, ≤512, non-whitespace) → `422`
@@ -218,66 +218,68 @@ and ends by wiring the pieces together, so there is no orphaned code.
       when not present.
     - _Requirements: 1.* (API side), 4.1, 4.3, 4.4, 4.5, 4.6, 4.7, 5.2, 5.5, 6.1, 6.2, 6.3, 6.4, 6.5_
 
-  - [ ] 7.4 Register the papers router in `main.py`
+  - [x] 7.4 Register the papers router in `main.py`
     - Add `app.include_router(papers.router)` in `backend/app/main.py`; leave
       `/health` and `/api/items` routes untouched. This wires the backend
       together.
     - _Requirements: 4.1, 5.5, 6.1_
 
-  - [ ]* 7.5 Write property test — one source failing never fails the search
+  - [x]* 7.5 Write property test — one source failing never fails the search
     - Create `backend/tests/test_search_api_properties.py` driving endpoints via
       `TestClient` against the testcontainer DB, with **faked adapters** and a
       **mocked LLM**.
     - **Property 6: One source failing never fails the search**
     - **Validates: Requirements 4.6, 4.7, 7.5**
 
-  - [ ]* 7.6 Write property test — query validation rejects before any fetch
+  - [x]* 7.6 Write property test — query validation rejects before any fetch
     - Assert faked adapters/LLM are **not** called for invalid queries.
     - **Property 7: Query validation rejects before any fetch**
     - **Validates: Requirements 1.1, 4.5**
 
-  - [ ]* 7.7 Write property test — caching persists Papers but never the query
+  - [x]* 7.7 Write property test — caching persists Papers but never the query
     - **Property 8: Caching persists Papers but never the query**
     - **Validates: Requirements 4.2, 9.1**
 
-  - [ ]* 7.8 Write property test — re-search reuses cached Papers rather than duplicating
+  - [x]* 7.8 Write property test — re-search reuses cached Papers rather than duplicating
     - **Property 9: Re-search reuses cached Papers rather than duplicating**
     - **Validates: Requirements 9.4, 9.5**
 
-  - [ ]* 7.9 Write property test — score lifecycle terminates (no permanent pending)
+  - [x]* 7.9 Write property test — score lifecycle terminates (no permanent pending)
     - Run the scheduled scoring jobs (faked LLM success and failure) and assert
       each component ends `ready` or `unavailable`.
     - **Property 10: Score lifecycle terminates — no component stays pending forever**
     - **Validates: Requirements 5.3, 5.4, 8.4**
 
-  - [ ]* 7.10 Write property test — reproducibility stub produces a full score lifecycle
+  - [x]* 7.10 Write property test — reproducibility stub produces a full score lifecycle
     - **Property 11: The reproducibility stub produces a full score lifecycle**
     - **Validates: Requirements 5.6**
 
-  - [ ]* 7.11 Write property test — detail served from cache, 404 for unknown ids
+  - [x]* 7.11 Write property test — detail served from cache, 404 for unknown ids
     - Assert the detail path does **not** call any adapter.
     - **Property 12: Detail is served from cache and 404s for unknown ids**
     - **Validates: Requirements 6.1, 6.2, 6.5**
 
-  - [ ]* 7.12 Write example/edge tests for endpoints
+  - [x]* 7.12 Write example/edge tests for endpoints
     - Create `backend/tests/test_search_api.py`: R4.5 empty/whitespace/513-char
       query → `422`; all-adapters-fail → `502 source_failure` vs. succeed-with-
       zero-records → `200 {papers: []}`; one-fails-one-succeeds → results +
       failed source listed; end-to-end search → scores-poll → detail happy path.
     - _Requirements: 4.5, 4.6, 4.7, 5.5, 6.1_
 
-- [ ] 8. Checkpoint — backend Search_API
+- [x] 8. Checkpoint — backend Search_API
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 9. Frontend — `Search_UI` (manual verification; no automated test gate)
-  - [ ] 9.1 Add any required frontend dependencies via pnpm
+- [x] 9. Frontend — `Search_UI` (manual verification; no automated test gate)
+  - [x] 9.1 Add any required frontend dependencies via pnpm
     - If the UI needs packages beyond the existing stack (e.g. a router), add them
       from `frontend/` with `pnpm add <pkg>` (pinned). If none are needed, note
       that explicitly and skip. Do not switch package managers.
+    - None needed: the existing React/TS/Tailwind + `fetch` stack covers the UI;
+      search/detail view switching uses local state, no router. Skipped.
     - _Requirements: 1.1, 2.6, 3.1_
 
-  - [ ] 9.2 Implement the typed API client `api/papers.ts`
+  - [x] 9.2 Implement the typed API client `api/papers.ts`
     - Create `frontend/src/api/papers.ts` with the `ScoreStatus`/`ScoreCell`/
       `PaperCard`/`PaperDetail` types and `search` (30s timeout, abandons the
       previous in-flight call), `scores(ids)`, and `paper(id)` (30s timeout).
@@ -285,14 +287,14 @@ and ends by wiring the pieces together, so there is no orphaned code.
       `AbortController`.
     - _Requirements: 1.2, 1.3, 1.6, 1.7, 2.7, 3.1, 3.7, 5.5_
 
-  - [ ] 9.3 Implement `SearchBox`
+  - [x] 9.3 Implement `SearchBox`
     - Create `frontend/src/components/SearchBox.tsx`: search input + submit;
       submit disabled while empty/whitespace; loading indicator + disabled submit
       during the request; empty-result message; error/retry on timeout/network,
       retaining the query; a new submit abandons the previous request.
     - _Requirements: 1.1, 1.3, 1.4, 1.5, 1.6, 1.7_
 
-  - [ ] 9.4 Implement `ResultList` + `ResultCard`
+  - [x] 9.4 Implement `ResultList` + `ResultCard`
     - Create `frontend/src/components/ResultList.tsx` and `ResultCard.tsx`: render
       cards in the API's returned order; each card shows title, authors, a Source
       badge per contributing Source, the three labeled component scores,
@@ -300,7 +302,7 @@ and ends by wiring the pieces together, so there is no orphaned code.
       navigates to the detail view on activation.
     - _Requirements: 1.4, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
 
-  - [ ] 9.5 Implement `useScorePolling` for live score updates
+  - [x] 9.5 Implement `useScorePolling` for live score updates
     - Create `frontend/src/components/useScorePolling.ts`: while any rendered card
       has a `pending` component, poll `scores(ids)` on an interval, replace each
       pending cell with its value or `unavailable`, re-sort when a Final Score
@@ -308,7 +310,7 @@ and ends by wiring the pieces together, so there is no orphaned code.
       attempts — no resubmission by the Reader.
     - _Requirements: 2.7, 5.5_
 
-  - [ ] 9.6 Implement `PaperDetail`
+  - [x] 9.6 Implement `PaperDetail`
     - Create `frontend/src/components/PaperDetail.tsx`: fetch by id; render title,
       authors, abstract, publication date, every Source badge, external source
       links, the full score breakdown with each Score_Status, the repo link or
@@ -319,7 +321,7 @@ and ends by wiring the pieces together, so there is no orphaned code.
       retry on timeout/failure.
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7_
 
-  - [ ] 9.7 Wire Search_UI into `App.tsx`
+  - [x] 9.7 Wire Search_UI into `App.tsx`
     - Render the search view (`SearchBox` + `ResultList`) and the `PaperDetail`
       view, switching between them on card activation / back. This integrates the
       frontend end-to-end.

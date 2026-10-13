@@ -7,6 +7,7 @@ from sqlmodel import Session, select
 from app.core.config import get_settings
 from app.db.session import get_session
 from app.models.item import Item, ItemCreate, ItemRead
+from app.routers import auth, papers
 
 settings = get_settings()
 
@@ -30,9 +31,15 @@ app.add_middleware(
 )
 
 
+app.include_router(papers.router)
+
+
 @app.get("/health", tags=["meta"])
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+app.include_router(auth.router)
 
 
 @app.get("/api/items", response_model=list[ItemRead], tags=["items"])
