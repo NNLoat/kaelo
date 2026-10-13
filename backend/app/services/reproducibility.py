@@ -1,11 +1,135 @@
-"""Reproducibility scoring seam.
+"""Reproducibility scoring seam (R6, R7).
 
-STUB for the ``paper-search`` spec: returns a fixed in-range value with an
-implicit ``ready`` status. ``reproducibility-scoring`` replaces this one module
-behind the same signature (R5.6) — keep the seam in its own file.
+Replaces the paper-search stub at the same signature. Runs the pipeline
+(inspect -> code-quality -> extract -> completeness -> score -> explain),
+upserts ``ReproducibilityScore`` + ``ExperimentSetup``, mirrors the setup and
+number onto the ``Paper`` in the same transaction, and returns the number.
+Raises ``ReproducibilityUnavailable`` only when the repo is not inspectable AND
+the setup is unavailable (R4.4, R6.4) — the orchestrator maps that to
+Score_Status ``unavailable``.
 """
+
+from datetime import UTC, datetime
+
+from sqlmodel import Session, select
+
+from app.core.config import get_settings
+from app.db.session import engine
+from app.models.paper import Paper, ScoreStatus
+from app.models.reproducibility import ExperimentSetup, ReproducibilityScore
+from app.services.repro import inspector
+from app.services.repro.code_quality import code_quality
+from app.services.repro.completeness import completeness
+from app.services.repro.explainer import explain
+from app.services.repro.extractor import extract_setup
+from app.services.repro.scorer import reproducibility
+from app.services.repro.types import (
+    ExperimentSetupData,
+    ReproducibilityUnavailable,
+)
 
 
 def score_reproducibility(paper_id: int) -> float:
-    """Return a reproducibility score in ``[0, 1]`` for the given paper."""
-    return 0.5
+    """Compute, persist, and return the rule-based Reproducibility Score."""
+    settings = get_settings()
+    with Session(engine) as session:
+        paper = session.get(Paper, paper_id)
+        if paper is None:
+            raise ReproducibilityUnavailable(f"paper {paper_id} not found")
+
+        signals = inspector.inspect_repo(paper.repo_url)
+        cq = code_quality(signals)
+
+        # Setup extraction; failure => unavailable, never fabricated (R3.3).
+        setup: ExperimentSetupData | None
+        try:
+            setup = extract_setup(paper.title, paper.abstract)
+        except Exception:
+            setup = None
+        setup_available = setup is not None
+        setup_completeness = completeness(setup)
+
+        if not signals.inspectable and not setup_available:
+            raise ReproducibilityUnavailable(f"no signal for paper {paper_id}")
+
+        score = reproducibility(
+            cq,
+            signals.exists,
+            setup_completeness,
+            w_repo=settings.repro_repo_weight,
+            w_setup=settings.repro_setup_weight,
+        )
+
+        # Explanation is optional; failure must not fail the score (R5.3).
+        try:
+            explanation = explain(score, signals, setup_completeness)
+        except Exception:
+            explanation = None
+
+        _persist(
+            session,
+            paper,
+            score=score,
+            cq=cq,
+            signals=signals,
+            setup=setup,
+            setup_available=setup_available,
+            setup_completeness=setup_completeness,
+            explanation=explanation,
+        )
+        session.commit()
+        return score
+
+
+def _persist(
+    session: Session,
+    paper: Paper,
+    *,
+    score: float,
+    cq: float,
+    signals,
+    setup: ExperimentSetupData | None,
+    setup_available: bool,
+    setup_completeness: float,
+    explanation: str | None,
+) -> None:
+    """Upsert both rows and mirror onto the Paper in one transaction (R7.4)."""
+    now = datetime.now(UTC)
+
+    repro_row = session.exec(
+        select(ReproducibilityScore).where(ReproducibilityScore.paper_id == paper.id)
+    ).first()
+    if repro_row is None:
+        repro_row = ReproducibilityScore(paper_id=paper.id)
+    repro_row.score = score
+    repro_row.status = ScoreStatus.ready
+    repro_row.code_quality_score = cq
+    repro_row.repo_exists = signals.exists
+    repro_row.repo_inspectable = signals.inspectable
+    repro_row.setup_completeness = setup_completeness
+    repro_row.explanation = explanation
+    repro_row.updated_at = now
+    session.add(repro_row)
+
+    setup_row = session.exec(
+        select(ExperimentSetup).where(ExperimentSetup.paper_id == paper.id)
+    ).first()
+    if setup_row is None:
+        setup_row = ExperimentSetup(paper_id=paper.id)
+    setup_row.hyperparameters = setup.hyperparameters if setup else None
+    setup_row.datasets = setup.datasets if setup else None
+    setup_row.environment = setup.environment if setup else None
+    setup_row.available = setup_available
+    setup_row.updated_at = now
+    session.add(setup_row)
+
+    # Mirror the setup JSON that paper-search's detail read expects (R6.3, R7.2).
+    paper.experiment_setup = {
+        "hyperparameters": setup.hyperparameters if setup else None,
+        "datasets": setup.datasets if setup else None,
+        "environment": setup.environment if setup else None,
+        "available": setup_available,
+    }
+    paper.reproducibility_score = score
+    paper.reproducibility_status = ScoreStatus.ready
+    session.add(paper)
