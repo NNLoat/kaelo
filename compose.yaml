@@ -26,6 +26,7 @@ services:
       DATABASE_URL: >-
         postgresql+psycopg://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-app}@db:5432/${POSTGRES_DB:-app}
       CORS_ORIGINS: '["http://localhost:${FRONTEND_PORT:-5173}"]'
+      SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET in your .env}
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     depends_on:
