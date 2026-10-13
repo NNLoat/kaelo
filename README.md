@@ -236,6 +236,7 @@ The framework-agnostic business-logic layer (`backend/app/services/` and
 | `accounts` | `core/security.py` — Argon2 hashing, verification, credential-format validation | `tests/test_security_properties.py` (6 passed) |
 | `paper-search` | `services/{ranking,merge,reproducibility}.py`, `services/sources/*`, `services/llm.py` | `tests/{test_ranking_properties,test_merge_properties,test_sources}.py` (13 passed) |
 | `reproducibility-scoring` | `services/repro/*` — rule-based scorers (`code_quality`, `completeness`, `scorer`), GitHub `inspector`, LLM `extractor`/`explainer` | `tests/{test_repro_scorers_properties,test_repro_inspector}.py` (17 passed) |
+| `code-generation` | `core/codegen.py` — `Generation_Helper` (`generate`, README-always/Python-default) + `Scoring_Helper` (`score`), Bedrock via LangChain | `tests/test_codegen_helper_properties.py` (7 passed) |
 
 Run the gate on the host: `cd backend && uv run pytest`. The ranking/merge/source
 tests need no Docker; the full suite (API + migrations) needs a reachable Docker

@@ -30,14 +30,14 @@ there is no orphaned code. It depends on the `accounts` spec for the
 
 ## Tasks
 
-- [ ] 1. Business logic — `Generation_Helper` + `Scoring_Helper` (`core/codegen.py`)
-  - [ ] 1.1 Add backend LLM dependencies via uv
+- [x] 1. Business logic — `Generation_Helper` + `Scoring_Helper` (`core/codegen.py`)
+  - [x] 1.1 Add backend LLM dependencies via uv
     - From `backend/`, run `uv add langchain langchain-aws` so Bedrock access
       through LangChain is available; confirm they land in `pyproject.toml` and
       `uv.lock`. Do not switch package managers.
     - _Requirements: 7.1_
 
-  - [ ] 1.2 Extend `Settings` with Bedrock config
+  - [x] 1.2 Extend `Settings` with Bedrock config
     - In `backend/app/core/config.py` add `bedrock_region: str` and
       `bedrock_model_id: str` with **no defaults**, and
       `codegen_job_timeout_seconds: int = 600`.
@@ -46,7 +46,7 @@ there is no orphaned code. It depends on the `accounts` spec for the
       (gitignored).
     - _Requirements: 7.6_
 
-  - [ ] 1.3 Implement the helpers
+  - [x] 1.3 Implement the helpers
     - Create `backend/app/core/codegen.py` with no FastAPI/SQLModel imports.
     - Define `Case` reuse (import from the model or a shared enum), `GenFile`
       (`path`, `content`), `ArtifactScore` (`score`, `rationale`),
@@ -62,23 +62,23 @@ there is no orphaned code. It depends on the `accounts` spec for the
     - Raise `GenerationError` on LLM/parse failure.
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6_
 
-  - [ ] 1.4 Add Hypothesis to the dev dependency group
+  - [x] 1.4 Add Hypothesis to the dev dependency group
     - From `backend/`, run `uv add --group dev hypothesis`; confirm it lands in
       the `pyproject.toml` dev group and `uv.lock`.
     - _Requirements: 7.1_
 
-  - [ ]* 1.5 Write property test — output always includes a README and defaults to Python
+  - [x]* 1.5 Write property test — output always includes a README and defaults to Python
     - Create `backend/tests/test_codegen_helper_properties.py` with the LangChain
       chat model **mocked** to return canned responses.
     - **Property 11: Generated output always includes a README and defaults to Python**
     - **Validates: Requirements 7.2, 7.3**
 
-  - [ ]* 1.6 Write example test — helper failure raises `GenerationError`
+  - [x]* 1.6 Write example test — helper failure raises `GenerationError`
     - With the mocked model raising / returning unparseable output, assert
       `generate` and `score` surface `GenerationError`.
     - _Requirements: 7.5, 5.7_
 
-- [ ] 2. Checkpoint — helpers
+- [x] 2. Checkpoint — helpers
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 

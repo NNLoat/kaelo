@@ -33,6 +33,9 @@ class Settings(BaseSettings):
     aws_region: str = "us-east-1"
     llm_timeout_seconds: float = 20.0
 
+    # code-generation: fail a job still running past this bound (R7.6).
+    codegen_job_timeout_seconds: int = 600
+
     # Signs session cookies. REQUIRED — no default, so a missing value fails
     # startup rather than reading a secret from committed source (R7.6).
     session_secret: str
