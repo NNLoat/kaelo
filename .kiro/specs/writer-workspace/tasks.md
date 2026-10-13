@@ -242,15 +242,17 @@ code. It depends on the `accounts` spec for the `current_user` dependency and th
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 7. Frontend — `Writer_UI` (manual verification; no automated test gate)
-  - [ ] 7.1 Add any required frontend dependencies via pnpm
+- [x] 7. Frontend — `Writer_UI` (manual verification; no automated test gate)
+  - [x] 7.1 Add any required frontend dependencies via pnpm
     - If the UI needs packages beyond the existing stack, add them from
       `frontend/` with `pnpm add <pkg>` (pinned). The archive is produced
       server-side, so no client-side zip helper is needed. If none are needed,
       note that and skip. Do not switch package managers.
+    - None needed: existing React/TS/Tailwind + `fetch`/`FormData` covers it.
+      Skipped.
     - _Requirements: 1.1, 2.1, 3.1_
 
-  - [ ] 7.2 Implement the typed API client `api/writer.ts`
+  - [x] 7.2 Implement the typed API client `api/writer.ts`
     - Create `frontend/src/api/writer.ts` with the `ClaimRead`, `ClaimDetail`,
       `ManuscriptRead`, `SourceRead`, `FieldError` types and `createClaim`,
       `listClaims`, `getClaim`, `uploadManuscript`, `uploadSource`,
@@ -259,14 +261,14 @@ code. It depends on the `accounts` spec for the `current_user` dependency and th
       per-endpoint timeout (30s claim/delete, 60s manuscript, 120s source).
     - _Requirements: 1.3, 1.6, 2.3, 2.6, 3.3, 3.6, 4.5_
 
-  - [ ] 7.3 Implement `ClaimForm`
+  - [x] 7.3 Implement `ClaimForm`
     - Create `frontend/src/components/ClaimForm.tsx`: a single `Paper_Reference`
       field + submit; submit disabled while empty or in flight; on success/existing
       open the claim workspace; on `422` show the message and retain the value; on
       timeout/network re-enable and retain the value.
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6_
 
-  - [ ] 7.4 Implement `ManuscriptUpload`
+  - [x] 7.4 Implement `ManuscriptUpload`
     - Create `frontend/src/components/ManuscriptUpload.tsx`: single-PDF input with
       a local type/size gate (reject non-PDF/oversized before any request);
       multipart upload with a progress indicator until response or the 60s
@@ -275,7 +277,7 @@ code. It depends on the `accounts` spec for the `current_user` dependency and th
       manuscript, and re-enable.
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
 
-  - [ ] 7.5 Implement `SourceUpload`
+  - [x] 7.5 Implement `SourceUpload`
     - Create `frontend/src/components/SourceUpload.tsx`: a tabbed archive-file /
       Git-URL control with a local type/size gate on the archive; upload with a
       progress indicator until response or the 120s timeout; on success list the
@@ -285,7 +287,7 @@ code. It depends on the `accounts` spec for the `current_user` dependency and th
       re-enable.
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
 
-  - [ ] 7.6 Implement `ClaimsList` + `ClaimWorkspace` with delete controls
+  - [x] 7.6 Implement `ClaimsList` + `ClaimWorkspace` with delete controls
     - Create `frontend/src/components/ClaimsList.tsx` and `ClaimWorkspace.tsx`:
       list only the current User's claims with per-claim manuscript/source
       presence markers; the workspace hosts `ManuscriptUpload`, `SourceUpload`,
@@ -297,7 +299,7 @@ code. It depends on the `accounts` spec for the `current_user` dependency and th
       slot markers).
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-  - [ ] 7.7 Wire `Writer_UI` into the app
+  - [x] 7.7 Wire `Writer_UI` into the app
     - Surface the Writer workspace when the signed-in User is in Writer mode
       (reusing the `accounts` mode toggle): render `ClaimsList` + `ClaimForm`, and
       route into `ClaimWorkspace` for a selected claim. This integrates the

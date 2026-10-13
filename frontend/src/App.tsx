@@ -10,6 +10,10 @@ import ResultList from "./components/ResultList";
 import PaperDetail from "./components/PaperDetail";
 import GenerationsList from "./components/GenerationsList";
 import ArtifactView from "./components/ArtifactView";
+import type { ClaimRead } from "./api/writer";
+import ClaimForm from "./components/writer/ClaimForm";
+import ClaimsList from "./components/writer/ClaimsList";
+import ClaimWorkspace from "./components/writer/ClaimWorkspace";
 
 type View =
   | { name: "search" }
@@ -72,7 +76,59 @@ function Shell() {
     );
   }
 
-  return <Reader />;
+  return <Authed />;
+}
+
+function Authed() {
+  const { mode } = useAuth();
+  return mode === "writer" ? <Writer /> : <Reader />;
+}
+
+function Writer() {
+  const [selected, setSelected] = useState<ClaimRead | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  return (
+    <div className="min-h-screen bg-paper text-ink">
+      <div className="mx-auto max-w-3xl px-6 py-12">
+        <AuthBar />
+
+        {selected ? (
+          <ClaimWorkspace
+            claimId={selected.id}
+            onBack={() => {
+              setSelected(null);
+              setRefreshKey((k) => k + 1);
+            }}
+            onDeleted={() => {
+              setSelected(null);
+              setRefreshKey((k) => k + 1);
+            }}
+          />
+        ) : (
+          <>
+            <header className="mb-8">
+              <p className="font-serif text-3xl text-ink">Your workspace</p>
+              <p className="mt-1 text-muted">
+                Claim your papers and upload the manuscript and code to evaluate them.
+              </p>
+            </header>
+
+            <div className="mb-8">
+              <ClaimForm
+                onClaimed={(c) => {
+                  setSelected(c);
+                  setRefreshKey((k) => k + 1);
+                }}
+              />
+            </div>
+
+            <ClaimsList refreshKey={refreshKey} onOpen={setSelected} />
+          </>
+        )}
+      </div>
+    </div>
+  );
 }
 
 function Reader() {
