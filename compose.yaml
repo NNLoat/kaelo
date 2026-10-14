@@ -32,6 +32,8 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
       SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET in your .env}
+      # code-generation mock mode (dev/test): canned artifact, no Bedrock call.
+      CODEGEN_MOCK: ${CODEGEN_MOCK:-false}
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     depends_on:

@@ -26,7 +26,16 @@ class _Client:
         return _FakeResp(self._text)
 
 
-_non_readme_path = st.text(min_size=1, max_size=20).filter(lambda s: "readme" not in s.lower())
+_non_readme_path = st.text(min_size=1, max_size=20).filter(
+    lambda s: "readme" not in s.lower() and "===" not in s and "\n" not in s and s.strip() != ""
+)
+
+
+def _blocks(files: list[dict]) -> str:
+    """Render files in the delimiter format generate() now parses (R11)."""
+    return "\n".join(
+        f"=== FILE: {f['path']} ===\n{f['content']}\n=== END ===" for f in files
+    )
 
 
 # Feature: code-generation, Property 11: output always includes a README and defaults to Python
@@ -39,25 +48,25 @@ _non_readme_path = st.text(min_size=1, max_size=20).filter(lambda s: "readme" no
     case=st.sampled_from(list(Case)),
     files=st.lists(
         st.fixed_dictionaries(
-            {"path": _non_readme_path, "content": st.text(max_size=50)}
+            # content without the END marker so a block can't be truncated mid-file
+            {"path": _non_readme_path, "content": st.text(max_size=50).filter(lambda s: "===" not in s)}
         ),
+        min_size=1,
         max_size=4,
     ),
 )
 def test_generate_always_includes_readme(monkeypatch, case, files) -> None:
-    monkeypatch.setattr(codegen, "_client", lambda: _Client(json.dumps({"files": files})))
+    monkeypatch.setattr(codegen, "_client", lambda: _Client(_blocks(files)))
     out = codegen.generate(case, GenerationInputs(experiment_setup="setup"))
     assert any(f.path.lower().startswith("readme") for f in out)
 
 
 def test_generate_keeps_model_readme(monkeypatch) -> None:
-    payload = {
-        "files": [
-            {"path": "README.md", "content": "# Mine"},
-            {"path": "a.py", "content": "x=1"},
-        ]
-    }
-    monkeypatch.setattr(codegen, "_client", lambda: _Client(json.dumps(payload)))
+    payload = [
+        {"path": "README.md", "content": "# Mine"},
+        {"path": "a.py", "content": "x=1"},
+    ]
+    monkeypatch.setattr(codegen, "_client", lambda: _Client(_blocks(payload)))
     out = codegen.generate(Case.generate, GenerationInputs(experiment_setup="s"))
     readmes = [f for f in out if f.path.lower().startswith("readme")]
     assert len(readmes) == 1 and readmes[0].content == "# Mine"

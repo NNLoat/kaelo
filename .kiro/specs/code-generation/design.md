@@ -672,3 +672,61 @@ property test, each tagged with a comment referencing its design property, e.g.:
   rejects a second concurrent in-flight insert for the same tuple.
 - R7.6: constructing `Settings` without `bedrock_region`/`bedrock_model_id`
   raises — single-run smoke test.
+
+## Addendum: cancel, mock mode, robust parsing (post-implementation)
+
+Three small additions settled while testing the shipped backend (R9–R11). They
+touch the job contract and the helper, so they are recorded here.
+
+### Robust generation parsing (R11)
+
+**Problem:** the shipped `Generation_Helper` asked the model for strict JSON
+(`{"files":[{"path","content"}]}`) and parsed it with `json.loads`. Model
+responses embed real source code — raw newlines, tabs, quotes — inside the
+`content` string, which is invalid JSON (control chars in a string). Every real
+Bedrock call failed with `could not parse generation files`.
+
+**Fix:** change the prompt and parser to a **delimiter-based** format that cannot
+be broken by file contents:
+
+```
+=== FILE: <relative path> ===
+<verbatim file text>
+=== END ===
+```
+
+`generate` splits on the `=== FILE: … ===` / `=== END ===` markers; no escaping
+of the body is required. The README guarantee (R7.2) and Python default (R7.3)
+are unchanged. `score` keeps its small JSON reply (`{"score","rationale"}`) —
+that payload has no code body, so JSON is fine there. No parseable block → still
+`GenerationError` (R7.5, R11.2).
+
+### Mock mode (R10)
+
+A `codegen_mock: bool = False` setting. When true, `generate` returns a fixed
+`[README.md, main.py]` file set and `score` returns a fixed score+rationale —
+both **before** constructing the Bedrock client — so the full start→poll→succeed
+→artifact→download flow (and cancel) is testable with no AWS access or cost. Off
+by default; set via env only.
+
+### Cancel (R9)
+
+A new terminal `JobState.cancelled`. New endpoint
+`POST /api/codegen/jobs/{id}/cancel` (owner-scoped, 404 otherwise): if the job is
+pending or running, set `cancelled`; if already terminal, return it unchanged
+(idempotent). The background `run_job` worker already re-reads the job and only
+advances a `pending` job to `running`; to honour a late cancel it **re-checks the
+job state before persisting** and aborts (persisting nothing) if the state is no
+longer `running` — so a cancel that lands mid-run is not overwritten (R9.4).
+
+**Migration required:** `state` is stored as a real Postgres `ENUM` type
+(`sa.Enum(name='jobstate')`, verified in migration `8f3c1a9b2d47`), not a
+VARCHAR, so adding a Python enum value alone is not enough — inserting
+`'cancelled'` raises `invalid input value for enum jobstate`. A new Alembic
+revision runs `ALTER TYPE jobstate ADD VALUE IF NOT EXISTS 'cancelled'` in an
+autocommit block (`ADD VALUE` cannot run inside a transaction). Downgrade is a
+no-op — Postgres cannot drop an enum value — which is acceptable and noted in
+the revision.
+
+The `Codegen_UI` `JobStatusView` gains a **Cancel** control while pending/running
+that calls the endpoint and stops polling on success.

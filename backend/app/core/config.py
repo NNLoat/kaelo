@@ -36,6 +36,10 @@ class Settings(BaseSettings):
     # code-generation: fail a job still running past this bound (R7.6).
     codegen_job_timeout_seconds: int = 600
 
+    # code-generation: when true, generation returns a canned artifact without
+    # calling Bedrock — deterministic dev/test flow (R10). Off by default.
+    codegen_mock: bool = False
+
     # Signs session cookies. REQUIRED — no default, so a missing value fails
     # startup rather than reading a secret from committed source (R7.6).
     session_secret: str

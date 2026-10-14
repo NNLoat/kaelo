@@ -287,6 +287,46 @@ there is no orphaned code. It depends on the `accounts` spec for the
 - This spec consumes the `Experiment_Setup` and Paper-level `Reproducibility_Score`
   as existing inputs; it neither extracts nor computes them.
 
+## Tasks (added post-implementation: R9–R11)
+
+- [ ] 9. Robust generation parsing + mock mode (business logic)
+  - [ ] 9.1 Switch `generate` to a delimiter-based file format
+    - In `backend/app/core/codegen.py` change the generate prompt to ask for
+      `=== FILE: <path> ===` / `=== END ===` blocks and rewrite `_parse_files`
+      to split on those markers (no JSON-escaping of code bodies). Keep the
+      README guarantee and Python default. No parseable block → `GenerationError`.
+      Leave `score`'s small JSON reply as-is.
+    - _Requirements: 11.1, 11.2, 7.2, 7.3, 7.5_
+  - [ ] 9.2 Add `codegen_mock` setting + mock path
+    - Add `codegen_mock: bool = False` to `Settings` (documented in `.env.example`).
+      When true, `generate` returns a fixed `[README.md, main.py]` set and `score`
+      returns a fixed score+rationale, both before building the Bedrock client.
+    - _Requirements: 10.1, 10.2, 10.3_
+
+- [ ] 10. Cancel a job (backend)
+  - [ ] 10.1 Add `cancelled` state + migration
+    - Add `JobState.cancelled` to `models/generation.py`. New Alembic revision:
+      `ALTER TYPE jobstate ADD VALUE IF NOT EXISTS 'cancelled'` in an autocommit
+      block; downgrade is a no-op. Commit under `alembic/versions/`.
+    - _Requirements: 9.3_
+  - [ ] 10.2 Cancel endpoint + worker guard
+    - `POST /api/codegen/jobs/{id}/cancel` (owner-scoped, 404 otherwise):
+      pending/running → `cancelled`; already-terminal → unchanged (idempotent).
+      In `run_job`, re-check the job state before persisting the Generation and
+      abort (persist nothing) if it is no longer `running` (R9.4).
+    - _Requirements: 9.3, 9.4, 9.5, 9.6_
+
+- [ ] 11. Frontend — cancel control (manual verification)
+  - [ ] 11.1 Add a Cancel button to `JobStatusView`
+    - In `frontend/src/components/JobStatusView.tsx` + `api/codegen.ts`: add
+      `cancelJob(id)`; while pending/running show a **Cancel** control that calls
+      it and stops polling on success, showing a cancelled state.
+    - _Requirements: 9.1, 9.2_
+
+- [ ] 12. Checkpoint — R9–R11
+  - Backend gate `cd backend && uv run pytest` passes; manually verify the UI
+    cancel + mock flow.
+
 ## Task Dependency Graph
 
 ```json

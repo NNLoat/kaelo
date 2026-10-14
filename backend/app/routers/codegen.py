@@ -121,11 +121,18 @@ def run_job(job_id: UUID) -> None:
         try:
             files = helper.generate(job.case, inputs)
             artifact = helper.score(files)
-        except GenerationError:
+        except GenerationError as exc:
             job.state = JobState.failed
+            job.reason = str(exc)  # surface why it failed (no longer silent)
             job.updated_at = datetime.now(UTC)
             session.add(job)
             session.commit()
+            return
+
+        # Honour a cancel that landed mid-run: re-read state; if no longer
+        # running, abort and persist no Generation (R9.4).
+        session.refresh(job)
+        if job.state is not JobState.running:
             return
 
         # Flip the prior latest for this (owner, paper, case) before inserting.
@@ -247,6 +254,26 @@ def get_job(
     job = session.get(GenerationJob, job_id)
     if job is None or job.owner_id != user.id:
         raise HTTPException(status_code=404, detail="not found")
+    return _job_read(job)
+
+
+@router.post("/jobs/{job_id}/cancel", response_model=JobRead)
+def cancel_job(
+    job_id: UUID,
+    user: User = Depends(current_user),
+    session: Session = Depends(get_session),
+) -> JobRead:
+    # Owner-scoped (404 otherwise, R9.5). Cancel only an in-flight job; a
+    # terminal job is returned unchanged (idempotent, R9.6).
+    job = session.get(GenerationJob, job_id)
+    if job is None or job.owner_id != user.id:
+        raise HTTPException(status_code=404, detail="not found")
+    if job.state in _INFLIGHT:
+        job.state = JobState.cancelled
+        job.updated_at = datetime.now(UTC)
+        session.add(job)
+        session.commit()
+        session.refresh(job)
     return _job_read(job)
 
 
