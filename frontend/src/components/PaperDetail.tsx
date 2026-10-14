@@ -188,10 +188,10 @@ function ReproBreakdown({ breakdown }: { breakdown: ReproducibilityBreakdown }) 
     <div className="mt-4 rounded-lg border border-hairline bg-white p-5 shadow-sm">
       <h3 className="mb-3 text-sm font-semibold text-ink">How the reproducibility score was reached</h3>
       <div className="grid gap-4 sm:grid-cols-2">
-        <ScoreBar label="Code quality" cell={breakdown.codeQuality} />
-        <ScoreBar label="Setup completeness" cell={breakdown.setupCompleteness} />
+        <ScoreBar label="Code quality" cell={breakdown.code_quality} />
+        <ScoreBar label="Setup completeness" cell={breakdown.setup_completeness} />
       </div>
-      {!breakdown.repoExists && (
+      {!breakdown.repo_exists && (
         <p className="mt-3 text-sm text-muted">
           No code repository was found, which lowered the code-quality contribution.
         </p>

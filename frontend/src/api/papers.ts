@@ -30,9 +30,9 @@ export interface ExperimentSetup {
 }
 
 export interface ReproducibilityBreakdown {
-  codeQuality: ScoreCell;
-  setupCompleteness: ScoreCell;
-  repoExists: boolean;
+  code_quality: ScoreCell;
+  setup_completeness: ScoreCell;
+  repo_exists: boolean;
   explanation: string | null;
 }
 
