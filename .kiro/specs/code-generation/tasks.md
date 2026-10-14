@@ -327,6 +327,39 @@ there is no orphaned code. It depends on the `accounts` spec for the
   - Backend gate `cd backend && uv run pytest` passes; manually verify the UI
     cancel + mock flow.
 
+- [ ] 13. Wire the Writer generation case (R5.3) — backend + frontend
+  - [ ] 13.1 Resolve Writer uploads in `_precondition` (backend)
+    - In `backend/app/routers/codegen.py`, change the signature to
+      `_precondition(session, case, paper_ref, owner_id)` and pass `user.id`
+      from `start_job` and `job.owner_id` from `run_job` (generate/align ignore
+      it). Replace the `case is Case.writer` stub arm: look up the `PaperClaim`
+      by `(owner_id, paper_ref)`; load its `WriterManuscript` (refuse with the
+      existing "no uploaded manuscript" reason when absent — the real R4.5
+      refusal); join its `WriterSourceFile` rows into an `uploaded_source` string
+      (or `None`); return `GenerationInputs(experiment_setup=<manuscript text or
+      a short summary>, manuscript_text=<manuscript.text>,
+      uploaded_source=<joined or None>)`. Do not fabricate an `ExperimentSetup`.
+      Import the writer models from `app.models.writer`.
+    - _Requirements: 5.3, 4.5_
+  - [ ]* 13.2 Backend tests for the writer case
+    - Extend `backend/tests/test_codegen_api.py` (or a new file): writer job with
+      a persisted manuscript (+ optional source) → succeeds and the Generation's
+      files reflect the upload; writer job with no manuscript → `refused`;
+      owner-scoping (another User's claim is not used). Mock the helper.
+    - _Requirements: 5.3, 4.5_
+  - [ ] 13.3 Writer-workspace generation trigger (frontend, manual verify)
+    - In the writer workspace (`frontend/src/components/writer/ClaimWorkspace.tsx`
+      or alongside it), add a "Generate code" trigger that starts a `writer` job
+      for the open claim (reuse `GenerateButton`/`JobStatusView`, which are
+      case-agnostic) and shows the artifact + disclaimer. No automated gate —
+      verify in the browser: claim with an uploaded manuscript → generate →
+      succeeded → artifact; claim without one → refused reason shown.
+    - _Requirements: 1.4, 2.2, 5.3_
+
+- [ ] 14. Checkpoint — writer case
+  - Backend gate `cd backend && uv run pytest` passes; manually verify the writer
+    generate flow end to end (with `CODEGEN_MOCK=true` for a deterministic run).
+
 ## Task Dependency Graph
 
 ```json

@@ -730,3 +730,50 @@ the revision.
 
 The `Codegen_UI` `JobStatusView` gains a **Cancel** control while pending/running
 that calls the endpoint and stops polling on success.
+
+### Writer case wiring (R5.3, post-writer-workspace)
+
+The `writer` case is specified in R5.3 but was shipped **stubbed**: the
+`_precondition` arm for `Case.writer` in `backend/app/routers/codegen.py`
+unconditionally refuses ("No uploaded manuscript…") because, when
+code-generation shipped, Writer uploads were not persisted. The
+`writer-workspace` spec has since landed the persistence (`PaperClaim`,
+`WriterManuscript`, `WriterSourceFile`), so the case can now be wired.
+
+**Lookup seam.** For the writer case the inputs come from the requesting
+Writer's own claim, not from an indexed `Paper`:
+
+1. The job's `paper_ref` for a writer job is the claim's reference. Resolve the
+   `PaperClaim` by `(owner_id, paper_ref)` — matching on the claim's stored
+   reference (the writer-workspace `normalize_reference` canonical form; the
+   trigger sends the claim's `paper_ref`). If no claim, refuse.
+2. Load the claim's `WriterManuscript` (one per claim). **No manuscript →
+   refuse** with the existing reason (this is the genuine R4.5 refusal, now
+   real instead of unconditional).
+3. Load the claim's `WriterSourceFile` rows; join them into a single
+   `uploaded_source` string (e.g. `=== path ===\n<content>` blocks), or `None`
+   when there are none.
+4. Build `GenerationInputs(experiment_setup=<manuscript text or a short
+   stand-in>, manuscript_text=<manuscript.text>, uploaded_source=<joined or
+   None>)`. Per R5.3: source present → the helper refines it to the manuscript;
+   source absent → generate from the manuscript from scratch. The existing
+   `_CASE_INSTRUCTION[Case.writer]` prompt already covers both.
+
+**Signature change (important).** `_precondition(session, case, paper_ref)` has
+no `User`, but the claim lookup is owner-scoped. Thread the owner id through:
+change it to `_precondition(session, case, paper_ref, owner_id)` and pass
+`user.id` from `start_job`, and `job.owner_id` from `run_job`. The generate/align
+arms ignore the new argument. `GenerationInputs.experiment_setup` is a required
+field; for the writer case there is no `ExperimentSetup`, so pass the manuscript
+text (or a short derived summary) as `experiment_setup` to satisfy the dataclass
+while `manuscript_text` carries the real payload — do not fabricate an
+`ExperimentSetup` row.
+
+**Frontend.** The writer workspace needs a trigger that starts a `writer` job for
+the open claim (reusing `GenerateButton`/`JobStatusView`, which are case-agnostic)
+and shows the artifact. No automated frontend gate — verify in the browser.
+
+**Owner scoping / no cross-spec FK.** The lookup stays on the `paper_ref` string
+seam (design decision above); it does not add an FK from `Generation`/
+`GenerationJob` to `PaperClaim`. A writer `Generation` remains a point-in-time
+snapshot that can outlive the claim's uploads.
