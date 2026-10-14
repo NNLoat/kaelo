@@ -88,9 +88,10 @@ def test_unpack_zip_skips_unsafe_and_binary() -> None:
         }
     )
     out = unpack_archive(data)
-    paths = {f.path for f in out}
+    paths = {f.path for f in out.files}
     assert paths == {"src/main.py"}
-    assert out == [SourceFile(path="src/main.py", content="print('hi')")]
+    assert out.files == [SourceFile(path="src/main.py", content="print('hi')")]
+    assert out.skipped == ["bin.dat"]
 
 
 def test_unpack_tar_skips_unsafe_and_binary() -> None:
@@ -101,7 +102,7 @@ def test_unpack_tar_skips_unsafe_and_binary() -> None:
             "bin.dat": b"text\x00more",
         }
     )
-    paths = {f.path for f in unpack_archive(data)}
+    paths = {f.path for f in unpack_archive(data).files}
     assert paths == {"src/main.py"}
 
 
@@ -131,4 +132,4 @@ def test_unpack_cap_never_partial(n: int, cap: int) -> None:
         with pytest.raises(LimitExceeded):
             unpack_archive(data, max_files=cap)
     else:
-        assert len(unpack_archive(data, max_files=cap)) == n
+        assert len(unpack_archive(data, max_files=cap).files) == n

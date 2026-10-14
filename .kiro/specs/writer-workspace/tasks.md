@@ -107,8 +107,8 @@ code. It depends on the `accounts` spec for the `current_user` dependency and th
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 3. Data models and migration (`PaperClaim`, `WriterManuscript`, `WriterSourceFile`)
-  - [ ] 3.1 Implement the SQLModel tables
+- [x] 3. Data models and migration (`PaperClaim`, `WriterManuscript`, `WriterSourceFile`)
+  - [x] 3.1 Implement the SQLModel tables
     - Create `backend/app/models/writer.py`: `PaperClaim(table=True)` on
       `paper_claims` (`id` UUID PK, `owner_id` FK→`users.id` indexed,
       `paper_ref_normalized` indexed, `paper_ref_original`, `created_at`);
@@ -121,7 +121,7 @@ code. It depends on the `accounts` spec for the `current_user` dependency and th
       `paths` and `skipped_paths`) read schemas.
     - _Requirements: 9.2, 9.3, 9.4, 9.5_
 
-  - [ ] 3.2 Generate and review the Alembic migration
+  - [x] 3.2 Generate and review the Alembic migration
     - Generate: `docker compose exec backend uv run alembic revision --autogenerate -m "create writer workspace tables"`.
     - Review the draft so it creates all three tables, the unique constraints on
       `(owner_id, paper_ref_normalized)`, `writer_manuscripts.claim_id`, and
@@ -139,12 +139,12 @@ code. It depends on the `accounts` spec for the `current_user` dependency and th
       exist after upgrade (single run, not PBT).
     - _Requirements: 9.1, 9.6_
 
-- [ ] 4. Checkpoint — models, migration
+- [x] 4. Checkpoint — models, migration
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 5. `Writer_API` router (backend)
-  - [ ] 5.1 Implement reference normalization and the claim endpoints
+- [x] 5. `Writer_API` router (backend)
+  - [x] 5.1 Implement reference normalization and the claim endpoints
     - In `backend/app/routers/writer.py` add a pure
       `normalize_reference(raw) -> str | None` (arXiv id → `arxiv:<id>`, DOI →
       `doi:<lowercased>`, URL → scheme/host-lowercased + trimmed, else `None`).
@@ -159,7 +159,7 @@ code. It depends on the `accounts` spec for the `current_user` dependency and th
       otherwise).
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 8.1, 8.2, 8.5, 8.6_
 
-  - [ ] 5.2 Implement the manuscript upload and delete endpoints
+  - [x] 5.2 Implement the manuscript upload and delete endpoints
     - `POST /api/writer/claims/{id}/manuscript` (multipart PDF, owner-scoped):
       enforce `max_manuscript_bytes` (`413`); call `extract_pdf_text`; on
       `ExtractionError` return `422` with the reason leaving any existing
@@ -169,7 +169,7 @@ code. It depends on the `accounts` spec for the `current_user` dependency and th
       manuscript (claim + source intact); `404`/`401` owner-scoped.
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 8.3_
 
-  - [ ] 5.3 Implement the source upload and delete endpoints
+  - [x] 5.3 Implement the source upload and delete endpoints
     - `POST /api/writer/claims/{id}/source` (multipart archive **or**
       `{git_url}`, owner-scoped): for an archive enforce
       `max_source_archive_bytes` and call `unpack_archive`; for a `git_url`
@@ -188,13 +188,13 @@ code. It depends on the `accounts` spec for the `current_user` dependency and th
       set (claim + manuscript intact); `404`/`401` owner-scoped.
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 8.3_
 
-  - [ ] 5.4 Implement the claim delete endpoint
+  - [x] 5.4 Implement the claim delete endpoint
     - `DELETE /api/writer/claims/{id}` → `204`, removing the claim and (via the
       `ON DELETE CASCADE` FKs) its manuscript and all source files; `404`/`401`
       owner-scoped.
     - _Requirements: 8.4, 8.5, 8.6, 9.6_
 
-  - [ ] 5.5 Register the writer router in `main.py`
+  - [x] 5.5 Register the writer router in `main.py`
     - Add `app.include_router(writer.router)` in `backend/app/main.py`; leave the
       existing routes untouched. This wires the backend together.
     - _Requirements: 5.1, 6.1, 7.1, 8.1_
@@ -241,7 +241,7 @@ code. It depends on the `accounts` spec for the `current_user` dependency and th
       and a 4xx response both map to `422` — never a live remote.
     - _Requirements: 5.3, 6.3, 6.4, 7.2, 7.4, 7.5, 7.8, 9.6_
 
-- [ ] 6. Checkpoint — backend Writer_API
+- [x] 6. Checkpoint — backend Writer_API
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
@@ -309,7 +309,7 @@ code. It depends on the `accounts` spec for the `current_user` dependency and th
       frontend end-to-end.
     - _Requirements: 1.1, 4.1_
 
-- [ ] 8. Final checkpoint
+- [x] 8. Final checkpoint
   - Backend: ensure all tests pass (`cd backend && uv run pytest`). Frontend:
     manually verify claim → upload PDF (manuscript shows present) → upload source
     (archive and Git URL, paths listed) → delete a single item → delete the claim

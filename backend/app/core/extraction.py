@@ -24,6 +24,19 @@ class SourceFile:
     content: str
 
 
+@dataclass
+class UnpackResult:
+    """What ``unpack_archive`` kept and what it dropped as binary.
+
+    ``files`` are the stored text entries; ``skipped`` are the relative paths of
+    regular files dropped because they decoded as binary (R7.1, R10.6). Path-unsafe
+    entries, directories, and symlinks are not reported — only binary skips.
+    """
+
+    files: list[SourceFile]
+    skipped: list[str]
+
+
 class ExtractionError(Exception):
     """A PDF could not be read, or carried no extractable text."""
 
@@ -79,13 +92,15 @@ def unpack_archive(
     *,
     max_files: int | None = None,
     max_total_bytes: int | None = None,
-) -> list[SourceFile]:
+) -> UnpackResult:
     """Unpack a zip or tar(.gz/.bz2/.xz) into safe, regular, text source files.
 
-    Skips directories, symlinks, device entries, and binary files; rejects
-    path-escaping entries. Enforces the count and uncompressed-size caps **while
-    reading** and raises ``LimitExceeded`` (never a partial set). Raises
-    ``UnpackError`` on an unsupported or corrupt archive (R10.3-R10.7).
+    Returns an ``UnpackResult`` whose ``files`` are the kept text entries and
+    whose ``skipped`` are the relative paths of regular files dropped as binary
+    (R7.1). Skips directories, symlinks, device entries; rejects path-escaping
+    entries. Enforces the count and uncompressed-size caps **while reading** and
+    raises ``LimitExceeded`` (never a partial set). Raises ``UnpackError`` on an
+    unsupported or corrupt archive (R10.3-R10.7).
     """
     settings = get_settings()
     max_files = settings.max_source_files if max_files is None else max_files
@@ -110,8 +125,9 @@ def _check_caps(count: int, total: int, max_files: int, max_total_bytes: int) ->
         raise LimitExceeded(f"unpacked size over {max_total_bytes} bytes")
 
 
-def _unpack_zip(data: bytes, max_files: int, max_total_bytes: int) -> list[SourceFile]:
+def _unpack_zip(data: bytes, max_files: int, max_total_bytes: int) -> UnpackResult:
     out: list[SourceFile] = []
+    skipped: list[str] = []
     total = 0
     try:
         with zipfile.ZipFile(io.BytesIO(data)) as zf:
@@ -124,15 +140,17 @@ def _unpack_zip(data: bytes, max_files: int, max_total_bytes: int) -> list[Sourc
                 raw = zf.read(info)
                 text = _is_text(raw)
                 if text is None:
+                    skipped.append(info.filename)
                     continue
                 out.append(SourceFile(path=info.filename, content=text))
     except (zipfile.BadZipFile, OSError) as exc:
         raise UnpackError(f"corrupt zip: {exc}") from exc
-    return out
+    return UnpackResult(files=out, skipped=skipped)
 
 
-def _unpack_tar(tf: tarfile.TarFile, max_files: int, max_total_bytes: int) -> list[SourceFile]:
+def _unpack_tar(tf: tarfile.TarFile, max_files: int, max_total_bytes: int) -> UnpackResult:
     out: list[SourceFile] = []
+    skipped: list[str] = []
     total = 0
     try:
         for member in tf.getmembers():
@@ -147,8 +165,9 @@ def _unpack_tar(tf: tarfile.TarFile, max_files: int, max_total_bytes: int) -> li
                 continue
             text = _is_text(fh.read())
             if text is None:
+                skipped.append(member.name)
                 continue
             out.append(SourceFile(path=member.name, content=text))
     except tarfile.TarError as exc:
         raise UnpackError(f"corrupt tar: {exc}") from exc
-    return out
+    return UnpackResult(files=out, skipped=skipped)
