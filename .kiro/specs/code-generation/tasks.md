@@ -82,8 +82,8 @@ there is no orphaned code. It depends on the `accounts` spec for the
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 3. Data models and migration (`GenerationJob`, `Generation`)
-  - [ ] 3.1 Implement the SQLModel tables
+- [x] 3. Data models and migration (`GenerationJob`, `Generation`)
+  - [x] 3.1 Implement the SQLModel tables
     - Create `backend/app/models/generation.py`: `Case` and `JobState` enums;
       `GenerationJob(table=True)` on `generation_jobs` (`id` UUID PK, `owner_id`
       FK→`users.id` indexed, `paper_ref` indexed, `case`, `state` indexed,
@@ -94,7 +94,7 @@ there is no orphaned code. It depends on the `accounts` spec for the
       indexed, `created_at`); plus `JobRead` and `GenerationRead` read schemas.
     - _Requirements: 8.2, 8.3, 8.5_
 
-  - [ ] 3.2 Generate and hand-edit the Alembic migration
+  - [x] 3.2 Generate and hand-edit the Alembic migration
     - Generate: `docker compose exec backend uv run alembic revision --autogenerate -m "create generation tables"`.
     - Review the draft so it creates both tables; **add by hand** the two partial
       unique indexes via `op.create_index(..., postgresql_where=...)`: one on
@@ -104,23 +104,26 @@ there is no orphaned code. It depends on the `accounts` spec for the
       `create_all`.
     - _Requirements: 8.1, 8.4, 5.6_
 
-  - [ ]* 3.3 Write migration smoke test
+  - [x]* 3.3 Write migration smoke test
     - Extend `backend/tests/test_migrations.py` with an upgrade → downgrade →
       upgrade run asserting both tables and both partial unique indexes exist
       after upgrade (single run, not PBT).
     - _Requirements: 8.1_
 
-  - [ ]* 3.4 Write config smoke test
+  - [x]* 3.4 Write config smoke test
     - Assert constructing `Settings` without `BEDROCK_REGION`/`BEDROCK_MODEL_ID`
       in the environment raises at startup (no committed default).
+    - Covered by the existing `test_settings_requires_bedrock_model_id` in
+      `tests/test_migrations.py` — codegen reuses the existing `bedrock_model_id`
+      / `aws_region` settings (no new `bedrock_region`), so no duplicate added.
     - _Requirements: 7.6_
 
-- [ ] 4. Checkpoint — models, migration
+- [x] 4. Checkpoint — models, migration
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
-- [ ] 5. Job lifecycle + `Codegen_API` router (backend)
-  - [ ] 5.1 Implement input loaders and the worker
+- [x] 5. Job lifecycle + `Codegen_API` router (backend)
+  - [x] 5.1 Implement input loaders and the worker
     - In `backend/app/routers/codegen.py` (or a small `app/core/codegen_jobs.py`),
       implement `run_job(job_id)` with its own DB session: set `running`; load
       `GenerationInputs` for the case (consume the existing `Experiment_Setup`,
@@ -133,7 +136,7 @@ there is no orphaned code. It depends on the `accounts` spec for the
       on read.
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8_
 
-  - [ ] 5.2 Implement the start endpoint and precondition checks
+  - [x] 5.2 Implement the start endpoint and precondition checks
     - `POST /jobs` using `current_user` + `get_session`: return the existing
       in-flight job for `(user, paper_ref, case)` if any (catch `IntegrityError`
       from the partial unique index, roll back, re-select, return the winner);
@@ -143,7 +146,7 @@ there is no orphaned code. It depends on the `accounts` spec for the
       `pending`, schedule `run_job` via `BackgroundTasks`, return `202`.
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
 
-  - [ ] 5.3 Implement poll / fetch / download / delete / list endpoints
+  - [x] 5.3 Implement poll / fetch / download / delete / list endpoints
     - `GET /jobs/{id}` → `JobRead` (owner-scoped, `404` otherwise); refusal reason
       included. `GET /generations/{id}` → `GenerationRead`.
       `GET /generations/{id}/archive` → `application/zip` including a top-level
@@ -152,46 +155,46 @@ there is no orphaned code. It depends on the `accounts` spec for the
       with `404` for not-owned/absent; `401` without a session.
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 3.1, 8.6_
 
-  - [ ] 5.4 Register the codegen router in `main.py`
+  - [x] 5.4 Register the codegen router in `main.py`
     - Add `app.include_router(codegen.router)` in `backend/app/main.py`; leave
       existing routes untouched. This wires the backend together.
     - _Requirements: 4.1, 6.1_
 
-  - [ ]* 5.5 Write property test — at most one in-flight job per (user, paper, case)
+  - [x]* 5.5 Write property test — at most one in-flight job per (user, paper, case)
     - Create `backend/tests/test_codegen_api_properties.py` driving endpoints via
       `TestClient` against the testcontainer DB with the helper **mocked**.
     - **Property 1: At most one in-flight job per (user, paper, case)**
     - **Validates: Requirements 4.2, 8.4**
 
-  - [ ]* 5.6 Write property test — unmet preconditions refuse without calling the helper
+  - [x]* 5.6 Write property test — unmet preconditions refuse without calling the helper
     - **Property 2: Unmet preconditions refuse without calling the helper**
     - **Validates: Requirements 4.3, 4.4, 4.5**
 
-  - [ ]* 5.7 Write property test — a succeeded job yields exactly one latest, scored Generation
+  - [x]* 5.7 Write property test — a succeeded job yields exactly one latest, scored Generation
     - Invoke `run_job` with a mocked helper returning files.
     - **Property 3: A succeeded job yields exactly one latest, scored Generation**
     - **Validates: Requirements 5.1, 5.4, 5.5, 5.6**
 
-  - [ ]* 5.8 Write property test — helper failure fails the job and persists no artifact
+  - [x]* 5.8 Write property test — helper failure fails the job and persists no artifact
     - **Property 4: Helper failure fails the job and persists no artifact**
     - **Validates: Requirements 5.7**
 
-  - [ ]* 5.9 Write property test — generation never writes a Paper's Reproducibility Score
+  - [x]* 5.9 Write property test — generation never writes a Paper's Reproducibility Score
     - **Property 5: Generation never writes a Paper's Reproducibility Score**
     - **Validates: Requirements 5.8 (ADR-0004)**
 
-  - [ ]* 5.10 Write property test — owner scoping and unauthenticated requests
+  - [x]* 5.10 Write property test — owner scoping and unauthenticated requests
     - **Property 6: Owner scoping — cross-user access is indistinguishable from absent**
     - **Property 7: Unauthenticated requests never act**
     - **Validates: Requirements 6.5, 4.6, 6.6**
 
-  - [ ]* 5.11 Write property tests — supersede/retain and targeted delete
+  - [x]* 5.11 Write property tests — supersede/retain and targeted delete
     - **Property 8: Re-run supersedes but retains the prior Generation**
     - **Property 9: Delete removes only the targeted Generation**
     - **Property 10: Stored artifacts contain only derived text**
     - **Validates: Requirements 5.6, 6.4, 8.5, 8.6**
 
-  - [ ]* 5.12 Write example/edge tests for endpoints
+  - [x]* 5.12 Write example/edge tests for endpoints
     - Create `backend/tests/test_codegen_api.py`: R4.2 race (two near-simultaneous
       starts → one in-flight, loser returns winner); R2.6/R4.3 generate with no
       `Experiment_Setup` → `refused` + reason, helper not called; R6.3 archive of
@@ -200,7 +203,7 @@ there is no orphaned code. It depends on the `accounts` spec for the
       helper.
     - _Requirements: 4.2, 4.3, 6.3, 6.5_
 
-- [ ] 6. Checkpoint — backend Codegen_API
+- [x] 6. Checkpoint — backend Codegen_API
   - Ensure all tests pass (`cd backend && uv run pytest`), ask the user if
     questions arise.
 
