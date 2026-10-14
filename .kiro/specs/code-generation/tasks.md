@@ -265,7 +265,7 @@ there is no orphaned code. It depends on the `accounts` spec for the
       integrates the frontend end-to-end.
     - _Requirements: 1.1, 2.2, 3.1_
 
-- [ ] 8. Final checkpoint
+- [x] 8. Final checkpoint
   - Backend: ensure all tests pass (`cd backend && uv run pytest`). Frontend:
     manually verify, per case, trigger → status polling → artifact view with
     disclaimer → download → delete. Ask the user if questions arise.
@@ -289,46 +289,46 @@ there is no orphaned code. It depends on the `accounts` spec for the
 
 ## Tasks (added post-implementation: R9–R11)
 
-- [ ] 9. Robust generation parsing + mock mode (business logic)
-  - [ ] 9.1 Switch `generate` to a delimiter-based file format
+- [x] 9. Robust generation parsing + mock mode (business logic)
+  - [x] 9.1 Switch `generate` to a delimiter-based file format
     - In `backend/app/core/codegen.py` change the generate prompt to ask for
       `=== FILE: <path> ===` / `=== END ===` blocks and rewrite `_parse_files`
       to split on those markers (no JSON-escaping of code bodies). Keep the
       README guarantee and Python default. No parseable block → `GenerationError`.
       Leave `score`'s small JSON reply as-is.
     - _Requirements: 11.1, 11.2, 7.2, 7.3, 7.5_
-  - [ ] 9.2 Add `codegen_mock` setting + mock path
+  - [x] 9.2 Add `codegen_mock` setting + mock path
     - Add `codegen_mock: bool = False` to `Settings` (documented in `.env.example`).
       When true, `generate` returns a fixed `[README.md, main.py]` set and `score`
       returns a fixed score+rationale, both before building the Bedrock client.
     - _Requirements: 10.1, 10.2, 10.3_
 
-- [ ] 10. Cancel a job (backend)
-  - [ ] 10.1 Add `cancelled` state + migration
+- [x] 10. Cancel a job (backend)
+  - [x] 10.1 Add `cancelled` state + migration
     - Add `JobState.cancelled` to `models/generation.py`. New Alembic revision:
       `ALTER TYPE jobstate ADD VALUE IF NOT EXISTS 'cancelled'` in an autocommit
       block; downgrade is a no-op. Commit under `alembic/versions/`.
     - _Requirements: 9.3_
-  - [ ] 10.2 Cancel endpoint + worker guard
+  - [x] 10.2 Cancel endpoint + worker guard
     - `POST /api/codegen/jobs/{id}/cancel` (owner-scoped, 404 otherwise):
       pending/running → `cancelled`; already-terminal → unchanged (idempotent).
       In `run_job`, re-check the job state before persisting the Generation and
       abort (persist nothing) if it is no longer `running` (R9.4).
     - _Requirements: 9.3, 9.4, 9.5, 9.6_
 
-- [ ] 11. Frontend — cancel control (manual verification)
-  - [ ] 11.1 Add a Cancel button to `JobStatusView`
+- [x] 11. Frontend — cancel control (manual verification)
+  - [x] 11.1 Add a Cancel button to `JobStatusView`
     - In `frontend/src/components/JobStatusView.tsx` + `api/codegen.ts`: add
       `cancelJob(id)`; while pending/running show a **Cancel** control that calls
       it and stops polling on success, showing a cancelled state.
     - _Requirements: 9.1, 9.2_
 
-- [ ] 12. Checkpoint — R9–R11
+- [x] 12. Checkpoint — R9–R11
   - Backend gate `cd backend && uv run pytest` passes; manually verify the UI
     cancel + mock flow.
 
-- [ ] 13. Wire the Writer generation case (R5.3) — backend + frontend
-  - [ ] 13.1 Resolve Writer uploads in `_precondition` (backend)
+- [x] 13. Wire the Writer generation case (R5.3) — backend + frontend
+  - [x] 13.1 Resolve Writer uploads in `_precondition` (backend)
     - In `backend/app/routers/codegen.py`, change the signature to
       `_precondition(session, case, paper_ref, owner_id)` and pass `user.id`
       from `start_job` and `job.owner_id` from `run_job` (generate/align ignore
@@ -341,13 +341,13 @@ there is no orphaned code. It depends on the `accounts` spec for the
       uploaded_source=<joined or None>)`. Do not fabricate an `ExperimentSetup`.
       Import the writer models from `app.models.writer`.
     - _Requirements: 5.3, 4.5_
-  - [ ]* 13.2 Backend tests for the writer case
+  - [x]* 13.2 Backend tests for the writer case
     - Extend `backend/tests/test_codegen_api.py` (or a new file): writer job with
       a persisted manuscript (+ optional source) → succeeds and the Generation's
       files reflect the upload; writer job with no manuscript → `refused`;
       owner-scoping (another User's claim is not used). Mock the helper.
     - _Requirements: 5.3, 4.5_
-  - [ ] 13.3 Writer-workspace generation trigger (frontend, manual verify)
+  - [x] 13.3 Writer-workspace generation trigger (frontend, manual verify)
     - In the writer workspace (`frontend/src/components/writer/ClaimWorkspace.tsx`
       or alongside it), add a "Generate code" trigger that starts a `writer` job
       for the open claim (reuse `GenerateButton`/`JobStatusView`, which are
@@ -356,7 +356,7 @@ there is no orphaned code. It depends on the `accounts` spec for the
       succeeded → artifact; claim without one → refused reason shown.
     - _Requirements: 1.4, 2.2, 5.3_
 
-- [ ] 14. Checkpoint — writer case
+- [x] 14. Checkpoint — writer case
   - Backend gate `cd backend && uv run pytest` passes; manually verify the writer
     generate flow end to end (with `CODEGEN_MOCK=true` for a deterministic run).
 

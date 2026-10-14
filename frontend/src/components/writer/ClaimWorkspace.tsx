@@ -11,6 +11,9 @@ import {
 import ManuscriptUpload from "./ManuscriptUpload";
 import SourceUpload from "./SourceUpload";
 import ConfirmDelete from "./ConfirmDelete";
+import GenerateButton from "../GenerateButton";
+import JobStatusView from "../JobStatusView";
+import type { JobRead } from "../../api/codegen";
 
 export default function ClaimWorkspace({
   claimId,
@@ -27,6 +30,7 @@ export default function ClaimWorkspace({
   // local mirrors so uploads/deletes update the view without a refetch
   const [manuscript, setManuscript] = useState<ManuscriptRead | null>(null);
   const [sourcePaths, setSourcePaths] = useState<string[]>([]);
+  const [job, setJob] = useState<JobRead | null>(null);
 
   useEffect(() => {
     void getClaim(claimId).then((res) => {
@@ -94,6 +98,15 @@ export default function ClaimWorkspace({
               }}
             />
           </div>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <h2 className="text-sm font-medium text-ink">Generate code</h2>
+        {job ? (
+          <JobStatusView job={job} onRetry={() => setJob(null)} />
+        ) : (
+          <GenerateButton paperRef={claim.paper_ref} genCase="writer" onStarted={setJob} />
         )}
       </div>
     </div>

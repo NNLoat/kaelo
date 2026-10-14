@@ -55,9 +55,10 @@ merged to `main`.
   PR #15), and the full backend — `GenerationJob`/`Generation` tables +
   migration, async job worker, `Codegen_API` router — are merged (PR #13).
   Post-prototype hardening (robust delimiter parsing, mock mode, job **cancel**;
-  R9–R11) is in **open PR #19** (`fix/codegen-parse-cancel-mock`), suite green.
-  The `writer` case is still stubbed (see Deferred). Manual final-checkpoint
-  tasks (8, 12) unchecked.
+  R9–R11) merged (PR #19). The `writer` case is now **wired end to end**
+  (spec Task 13 — `_precondition` resolves the Writer's persisted claim +
+  manuscript/source; writer-workspace has a Generate trigger), suite green
+  (132 passed). Manual final-checkpoint tasks (8, 12) unchecked.
 - [x] **#5 `writer-workspace`** — frontend (`Writer_UI`, PR #9), the
   `Extraction_Helper` (`core/extraction.py`, PR #16), **and the backend
   persistence + `Writer_API`** (`PaperClaim`/`WriterManuscript`/
@@ -72,30 +73,21 @@ flows, what's left, operational gotchas).
 
 ## Deferred
 
-- **code-generation `writer` case is intentionally not wired yet.** The three
-  generation cases are `generate` (Reader, no repo), `align` (Reader, has repo),
-  and `writer` (Writer, from their uploaded manuscript + source). `generate` and
-  `align` work end to end. The `writer` case needs a Writer's **persisted upload**
-  — which **now exists** (writer-workspace shipped `WriterManuscript` /
-  `WriterSourceFile`, PR #17) — but `_precondition` in
-  `backend/app/routers/codegen.py` (the `case is Case.writer` arm) was never
-  wired to read it, so it still returns a `refused` job ("No uploaded manuscript
-  for this paper yet…"). **To finish it (top-priority follow-up):** replace that
-  stub arm with a lookup that loads the Writer's claim + manuscript/source for the
-  paper and builds `GenerationInputs(manuscript_text=…, uploaded_source=…)`,
-  refusing only when there genuinely is no upload; add a frontend trigger in the
-  writer workspace. Touches backend + frontend; add it as a task on the
-  code-generation spec (R5.3 already describes the behavior). Depends on PR #19.
+- (none open) — the code-generation `writer` case, previously the top deferral,
+  is now wired (spec Task 13): `_precondition` in
+  `backend/app/routers/codegen.py` resolves the Writer's claim +
+  manuscript/source and builds `GenerationInputs`, refusing only when there is
+  genuinely no upload; the writer workspace has a Generate trigger.
 
 ## Follow-ups
 
 - [x] **Rebased open PR #13 (`code-generation_backend`) onto current `main`** and
   merged. `cd backend && uv run pytest` → 124 passed.
-- [ ] **Merge PR #19** (`fix/codegen-parse-cancel-mock`) — generation parse fix,
-  mock mode, job cancel. After merge: `docker compose up -d --build backend` so
-  the `cancelled` enum migration applies (`alembic/` is not compose-watch-synced).
-- [ ] **Wire the code-generation `writer` case** to the persisted Writer uploads
-  (see Deferred) — the single most important remaining feature gap.
+- [x] **Merge PR #19** (`fix/codegen-parse-cancel-mock`) — generation parse fix,
+  mock mode, job cancel. Merged; `cancelled` enum migration applied.
+- [x] **Wire the code-generation `writer` case** to the persisted Writer uploads
+  (spec Task 13). `_precondition` resolves claim + manuscript/source; writer
+  workspace has a Generate trigger. Verified in the browser.
 - [ ] **writer-workspace tests:** `/api/writer/*` has no dedicated coverage; do at
   least optional tasks 3.3 (migration smoke) and 5.11 (API edge + mocked
   Git-fetch).

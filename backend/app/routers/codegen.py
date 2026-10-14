@@ -32,6 +32,8 @@ from app.models.generation import (
 from app.models.paper import Paper
 from app.models.reproducibility import ExperimentSetup
 from app.models.user import User
+from app.models.writer import PaperClaim, WriterManuscript, WriterSourceFile
+from app.routers.writer import normalize_reference
 
 router = APIRouter(prefix="/api/codegen", tags=["codegen"])
 
@@ -65,7 +67,7 @@ def _setup_text(session: Session, paper: Paper | None) -> str | None:
 
 
 def _precondition(
-    session: Session, case: Case, paper_ref: str
+    session: Session, case: Case, paper_ref: str, owner_id: int
 ) -> tuple[str | None, GenerationInputs | None]:
     """Return (refusal_reason, inputs). Reason set => refuse, inputs is None
     (R4.3-R4.5); reason None => inputs is ready for the helper."""
@@ -83,13 +85,55 @@ def _precondition(
             return ("This paper has no repository to align with.", None)
         return (None, GenerationInputs(experiment_setup=setup, repo_link=paper.repo_url))
     if case is Case.writer:
-        # Writer uploads (ADR-0003) are not yet persisted; without an uploaded
-        # manuscript there is nothing to generate from. Slots in once uploads exist.
-        return (
-            "No uploaded manuscript for this paper yet, so there's nothing to generate from.",
-            None,
-        )
+        return _writer_inputs(session, paper_ref, owner_id)
     return (None, GenerationInputs(experiment_setup=setup))
+
+
+def _writer_inputs(
+    session: Session, paper_ref: str, owner_id: int
+) -> tuple[str | None, GenerationInputs | None]:
+    """Resolve a Writer's uploaded manuscript + source for a claimed paper.
+
+    Refuse (R4.5) when there is no claim or no uploaded manuscript. Otherwise
+    build inputs from the stored text: manuscript text drives the experiment
+    setup (we do not fabricate an ExperimentSetup row), and the uploaded source
+    files — if any — are joined so the helper refines rather than generates from
+    scratch (R5.3).
+    """
+    _NO_UPLOAD = "No uploaded manuscript for this paper yet, so there's nothing to generate from."
+    normalized = normalize_reference(paper_ref)
+    if normalized is None:
+        return (_NO_UPLOAD, None)
+    claim = session.exec(
+        select(PaperClaim).where(
+            PaperClaim.owner_id == owner_id,
+            PaperClaim.paper_ref_normalized == normalized,
+        )
+    ).first()
+    if claim is None:
+        return (_NO_UPLOAD, None)
+    manuscript = session.exec(
+        select(WriterManuscript).where(WriterManuscript.claim_id == claim.id)
+    ).first()
+    if manuscript is None:
+        return (_NO_UPLOAD, None)
+
+    sources = session.exec(
+        select(WriterSourceFile)
+        .where(WriterSourceFile.claim_id == claim.id)
+        .order_by(WriterSourceFile.path)  # type: ignore[arg-type]
+    ).all()
+    uploaded_source = (
+        "\n\n".join(f"=== {f.path} ===\n{f.content}" for f in sources) if sources else None
+    )
+    return (
+        None,
+        GenerationInputs(
+            experiment_setup=manuscript.text,
+            manuscript_text=manuscript.text,
+            uploaded_source=uploaded_source,
+        ),
+    )
 
 
 # --- worker -------------------------------------------------------------------
@@ -108,7 +152,7 @@ def run_job(job_id: UUID) -> None:
         session.add(job)
         session.commit()
 
-        reason, inputs = _precondition(session, job.case, job.paper_ref)
+        reason, inputs = _precondition(session, job.case, job.paper_ref, job.owner_id)
         if inputs is None:
             # Preconditions passed at start but no longer hold (e.g. setup
             # removed in the interim) -> fail rather than call the helper.
@@ -209,7 +253,7 @@ def start_job(
         return _job_read(existing)
 
     # 2. Preconditions; unmet -> persist refused, helper never called (R4.3-R4.5).
-    reason, _ = _precondition(session, payload.case, payload.paper_ref)
+    reason, _ = _precondition(session, payload.case, payload.paper_ref, user.id)
     if reason is not None:
         job = GenerationJob(
             owner_id=user.id, paper_ref=payload.paper_ref, case=payload.case,
