@@ -51,6 +51,8 @@ _TRACKING_PREFIXES = ("utm_", "ref", "fbclid", "gclid", "mc_")
 
 def _canonical_arxiv(value: str) -> str | None:
     v = value.strip()
+    # Accept an explicit "arXiv:" prefix (case-insensitive) as well as a bare id.
+    v = re.sub(r"^arxiv:\s*", "", v, flags=re.IGNORECASE)
     if _ARXIV_NEW.fullmatch(v) or _ARXIV_OLD.fullmatch(v):
         return f"arxiv:{v.lower() if '/' in v else v}"
     return None

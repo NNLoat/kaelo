@@ -13,7 +13,10 @@ from app.core.codegen import Case
 from app.models.generation import Generation, GenerationJob, JobState
 from app.models.paper import Paper
 from app.models.reproducibility import ExperimentSetup
+from app.models.user import User
+from app.models.writer import PaperClaim, WriterManuscript, WriterSourceFile
 from app.routers import codegen as api
+from app.routers.writer import normalize_reference
 
 
 @pytest.fixture(autouse=True)
@@ -59,6 +62,58 @@ def _paper_with_setup(session: Session, *, repo_url=None, available=True) -> int
     )
     session.commit()
     return p.id
+
+
+def _writer_claim(
+    session: Session, owner_id: int, paper_ref: str, *, manuscript=True, source=None
+) -> PaperClaim:
+    """Persist a Writer's claim for ``paper_ref`` owned by ``owner_id``.
+
+    With ``manuscript=True`` attach a WriterManuscript; ``source`` is an optional
+    list of ``(path, content)`` WriterSourceFile rows. The claim's normalized ref
+    is computed with ``normalize_reference`` so the writer-case lookup matches.
+    """
+    claim = PaperClaim(
+        owner_id=owner_id,
+        paper_ref_normalized=normalize_reference(paper_ref),
+        paper_ref_original=paper_ref,
+    )
+    session.add(claim)
+    session.commit()
+    session.refresh(claim)
+    if manuscript:
+        session.add(
+            WriterManuscript(claim_id=claim.id, filename="paper.pdf", text="manuscript body")
+        )
+    for path, content in source or []:
+        session.add(WriterSourceFile(claim_id=claim.id, path=path, content=content))
+    session.commit()
+    return claim
+
+
+# R4.5: a writer job for a claim that has no uploaded manuscript -> refused.
+def test_writer_claim_without_manuscript_refuses(client: TestClient, session: Session):
+    me_user = "writer_no_ms"
+    _register_login(client, me_user)
+    me = client.get("/api/auth/me").json()
+    ref = "2401.00001"
+    _writer_claim(session, me["id"], ref, manuscript=False)
+    resp = _start(client, ref, "writer")
+    assert resp.json()["state"] == "refused" and resp.json()["reason"]
+
+
+# R4.5 + R5.1: owner scoping — a claim owned by user A is not used for user B's job.
+def test_writer_claim_owner_scoped(client: TestClient, session: Session):
+    _register_login(client, "writer_owner_a")
+    a = client.get("/api/auth/me").json()
+    ref = "2401.00002"
+    _writer_claim(session, a["id"], ref, manuscript=True)
+    # Switch to user B, who has no claim for this paper.
+    client.post("/api/auth/logout")
+    client.cookies.clear()
+    _register_login(client, "writer_owner_b")
+    resp = _start(client, ref, "writer")
+    assert resp.json()["state"] == "refused"
 
 
 # Feature: code-generation, Property 2: Unmet preconditions refuse without calling the helper
@@ -144,6 +199,51 @@ def test_delete_removes_only_target(client: TestClient, session: Session):
     listed = client.get("/api/codegen/generations").json()
     ids = {g["id"] for g in listed}
     assert str(g2.id) in ids and str(g1.id) not in ids
+
+
+# R9.3: cancel an in-flight (pending) job -> cancelled, no Generation persisted.
+def test_cancel_pending_job_cancels(client: TestClient, session: Session):
+    _register_login(client, "cancel1")
+    pid = _paper_with_setup(session)
+    job = _start(client, str(pid), "generate").json()
+    resp = client.post(f"/api/codegen/jobs/{job['id']}/cancel")
+    assert resp.status_code == 200
+    assert resp.json()["state"] == "cancelled"
+    assert session.exec(select(Generation)).all() == []
+
+
+# R9.5: cancel for a job not owned by the caller reads as absent (404).
+def test_cancel_cross_user_is_404(client: TestClient, session: Session):
+    _register_login(client, "cancel_owner")
+    pid = _paper_with_setup(session)
+    job = _start(client, str(pid), "generate").json()
+    client.post("/api/auth/logout")
+    client.cookies.clear()
+    _register_login(client, "cancel_other")
+    assert client.post(f"/api/codegen/jobs/{job['id']}/cancel").status_code == 404
+
+
+# R9.6: cancel is idempotent — a terminal job is left unchanged.
+def test_cancel_terminal_job_is_idempotent(client: TestClient, session: Session):
+    _register_login(client, "cancel_term")
+    me = client.get("/api/auth/me").json()
+    job = GenerationJob(
+        owner_id=me["id"], paper_ref="1", case=Case.generate, state=JobState.succeeded
+    )
+    session.add(job)
+    session.commit()
+    session.refresh(job)
+    resp = client.post(f"/api/codegen/jobs/{job.id}/cancel")
+    assert resp.status_code == 200
+    assert resp.json()["state"] == "succeeded"
+    # Re-cancelling an already-cancelled job stays cancelled.
+    cj = GenerationJob(
+        owner_id=me["id"], paper_ref="2", case=Case.generate, state=JobState.cancelled
+    )
+    session.add(cj)
+    session.commit()
+    session.refresh(cj)
+    assert client.post(f"/api/codegen/jobs/{cj.id}/cancel").json()["state"] == "cancelled"
 
 
 def test_archive_contains_files_and_disclaimer(client: TestClient, session: Session):
