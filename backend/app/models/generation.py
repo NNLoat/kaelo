@@ -22,6 +22,7 @@ class JobState(str, Enum):
     succeeded = "succeeded"
     failed = "failed"
     refused = "refused"
+    cancelled = "cancelled"  # user-cancelled an in-flight job (R9)
 
 
 class GenerationJob(SQLModel, table=True):

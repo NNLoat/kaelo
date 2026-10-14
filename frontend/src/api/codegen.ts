@@ -1,7 +1,7 @@
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
 
 export type Case = "generate" | "align" | "writer";
-export type JobState = "pending" | "running" | "succeeded" | "failed" | "refused";
+export type JobState = "pending" | "running" | "succeeded" | "failed" | "refused" | "cancelled";
 
 export interface JobRead {
   id: string;
@@ -64,6 +64,10 @@ export function startJob(paperRef: string, c: Case): Promise<JobRead | NetworkEr
 
 export function getJob(id: string): Promise<JobRead | NetworkError> {
   return req<JobRead>(`/api/codegen/jobs/${id}`, {});
+}
+
+export function cancelJob(id: string): Promise<JobRead | NetworkError> {
+  return req<JobRead>(`/api/codegen/jobs/${id}/cancel`, { method: "POST" });
 }
 
 export function getGeneration(id: string): Promise<GenerationRead | NetworkError> {

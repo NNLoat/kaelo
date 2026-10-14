@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   getJob,
   getGeneration,
+  cancelJob,
   isNetworkError,
   type GenerationRead,
   type JobRead,
@@ -15,12 +16,20 @@ export default function JobStatusView({ job, onRetry }: { job: JobRead; onRetry:
   const [state, setState] = useState<JobRead>(job);
   const [generation, setGeneration] = useState<GenerationRead | null>(null);
   const [loadError, setLoadError] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
   const interval = useRef(MIN_INTERVAL);
 
   useEffect(() => {
     setState(job);
     interval.current = MIN_INTERVAL;
   }, [job]);
+
+  async function cancel() {
+    setCancelling(true);
+    const res = await cancelJob(state.id);
+    setCancelling(false);
+    if (!isNetworkError(res)) setState(res); // cancelled -> polling stops
+  }
 
   // poll while the job is in flight (interval with backoff cap)
   useEffect(() => {
@@ -46,9 +55,29 @@ export default function JobStatusView({ job, onRetry }: { job: JobRead; onRetry:
 
   if (state.state === "pending" || state.state === "running") {
     return (
-      <p className="text-sm text-muted" aria-live="polite">
-        {state.state === "pending" ? "Queued…" : "Generating…"}
-      </p>
+      <div className="flex items-center gap-3">
+        <p className="text-sm text-muted" aria-live="polite">
+          {state.state === "pending" ? "Queued…" : "Generating…"}
+        </p>
+        <button
+          onClick={cancel}
+          disabled={cancelling}
+          className="text-sm font-medium text-caution hover:underline disabled:opacity-50"
+        >
+          {cancelling ? "Cancelling…" : "Cancel"}
+        </button>
+      </div>
+    );
+  }
+
+  if (state.state === "cancelled") {
+    return (
+      <div>
+        <p className="text-sm text-muted">Generation cancelled.</p>
+        <button onClick={onRetry} className="mt-2 text-sm font-medium text-accent hover:underline">
+          Start again
+        </button>
+      </div>
     );
   }
 
@@ -64,7 +93,7 @@ export default function JobStatusView({ job, onRetry }: { job: JobRead; onRetry:
     return (
       <div>
         <p role="alert" className="text-sm text-caution">
-          Generation failed.
+          {state.reason ? `Generation failed: ${state.reason}` : "Generation failed."}
         </p>
         <button onClick={onRetry} className="mt-2 text-sm font-medium text-accent hover:underline">
           Try again

@@ -95,8 +95,11 @@ _CASE_INSTRUCTION = {
 def _build_prompt(case: Case, inputs: GenerationInputs) -> str:
     parts = [
         _CASE_INSTRUCTION[case],
-        "Reply as JSON only: "
-        '{"files": [{"path": "<relative path>", "content": "<file text>"}]}. '
+        "Reply with one or more file blocks in exactly this format, nothing else:\n"
+        "=== FILE: <relative path> ===\n"
+        "<verbatim file contents>\n"
+        "=== END ===\n"
+        "Write the file contents literally — do NOT escape or wrap them as JSON. "
         "Always include a README. If the material does not determine a language, "
         "write Python.",
         f"Experiment setup:\n{inputs.experiment_setup}",
@@ -110,17 +113,28 @@ def _build_prompt(case: Case, inputs: GenerationInputs) -> str:
     return "\n\n".join(parts)
 
 
+# Delimiter format avoids JSON-escaping the file body: generated code carries raw
+# newlines/quotes that break json.loads inside a "content" string (R11).
+_FILE_BLOCK = re.compile(
+    r"===\s*FILE:\s*(?P<path>.+?)\s*===\n(?P<content>.*?)\n===\s*END\s*===",
+    re.DOTALL,
+)
+
+
 def _parse_files(text: str) -> list[GenFile]:
-    match = re.search(r"\{.*\}", text, re.DOTALL)
-    if not match:
-        raise GenerationError(f"generation response not JSON: {text!r}")
-    try:
-        data = json.loads(match.group(0))
-        raw = data["files"]
-        files = [GenFile(path=str(f["path"]), content=str(f["content"])) for f in raw]
-    except (ValueError, KeyError, TypeError) as exc:
-        raise GenerationError(f"could not parse generation files: {exc}") from exc
+    files = [
+        GenFile(path=m.group("path").strip(), content=m.group("content"))
+        for m in _FILE_BLOCK.finditer(text)
+    ]
+    if not files:
+        raise GenerationError(f"no file blocks in generation response: {text!r}")
     return files
+
+
+_MOCK_FILES = [
+    GenFile(path="README.md", content="# Generated code (mock)\n\nDeterministic mock artifact.\n"),
+    GenFile(path="main.py", content='print("mock generated code")\n'),
+]
 
 
 def _ensure_readme(files: list[GenFile]) -> list[GenFile]:
@@ -135,6 +149,8 @@ def generate(case: Case, inputs: GenerationInputs) -> list[GenFile]:
     Guarantees a README is present (R7.2); the Python default (R7.3) is carried
     in the prompt. Raises ``GenerationError`` on LLM/parse failure.
     """
+    if get_settings().codegen_mock:
+        return list(_MOCK_FILES)  # R10: no Bedrock call
     try:
         resp = _client().invoke(_build_prompt(case, inputs))
     except Exception as exc:
@@ -148,6 +164,8 @@ def score(files: list[GenFile]) -> ArtifactScore:
 
     Never executes the code. Raises ``GenerationError`` on LLM/parse failure.
     """
+    if get_settings().codegen_mock:
+        return ArtifactScore(score=0.5, rationale="Mock score (codegen_mock enabled).")  # R10
     listing = "\n\n".join(f"=== {f.path} ===\n{f.content}" for f in files)
     prompt = (
         "Rate the quality of this generated code on a 0.0-1.0 scale and give a "
