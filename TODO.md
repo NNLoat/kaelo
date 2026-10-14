@@ -50,50 +50,59 @@ merged to `main`.
 - [x] **#3 `reproducibility-scoring`** — scoring seam, scorers, and GitHub
   inspector merged (PRs #7, #12, #15); unstubs the paper-search seam at the same
   signature. Only the manual-frontend final-checkpoint task is unchecked.
-- [~] **#4 `code-generation`** — frontend (`Codegen_UI`, PR #8) and the
+- [x] **#4 `code-generation`** — frontend (`Codegen_UI`, PR #8), the
   `Generation_Helper` / `Scoring_Helper` business logic (`core/codegen.py`,
-  PR #15) are merged. The rest of the backend — `GenerationJob`/`Generation`
-  tables + migration, the async job worker, and the `Codegen_API` router — is in
-  **open PR #13** (`code-generation_backend`), now rebased onto current `main`
-  (the duplicated helper dropped; the worker adapted to the merged helper's API)
-  with the full suite green. Ready for review/merge.
-- [~] **#5 `writer-workspace`** — frontend (`Writer_UI`, PR #9) and the
-  `Extraction_Helper` business logic (`core/extraction.py`, PR #16) are merged.
-  The persistence (Writer `Upload` model + migration), upload/claim endpoints,
-  and wiring are **not implemented** (`.kiro/specs/writer-workspace/tasks.md`
-  task 1 onward still open). Depends on `accounts`, `reproducibility-scoring`,
-  `code-generation`.
+  PR #15), and the full backend — `GenerationJob`/`Generation` tables +
+  migration, async job worker, `Codegen_API` router — are merged (PR #13).
+  Post-prototype hardening (robust delimiter parsing, mock mode, job **cancel**;
+  R9–R11) is in **open PR #19** (`fix/codegen-parse-cancel-mock`), suite green.
+  The `writer` case is still stubbed (see Deferred). Manual final-checkpoint
+  tasks (8, 12) unchecked.
+- [x] **#5 `writer-workspace`** — frontend (`Writer_UI`, PR #9), the
+  `Extraction_Helper` (`core/extraction.py`, PR #16), **and the backend
+  persistence + `Writer_API`** (`PaperClaim`/`WriterManuscript`/
+  `WriterSourceFile` tables + migration, claim/manuscript/source endpoints,
+  router wiring) are merged (PR #17). Claim → upload manuscript/source →
+  list/delete all work (verified via API + UI). Remaining: 7 optional (`*`) test
+  tasks (1.5, 3.3, 5.6–5.11) — the `/api/writer/*` surface has no dedicated
+  coverage yet.
+
+See `summary-1st-prototype.md` for the full first-prototype handoff (verified
+flows, what's left, operational gotchas).
 
 ## Deferred
 
 - **code-generation `writer` case is intentionally not wired yet.** The three
   generation cases are `generate` (Reader, no repo), `align` (Reader, has repo),
   and `writer` (Writer, from their uploaded manuscript + source). `generate` and
-  `align` work end to end because their inputs already exist (Experiment Setup,
-  the Paper `repo_url`). The `writer` case needs a Writer's **persisted upload**
-  (manuscript text + source code, per `docs/adr/0003`), and that `Upload` model
-  does not exist yet — it belongs to **#5 `writer-workspace`**, which hasn't
-  built persistence. Until it does, the `writer` case is handled by the normal
-  precondition path: `POST /api/codegen/jobs` with `case=writer` returns a
-  `refused` job with the reason "No uploaded manuscript for this paper yet, so
-  there's nothing to generate from." No crash; the pipeline is ready. **To
-  finish it later:** build the `writer-workspace` `Upload` persistence, then
-  replace the stub branch in `backend/app/routers/codegen.py` `_precondition`
-  (the `case is Case.writer` arm) with a lookup that loads the Writer's upload
-  for the paper and only refuses when there genuinely isn't one.
+  `align` work end to end. The `writer` case needs a Writer's **persisted upload**
+  — which **now exists** (writer-workspace shipped `WriterManuscript` /
+  `WriterSourceFile`, PR #17) — but `_precondition` in
+  `backend/app/routers/codegen.py` (the `case is Case.writer` arm) was never
+  wired to read it, so it still returns a `refused` job ("No uploaded manuscript
+  for this paper yet…"). **To finish it (top-priority follow-up):** replace that
+  stub arm with a lookup that loads the Writer's claim + manuscript/source for the
+  paper and builds `GenerationInputs(manuscript_text=…, uploaded_source=…)`,
+  refusing only when there genuinely is no upload; add a frontend trigger in the
+  writer workspace. Touches backend + frontend; add it as a task on the
+  code-generation spec (R5.3 already describes the behavior). Depends on PR #19.
 
 ## Follow-ups
 
-- [x] **Rebased open PR #13 (`code-generation_backend`) onto current `main`.** It
-  was branched before PR #15 merged `core/codegen.py` (the `Generation_Helper` /
-  `Scoring_Helper`); both added that file. Resolved by dropping #13's copy of
-  `core/codegen.py` and its helper test, keeping the merged version, and adapting
-  the worker to the merged helper's API (`GenerationInputs.experiment_setup` is
-  required; refusal paths now carry no inputs). `cd backend && uv run pytest` →
-  124 passed.
+- [x] **Rebased open PR #13 (`code-generation_backend`) onto current `main`** and
+  merged. `cd backend && uv run pytest` → 124 passed.
+- [ ] **Merge PR #19** (`fix/codegen-parse-cancel-mock`) — generation parse fix,
+  mock mode, job cancel. After merge: `docker compose up -d --build backend` so
+  the `cancelled` enum migration applies (`alembic/` is not compose-watch-synced).
+- [ ] **Wire the code-generation `writer` case** to the persisted Writer uploads
+  (see Deferred) — the single most important remaining feature gap.
+- [ ] **writer-workspace tests:** `/api/writer/*` has no dedicated coverage; do at
+  least optional tasks 3.3 (migration smoke) and 5.11 (API edge + mocked
+  Git-fetch).
 - [ ] Manual-frontend final-checkpoint tasks remain unchecked for `accounts`,
-  `paper-search`, `reproducibility-scoring`, and `code-generation` — verify each
-  in the browser and tick the final task in its `tasks.md`.
+  `paper-search`, `reproducibility-scoring`, and `code-generation` (tasks 8/10/12)
+  — verify each in the browser and tick the final task in its `tasks.md`.
+- [ ] **Rotate the leaked AWS key** `AKIA6HF7RX3XVOANFSIE` still present in `.env`.
 
 ## The workflow (for reference)
 
