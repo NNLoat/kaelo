@@ -91,17 +91,20 @@ def test_score_independent_of_llm_text(db, monkeypatch, hp, ds, expl):
     setup = ExperimentSetupData(hp, ds, None)
     _patch(monkeypatch, signals=GOOD_SIGNALS, setup=setup, explanation=expl)
     score = seam.score_reproducibility(pid)
-    # Same signals + same populated-field count -> identical score regardless of text.
-    settings_obj = get_settings()
+    # Same signals + same populated-field pattern -> identical score regardless
+    # of the LLM text, because the standard judges structure, not prose.
     from app.services.repro.scorer import reproducibility
+    from app.services.repro.standards import Evidence
 
     expected = reproducibility(
-        1.0,
-        True,
-        2 / 3,
-        w_repo=settings_obj.repro_repo_weight,
-        w_setup=settings_obj.repro_setup_weight,
-    )
+        "unknown",
+        Evidence(
+            repo=GOOD_SIGNALS,
+            code_quality=1.0,
+            setup=setup,
+            setup_completeness=2 / 3,
+        ),
+    ).score
     assert score == pytest.approx(expected)
 
 

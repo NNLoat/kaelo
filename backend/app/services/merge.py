@@ -8,6 +8,7 @@ import re
 from dataclasses import dataclass, field
 from datetime import date
 
+from app.models.paper import PaperDomain
 from app.services.sources.base import SourceRecord
 
 
@@ -24,6 +25,7 @@ class MergedPaper:
     repo_url: str | None = None
     sources: list[str] = field(default_factory=list)
     source_links: list[tuple[str, str]] = field(default_factory=list)
+    domain: PaperDomain = PaperDomain.unknown
 
 
 def _norm_doi(doi: str | None) -> str | None:
@@ -96,6 +98,8 @@ def _fold(paper: MergedPaper, rec: SourceRecord) -> None:
         paper.authors = list(rec.authors)
     if rec.source not in paper.sources:
         paper.sources.append(rec.source)
+    if paper.domain is PaperDomain.unknown and rec.domain is not PaperDomain.unknown:
+        paper.domain = rec.domain
     for link in rec.source_links:
         if link not in paper.source_links:
             paper.source_links.append(link)

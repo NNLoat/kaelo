@@ -12,6 +12,14 @@ class ScoreStatus(str, Enum):
     unavailable = "unavailable"
 
 
+class PaperDomain(str, Enum):
+    """Field domain captured at ingestion; selects the Reproducibility Standard (R9.4)."""
+
+    computer_science = "computer_science"
+    medicine = "medicine"
+    unknown = "unknown"
+
+
 class ScoreCell(BaseModel):
     """Clean read shape for one component score — never leaks raw columns."""
 
@@ -30,6 +38,9 @@ class ReproducibilityBreakdown(BaseModel):
     setup_completeness: ScoreCell
     repo_exists: bool | None
     explanation: str | None
+    standard_key: str | None = None
+    standard_name: str | None = None  # display label derived from standard_key
+    criteria: list[dict] | None = None  # per-Criterion: {id, title, status, evidence_note}
 
 
 class PaperBase(SQLModel):
@@ -42,6 +53,7 @@ class PaperBase(SQLModel):
     sources: list[str] = Field(default_factory=list, sa_column=Column(JSON))
     source_links: list[dict] = Field(default_factory=list, sa_column=Column(JSON))
     repo_url: str | None = Field(default=None)  # None => no repo (R6.3)
+    domain: PaperDomain = Field(default=PaperDomain.unknown)  # selects standard (R9.4)
 
 
 class Paper(PaperBase, table=True):

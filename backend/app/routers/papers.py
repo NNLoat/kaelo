@@ -13,6 +13,13 @@ router = APIRouter(prefix="/api/papers", tags=["papers"])
 
 _MAX_QUERY_LEN = 512
 
+# Display labels for the selected Reproducibility Standard (R8.8).
+_STANDARD_NAMES = {
+    "ml_checklist": "ML Reproducibility Checklist",
+    "fair": "FAIR",
+    "baseline": "Baseline",
+}
+
 
 class SearchRequest(BaseModel):
     query: str
@@ -130,6 +137,9 @@ def get_paper(paper_id: int, session: Session = Depends(get_session)) -> PaperRe
             setup_completeness=_cell(row.setup_completeness, row.status),
             repo_exists=row.repo_exists,
             explanation=row.explanation,
+            standard_key=row.standard_key,
+            standard_name=_STANDARD_NAMES.get(row.standard_key),
+            criteria=row.criteria,
         )
 
     return PaperRead(

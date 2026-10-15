@@ -9,6 +9,8 @@ from dataclasses import dataclass, field
 from datetime import date
 from typing import Protocol
 
+from app.models.paper import PaperDomain
+
 
 class SourceError(Exception):
     """Raised when a Source_Adapter fails or times out."""
@@ -27,6 +29,7 @@ class SourceRecord:
     arxiv_id: str | None = None
     source_links: list[tuple[str, str]] = field(default_factory=list)  # (source, url)
     repo_url: str | None = None
+    domain: PaperDomain = PaperDomain.unknown  # field domain at ingestion (R9.1-9.3)
 
 
 class SourceAdapter(Protocol):

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   paper as fetchPaper,
+  type Criterion,
   type PaperDetail as Detail,
   type ReproducibilityBreakdown,
 } from "../api/papers";
@@ -164,30 +165,43 @@ function Body({ paper }: { paper: Detail }) {
 function CodegenSection({ paper }: { paper: Detail }) {
   const { mode } = useAuth();
   const [job, setJob] = useState<JobRead | null>(null);
+  const [reviewJob, setReviewJob] = useState<JobRead | null>(null);
 
   const genCase: Case = mode === "writer" ? "writer" : paper.repo_url ? "align" : "generate";
+  const paperRef = String(paper.id);
 
   return (
-    <section>
-      <h2 className="mb-2 text-sm font-semibold text-ink">Code generation</h2>
-      {job ? (
-        <JobStatusView job={job} onRetry={() => setJob(null)} />
-      ) : (
-        <GenerateButton
-          paperRef={String(paper.id)}
-          genCase={genCase}
-          onStarted={setJob}
-        />
-      )}
+    <section className="flex flex-col gap-6">
+      <div>
+        <h2 className="mb-2 text-sm font-semibold text-ink">Code generation</h2>
+        {job ? (
+          <JobStatusView job={job} onRetry={() => setJob(null)} />
+        ) : (
+          <GenerateButton paperRef={paperRef} genCase={genCase} onStarted={setJob} />
+        )}
+      </div>
+
+      <div>
+        <h2 className="mb-2 text-sm font-semibold text-ink">Reproducibility review</h2>
+        {reviewJob ? (
+          <JobStatusView job={reviewJob} onRetry={() => setReviewJob(null)} />
+        ) : (
+          <GenerateButton paperRef={paperRef} genCase="review" onStarted={setReviewJob} />
+        )}
+      </div>
     </section>
   );
 }
 
 function ReproBreakdown({ breakdown }: { breakdown: ReproducibilityBreakdown }) {
+  const criteria = breakdown.criteria ?? [];
   return (
     <div className="mt-4 rounded-lg border border-hairline bg-white p-5 shadow-sm">
-      <h3 className="mb-3 text-sm font-semibold text-ink">How the reproducibility score was reached</h3>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <h3 className="text-sm font-semibold text-ink">How the reproducibility score was reached</h3>
+      {breakdown.standard_name && (
+        <p className="mt-1 text-xs text-muted">Evaluated against {breakdown.standard_name}</p>
+      )}
+      <div className="mt-3 grid gap-4 sm:grid-cols-2">
         <ScoreBar label="Code quality" cell={breakdown.code_quality} />
         <ScoreBar label="Setup completeness" cell={breakdown.setup_completeness} />
       </div>
@@ -196,10 +210,44 @@ function ReproBreakdown({ breakdown }: { breakdown: ReproducibilityBreakdown }) 
           No code repository was found, which lowered the code-quality contribution.
         </p>
       )}
+      {criteria.length > 0 && (
+        <ul className="mt-4 divide-y divide-hairline border-t border-hairline">
+          {criteria.map((c) => (
+            <CriterionRow key={c.id} criterion={c} />
+          ))}
+        </ul>
+      )}
       {breakdown.explanation && (
         <p className="mt-3 text-sm leading-relaxed text-ink">{breakdown.explanation}</p>
       )}
     </div>
+  );
+}
+
+const STATUS: Record<Criterion["status"], { label: string; dot: string; text: string }> = {
+  met: { label: "Met", dot: "bg-accent", text: "text-accent-strong" },
+  partial: { label: "Partial", dot: "bg-caution", text: "text-caution" },
+  unmet: { label: "Unmet", dot: "bg-red-700", text: "text-red-700" },
+  not_applicable: { label: "Not applicable", dot: "bg-muted", text: "text-muted" },
+};
+
+function CriterionRow({ criterion }: { criterion: Criterion }) {
+  const s = STATUS[criterion.status];
+  return (
+    <li className="flex items-start gap-3 py-3">
+      <span
+        className={`mt-0.5 inline-flex shrink-0 items-center gap-1.5 text-xs font-medium ${s.text}`}
+      >
+        <span aria-hidden="true" className={`h-2 w-2 rounded-full ${s.dot}`} />
+        {s.label}
+      </span>
+      <div className="min-w-0">
+        <p className="text-sm font-medium text-ink">{criterion.title}</p>
+        {criterion.evidence_note && (
+          <p className="mt-0.5 text-sm leading-relaxed text-muted">{criterion.evidence_note}</p>
+        )}
+      </div>
+    </li>
   );
 }
 

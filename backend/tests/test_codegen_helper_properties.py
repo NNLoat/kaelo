@@ -45,7 +45,8 @@ def _blocks(files: list[dict]) -> str:
     suppress_health_check=[HealthCheck.function_scoped_fixture],
 )
 @given(
-    case=st.sampled_from(list(Case)),
+    # generate() handles the generation cases; Case.review routes through review()
+    case=st.sampled_from([Case.generate, Case.align, Case.writer]),
     files=st.lists(
         st.fixed_dictionaries(
             # content without the END marker so a block can't be truncated mid-file

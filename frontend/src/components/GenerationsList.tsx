@@ -10,6 +10,7 @@ const CASE_LABEL: Record<GenerationRead["case"], string> = {
   generate: "Generated",
   align: "Aligned",
   writer: "From upload",
+  review: "Reviewed",
 };
 
 export default function GenerationsList({ onOpen }: { onOpen: (g: GenerationRead) => void }) {

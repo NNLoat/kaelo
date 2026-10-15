@@ -17,7 +17,13 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
 from app.core import codegen as helper
-from app.core.codegen import Case, GenerationError, GenerationInputs
+from app.core.codegen import (
+    Case,
+    CriterionFinding,
+    GenerationError,
+    GenerationInputs,
+    ReviewInputs,
+)
 from app.core.config import get_settings
 from app.core.session import current_user
 from app.db.session import engine, get_session
@@ -29,11 +35,12 @@ from app.models.generation import (
     JobRead,
     JobState,
 )
-from app.models.paper import Paper
-from app.models.reproducibility import ExperimentSetup
+from app.models.paper import Paper, ScoreStatus
+from app.models.reproducibility import ExperimentSetup, ReproducibilityScore
 from app.models.user import User
 from app.models.writer import PaperClaim, WriterManuscript, WriterSourceFile
 from app.routers.writer import normalize_reference
+from app.services.reproducibility import score_reproducibility
 
 router = APIRouter(prefix="/api/codegen", tags=["codegen"])
 
@@ -68,12 +75,14 @@ def _setup_text(session: Session, paper: Paper | None) -> str | None:
 
 def _precondition(
     session: Session, case: Case, paper_ref: str, owner_id: int
-) -> tuple[str | None, GenerationInputs | None]:
+) -> tuple[str | None, GenerationInputs | ReviewInputs | None]:
     """Return (refusal_reason, inputs). Reason set => refuse, inputs is None
     (R4.3-R4.5); reason None => inputs is ready for the helper."""
     paper = _paper_for_ref(session, paper_ref)
     setup = _setup_text(session, paper)
 
+    if case is Case.review:
+        return _review_inputs(session, paper, paper_ref, owner_id)
     if case in (Case.generate, Case.align):
         if setup is None:
             return (
@@ -136,6 +145,122 @@ def _writer_inputs(
     )
 
 
+def _writer_material(
+    session: Session, paper_ref: str, owner_id: int
+) -> tuple[str | None, str | None]:
+    """Resolve a Writer's uploaded manuscript text + joined source for a claim.
+
+    Returns ``(manuscript_text, uploaded_source)`` — both ``None`` when the owner
+    has no claim/manuscript for ``paper_ref``. Unlike ``_writer_inputs`` this never
+    refuses: it is additive material for the Review case (R12.3), which also admits
+    Reader material from the Paper index.
+    """
+    normalized = normalize_reference(paper_ref)
+    if normalized is None:
+        return (None, None)
+    claim = session.exec(
+        select(PaperClaim).where(
+            PaperClaim.owner_id == owner_id,
+            PaperClaim.paper_ref_normalized == normalized,
+        )
+    ).first()
+    if claim is None:
+        return (None, None)
+    manuscript = session.exec(
+        select(WriterManuscript).where(WriterManuscript.claim_id == claim.id)
+    ).first()
+    if manuscript is None:
+        return (None, None)
+    sources = session.exec(
+        select(WriterSourceFile)
+        .where(WriterSourceFile.claim_id == claim.id)
+        .order_by(WriterSourceFile.path)  # type: ignore[arg-type]
+    ).all()
+    uploaded_source = (
+        "\n\n".join(f"=== {f.path} ===\n{f.content}" for f in sources) if sources else None
+    )
+    return (manuscript.text, uploaded_source)
+
+
+def _standard_result(session: Session, paper: Paper | None) -> ReproducibilityScore | None:
+    """The ready Standard_Result for a Paper, or None if absent/not ready.
+
+    A Standard_Result is usable only when the row exists with ``status == ready``
+    and both the selected standard key and its per-Criterion results are present
+    (R12.4)."""
+    if paper is None:
+        return None
+    row = session.exec(
+        select(ReproducibilityScore).where(ReproducibilityScore.paper_id == paper.id)
+    ).first()
+    if (
+        row is None
+        or row.status is not ScoreStatus.ready
+        or not row.standard_key
+        or not row.criteria
+    ):
+        return None
+    return row
+
+
+def _review_inputs(
+    session: Session, paper: Paper | None, paper_ref: str, owner_id: int
+) -> tuple[str | None, ReviewInputs | None]:
+    """Build ReviewInputs grounded in the Paper's Standard_Result (R12.3-R12.5).
+
+    Requires a ready Standard_Result for the Paper; when absent, trigger the
+    Paper's reproducibility evaluation once and re-read — proceeding if it is then
+    ready, else refusing with the R12.5 reason. The review is role-aware: Reader
+    material comes from the Paper index (metadata + repo link), Writer material
+    from the owner's uploaded manuscript + source; whatever is present is included.
+    """
+    result = _standard_result(session, paper)
+    if result is None:
+        # Trigger the Paper's reproducibility evaluation (rule-based seam; no live
+        # Bedrock) and re-read. Any failure leaves us without a Standard_Result.
+        if paper is not None:
+            try:
+                score_reproducibility(paper.id)
+            except Exception:
+                pass
+            session.expire_all()
+            result = _standard_result(session, _paper_for_ref(session, paper_ref))
+        if result is None:
+            return ("Standard evaluation unavailable for this paper.", None)
+
+    criteria = [
+        CriterionFinding(
+            id=str(c.get("id", "")),
+            title=str(c.get("title", "")),
+            status=str(c.get("status", "")),
+            evidence_note=str(c.get("evidence_note", "")),
+        )
+        for c in (result.criteria or [])
+    ]
+
+    # Reader material from the Paper index (metadata only; no full text, R12.3).
+    metadata = None
+    repo_link = None
+    if paper is not None:
+        meta_parts = [p for p in (paper.title, paper.abstract) if p]
+        metadata = "\n\n".join(meta_parts) or None
+        repo_link = paper.repo_url or None
+
+    manuscript_text, uploaded_source = _writer_material(session, paper_ref, owner_id)
+
+    return (
+        None,
+        ReviewInputs(
+            standard_key=result.standard_key,
+            criteria=criteria,
+            repo_link=repo_link,
+            metadata=metadata,
+            manuscript_text=manuscript_text,
+            uploaded_source=uploaded_source,
+        ),
+    )
+
+
 # --- worker -------------------------------------------------------------------
 
 
@@ -163,8 +288,13 @@ def run_job(job_id: UUID) -> None:
             session.commit()
             return
         try:
-            files = helper.generate(job.case, inputs)
-            artifact = helper.score(files)
+            if job.case is Case.review:
+                review_file = helper.review(inputs)
+                files = [review_file]
+                artifact = None
+            else:
+                files = helper.generate(job.case, inputs)
+                artifact = helper.score(files)
         except GenerationError as exc:
             job.state = JobState.failed
             job.reason = str(exc)  # surface why it failed (no longer silent)
@@ -193,13 +323,15 @@ def run_job(job_id: UUID) -> None:
             session.add(row)
         session.flush()
 
+        # Review has no Artifact_Code_Quality_Score (R12.8): sentinel/zero. The
+        # other cases carry the Scoring_Helper's score + rationale.
         gen = Generation(
             owner_id=job.owner_id,
             paper_ref=job.paper_ref,
             case=job.case,
             files=[{"path": f.path, "content": f.content} for f in files],
-            code_quality_score=artifact.score,
-            code_quality_rationale=artifact.rationale,
+            code_quality_score=artifact.score if artifact is not None else 0.0,
+            code_quality_rationale=artifact.rationale if artifact is not None else "",
             disclaimer=DISCLAIMER,
             is_latest=True,
         )

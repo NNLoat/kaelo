@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { downloadArchive, isNetworkError, type GenerationRead } from "../api/codegen";
+import ReviewView from "./ReviewView";
 
 export default function ArtifactView({ generation }: { generation: GenerationRead }) {
+  // The Review case has no code-quality score and a single REVIEW.md report, so
+  // it renders Markdown instead of the score block + file-tree viewer (R12.7/12.8).
+  if (generation.case === "review") {
+    return <ReviewView generation={generation} />;
+  }
+
   const files = generation.files;
   const [selected, setSelected] = useState(0);
   const [downloading, setDownloading] = useState(false);

@@ -11,6 +11,7 @@ from xml.etree import ElementTree as ET
 
 import httpx
 
+from app.models.paper import PaperDomain
 from app.services.sources.base import SourceError, SourceRecord
 
 _API_URL = "https://export.arxiv.org/api/query"
@@ -85,4 +86,21 @@ class ArxivAdapter:
             arxiv_id=arxiv_id,
             source_links=links,
             repo_url=None,
+            domain=_domain(entry),
         )
+
+
+def _domain(entry: ET.Element) -> PaperDomain:
+    """Map the source category: prefer primary_category, else first category."""
+    primary = entry.find(f"{_ARXIV_NS}primary_category")
+    term = primary.get("term") if primary is not None else None
+    if not term:
+        cat = entry.find(f"{_ATOM}category")
+        term = cat.get("term") if cat is not None else None
+    if not term:
+        return PaperDomain.unknown
+    if term.startswith("cs."):
+        return PaperDomain.computer_science
+    if term.startswith("q-bio."):
+        return PaperDomain.medicine
+    return PaperDomain.unknown

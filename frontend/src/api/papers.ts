@@ -29,11 +29,22 @@ export interface ExperimentSetup {
   available: boolean;
 }
 
+export interface Criterion {
+  id: string;
+  title: string;
+  status: "met" | "partial" | "unmet" | "not_applicable";
+  evidence_note: string;
+}
+
 export interface ReproducibilityBreakdown {
   code_quality: ScoreCell;
   setup_completeness: ScoreCell;
   repo_exists: boolean;
   explanation: string | null;
+  // null until scoring runs / unknown standard (R8.1, R8.8)
+  standard_key: string | null;
+  standard_name: string | null;
+  criteria: Criterion[] | null;
 }
 
 export interface PaperDetail extends PaperCard {

@@ -1,0 +1,133 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "15.1 Implement `review(inputs) -> GenFile`": [
+      {
+        "executionId": "35280c87-899c-4786-bc5f-cda2e6e1acf8",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792071137297
+      },
+      {
+        "executionId": "35280c87-899c-4786-bc5f-cda2e6e1acf8",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792071147525
+      },
+      {
+        "executionId": "35280c87-899c-4786-bc5f-cda2e6e1acf8",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792078335294
+      }
+    ],
+    "16.1 Add `review` to the `Case` enum (no new table; enum value only)": [
+      {
+        "executionId": "35280c87-899c-4786-bc5f-cda2e6e1acf8",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792071137300
+      },
+      {
+        "executionId": "35280c87-899c-4786-bc5f-cda2e6e1acf8",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792078355111
+      },
+      {
+        "executionId": "6750433d-cc99-48eb-9dfe-3d51701faa79",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792078796984
+      },
+      {
+        "executionId": "6750433d-cc99-48eb-9dfe-3d51701faa79",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792079025764
+      }
+    ],
+    "16.2 Review precondition + worker branch": [
+      {
+        "executionId": "35280c87-899c-4786-bc5f-cda2e6e1acf8",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792071137302
+      },
+      {
+        "executionId": "6750433d-cc99-48eb-9dfe-3d51701faa79",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792079030658
+      },
+      {
+        "executionId": "6750433d-cc99-48eb-9dfe-3d51701faa79",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792079344609
+      }
+    ],
+    "17.1 Offer the Review case": [
+      {
+        "executionId": "35280c87-899c-4786-bc5f-cda2e6e1acf8",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792071137304
+      },
+      {
+        "executionId": "6750433d-cc99-48eb-9dfe-3d51701faa79",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792079366988
+      },
+      {
+        "executionId": "6750433d-cc99-48eb-9dfe-3d51701faa79",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792079534724
+      }
+    ],
+    "17.2 Render the REVIEW.md report": [
+      {
+        "executionId": "35280c87-899c-4786-bc5f-cda2e6e1acf8",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792071137306
+      },
+      {
+        "executionId": "6750433d-cc99-48eb-9dfe-3d51701faa79",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792079542581
+      },
+      {
+        "executionId": "6750433d-cc99-48eb-9dfe-3d51701faa79",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792079735384
+      }
+    ],
+    "18. Checkpoint — Review case": [
+      {
+        "executionId": "35280c87-899c-4786-bc5f-cda2e6e1acf8",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792071137308
+      },
+      {
+        "executionId": "6750433d-cc99-48eb-9dfe-3d51701faa79",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792079740642
+      },
+      {
+        "executionId": "6750433d-cc99-48eb-9dfe-3d51701faa79",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792079799704
+      }
+    ],
+    "15. Business logic — `Review_Helper` (`core/codegen.py`)": [
+      {
+        "executionId": "35280c87-899c-4786-bc5f-cda2e6e1acf8",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792078335297
+      }
+    ],
+    "16. Backend — the Review case on the job machinery": [
+      {
+        "executionId": "6750433d-cc99-48eb-9dfe-3d51701faa79",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792079344612
+      }
+    ],
+    "17. Frontend — the Review trigger and report view (manual verification)": [
+      {
+        "executionId": "6750433d-cc99-48eb-9dfe-3d51701faa79",
+        "chatSessionId": "sess_a90c392d-9739-431c-b7f4-042cc9c12a26",
+        "timestamp": 1792079735385
+      }
+    ]
+  }
+}

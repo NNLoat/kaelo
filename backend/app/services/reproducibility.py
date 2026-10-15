@@ -13,7 +13,6 @@ from datetime import UTC, datetime
 
 from sqlmodel import Session, select
 
-from app.core.config import get_settings
 from app.db.session import engine
 from app.models.paper import Paper, ScoreStatus
 from app.models.reproducibility import ExperimentSetup, ReproducibilityScore
@@ -23,6 +22,7 @@ from app.services.repro.completeness import completeness
 from app.services.repro.explainer import explain
 from app.services.repro.extractor import extract_setup
 from app.services.repro.scorer import reproducibility
+from app.services.repro.standards import Evidence
 from app.services.repro.types import (
     ExperimentSetupData,
     ReproducibilityUnavailable,
@@ -31,7 +31,6 @@ from app.services.repro.types import (
 
 def score_reproducibility(paper_id: int) -> float:
     """Compute, persist, and return the rule-based Reproducibility Score."""
-    settings = get_settings()
     with Session(engine) as session:
         paper = session.get(Paper, paper_id)
         if paper is None:
@@ -52,13 +51,16 @@ def score_reproducibility(paper_id: int) -> float:
         if not signals.inspectable and not setup_available:
             raise ReproducibilityUnavailable(f"no signal for paper {paper_id}")
 
-        score = reproducibility(
-            cq,
-            signals.exists,
-            setup_completeness,
-            w_repo=settings.repro_repo_weight,
-            w_setup=settings.repro_setup_weight,
+        # Evaluate against the Domain's standard (R10.2). Reader-side papers have
+        # no manuscript/source — those stay None (ADR 0003 / Writer-only).
+        evidence = Evidence(
+            repo=signals,
+            code_quality=cq,
+            setup=setup,
+            setup_completeness=setup_completeness,
         )
+        result = reproducibility(paper.domain, evidence)
+        score = result.score
 
         # Explanation is optional; failure must not fail the score (R5.3).
         try:
@@ -76,6 +78,16 @@ def score_reproducibility(paper_id: int) -> float:
             setup_available=setup_available,
             setup_completeness=setup_completeness,
             explanation=explanation,
+            standard_key=result.standard_key,
+            criteria=[
+                {
+                    "id": c.id,
+                    "title": c.title,
+                    "status": c.status.value,
+                    "evidence_note": c.evidence_note,
+                }
+                for c in result.criteria
+            ],
         )
         session.commit()
         return score
@@ -92,6 +104,8 @@ def _persist(
     setup_available: bool,
     setup_completeness: float,
     explanation: str | None,
+    standard_key: str | None,
+    criteria: list[dict] | None,
 ) -> None:
     """Upsert both rows and mirror onto the Paper in one transaction (R7.4)."""
     now = datetime.now(UTC)
@@ -108,6 +122,8 @@ def _persist(
     repro_row.repo_inspectable = signals.inspectable
     repro_row.setup_completeness = setup_completeness
     repro_row.explanation = explanation
+    repro_row.standard_key = standard_key
+    repro_row.criteria = criteria
     repro_row.updated_at = now
     session.add(repro_row)
 

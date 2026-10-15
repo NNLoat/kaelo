@@ -1,5 +1,6 @@
 from datetime import UTC, datetime
 
+from sqlalchemy import JSON, Column
 from sqlmodel import Field, SQLModel
 
 from app.models.paper import ScoreStatus  # reuse the shared enum
@@ -18,6 +19,11 @@ class ReproducibilityScore(SQLModel, table=True):
     repo_inspectable: bool | None = Field(default=None)
     setup_completeness: float | None = Field(default=None)
     explanation: str | None = Field(default=None)  # nullable (R5.3)
+
+    # Selected Reproducibility Standard + per-Criterion results (R7.1, R8.8, R10).
+    # Both additive/nullable: null until the scoring seam populates them (task 13.2).
+    standard_key: str | None = Field(default=None)  # e.g. "ml_checklist" / "fair" / "baseline"
+    criteria: list[dict] | None = Field(default=None, sa_column=Column(JSON))
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), nullable=False)
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC), nullable=False)

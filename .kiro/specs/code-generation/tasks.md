@@ -367,8 +367,8 @@ Adds `review` as a fourth `Case` on the existing job/artifact machinery: a
 `Standard_Result` from `reproducibility-scoring`. No artifact score. Lifecycle,
 ownership, polling, cancellation, listing, and delete are reused unchanged.
 
-- [ ] 15. Business logic — `Review_Helper` (`core/codegen.py`)
-  - [ ] 15.1 Implement `review(inputs) -> GenFile`
+- [x] 15. Business logic — `Review_Helper` (`core/codegen.py`)
+  - [x] 15.1 Implement `review(inputs) -> GenFile`
     - Add `ReviewInputs` (role-aware material + the Paper's `Standard_Result`
       per-criterion statuses/notes) and `review(...)`: build a review prompt,
       call Bedrock via LangChain, return a single `REVIEW.md` `GenFile` listing
@@ -380,14 +380,14 @@ ownership, polling, cancellation, listing, and delete are reused unchanged.
     failure raises `GenerationError`.
     - _Requirements: 12.6, 12.8_
 
-- [ ] 16. Backend — the Review case on the job machinery
-  - [ ] 16.1 Add `review` to the `Case` enum (no new table; enum value only)
+- [x] 16. Backend — the Review case on the job machinery
+  - [x] 16.1 Add `review` to the `Case` enum (no new table; enum value only)
     - Add `Case.review` in `models/generation.py`. If `case` is a Postgres enum
       type, add an Alembic revision `ALTER TYPE ... ADD VALUE IF NOT EXISTS
       'review'` (autocommit) mirroring the `cancelled` migration; else no schema
       change.
     - _Requirements: 12.2_
-  - [ ] 16.2 Review precondition + worker branch
+  - [x] 16.2 Review precondition + worker branch
     - In `_precondition`, add the `review` arm: require a `Standard_Result` for
       `paper_ref`; if absent, trigger reproducibility evaluation and proceed when
       ready, else `refused("standard evaluation unavailable")` (R12.5). In
@@ -401,13 +401,13 @@ ownership, polling, cancellation, listing, and delete are reused unchanged.
     Generation has one `REVIEW.md` and no score; cross-user 404 still holds.
     - _Requirements: 12.3, 12.4, 12.5, 12.6_
 
-- [ ] 17. Frontend — the Review trigger and report view (manual verification)
-  - [ ] 17.1 Offer the Review case
+- [x] 17. Frontend — the Review trigger and report view (manual verification)
+  - [x] 17.1 Offer the Review case
     - Add a **Review manuscript & code** trigger alongside the existing per-paper
       case trigger (reuse `GenerateButton`/`JobStatusView`, which are
       case-agnostic), starting a `review` job for the Paper/claim.
     - _Requirements: 12.1, 12.2_
-  - [ ] 17.2 Render the REVIEW.md report
+  - [x] 17.2 Render the REVIEW.md report
     - In `ArtifactView` (or a small `ReviewView`), render the `REVIEW.md` as
       Markdown, keep the amber `Disclaimer` band, offer download, hide the
       code-quality score for Review, and reuse the owned-generation list +
@@ -415,7 +415,7 @@ ownership, polling, cancellation, listing, and delete are reused unchanged.
       `frontend-design` skill for the report layout.
     - _Requirements: 12.7, 12.8_
 
-- [ ] 18. Checkpoint — Review case
+- [x] 18. Checkpoint — Review case
   - Backend gate `cd backend && uv run pytest` passes; manually verify (with
     `CODEGEN_MOCK=true`) a Reader review and a Writer review: trigger → status →
     REVIEW.md rendered with disclaimer → download → delete.
