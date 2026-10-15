@@ -14,6 +14,17 @@ product glossary:
 - **Writer generation** (`Writer`): generate from the `Writer`'s uploaded
   manuscript text and, when present, uploaded source code.
 
+It also offers a cheaper alternative to full generation — the **Review** case: a
+`Review_Report` that reviews the manuscript and existing code against the
+applicable `Reproducibility_Standard`, identifies gaps and inconsistencies that
+affect reproducibility, recommends specific improvements, and is produced as a
+Markdown report. The Review case reuses the same `Generation_Job`/`Generation`
+machinery (lifecycle, polling, ownership, delete, and the "unverified" framing);
+its output is a single `REVIEW.md` rather than runnable code. It consumes the
+`Standard_Result` produced by `reproducibility-scoring`, so the standards are
+defined once and shared (see
+`docs/adr/0008-reproducibility-standard-adapter.md`).
+
 The system **never executes or verifies** generated code (see `product.md`).
 Every artifact carries an "unverified, not executed" disclaimer.
 
@@ -72,8 +83,24 @@ between `User`s; and any global opt-in account setting.
 - **Experiment_Setup**: The structured, machine-readable description of how to
   reproduce a Paper's results, produced by a separate feature and **consumed** by
   this spec as an existing, already-persisted input.
-- **Case**: Which of the three generation flows applies — **Generate**,
-  **Align**, or **Writer generation**.
+- **Case**: Which generation flow applies — **Generate**, **Align**, **Writer
+  generation**, or **Review**. The first three produce candidate code; Review
+  produces a `Review_Report` instead.
+- **Review_Report**: A Markdown (`REVIEW.md`) artifact a Review-case
+  `Generation_Job` produces: a review of the Paper's manuscript and existing code
+  against the applicable `Reproducibility_Standard`, listing gaps and
+  inconsistencies that affect reproducibility and recommending specific
+  improvements. Persisted as a `Generation` (its single file is the report);
+  carries the same unverified `Disclaimer`. It produces findings, not runnable
+  code, and never writes a Paper's `Reproducibility_Score`.
+- **Standard_Result**: The per-`Criterion` evaluation of a Paper against its
+  `Reproducibility_Standard` (statuses + evidence notes + the `[0,1]` roll-up),
+  produced and persisted by `reproducibility-scoring` and **consumed** by the
+  Review case to ground the report. Never produced by this spec.
+- **Reproducibility_Standard**: The published, domain-selected set of criteria a
+  Paper is evaluated against (ML Reproducibility Checklist for Computer Science,
+  FAIR for Medicine, baseline for unknown). Owned by `reproducibility-scoring`;
+  referenced here only via the `Standard_Result`.
 - **Generation_Job**: The asynchronous unit of work that produces a `Generation`.
   Started on explicit per-action opt-in. Ends in exactly one terminal state:
   **succeeded**, **failed**, or **refused**. At most one in-flight (pending or
@@ -250,3 +277,21 @@ response is not rejected as unparseable.
 
 1. WHEN the Generation_Helper receives a model response describing one or more files, THE Generation_Helper SHALL parse the files using a delimiter-based format that does not require the file contents to be escaped as JSON string values.
 2. IF the model response contains no parseable file block, THEN THE Generation_Helper SHALL raise a GenerationError (R7.5 unchanged).
+
+### Requirement 12: Review Report (manuscript-and-code review)
+
+**User Story:** As a User, I want a cheaper alternative to full code generation
+that reviews a Paper's manuscript and existing code against the applicable
+reproducibility standard and recommends improvements, so that I can close
+reproducibility gaps without generating a whole codebase.
+
+#### Acceptance Criteria
+
+1. WHILE a User is viewing a Paper for which code generation is applicable, THE Codegen_UI SHALL offer the Review case alongside the applicable Generate/Align/Writer-generation case, as a per-action opt-in control that is not activated by default.
+2. WHEN a User activates the Review trigger, THE Codegen_API SHALL start a Review-case Generation_Job on the same job machinery (lifecycle, in-flight de-duplication, ownership, polling, and cancellation) as the other cases.
+3. WHEN a Review-case Generation_Job runs, THE Codegen_API SHALL review the available material against the applicable Reproducibility_Standard — for a Writer, the uploaded manuscript text and uploaded source; for a Reader, the Paper's index metadata and, when present, its existing repository — using the same material-availability rules as the other cases, and SHALL NOT access any Paper full text not already available under the index-only rule.
+4. WHEN a Review-case Generation_Job produces its report, THE Codegen_API SHALL consume the Paper's existing Standard_Result produced by reproducibility-scoring to ground the review, and SHALL NOT compute or write the Paper's Reproducibility_Score itself.
+5. IF no Standard_Result exists for the Paper when a Review is requested, THEN THE Codegen_API SHALL trigger the Paper's reproducibility evaluation and proceed once it is available, or complete the Job in the refused state with a reason indicating the standard evaluation is unavailable.
+6. WHEN a Review-case Generation_Job completes successfully, THE Codegen_API SHALL persist a Generation whose single file is a Markdown REVIEW.md containing the identified gaps and inconsistencies and the recommended improvements to the manuscript and code, together with the Disclaimer, and SHALL set the Job to the succeeded state.
+7. WHEN the Codegen_UI presents a succeeded Review Generation, THE Codegen_UI SHALL render the REVIEW.md report, offer download including the Disclaimer, and reuse the owned-generation listing, latest-marking, and delete behavior of the other cases.
+8. THE Review case SHALL NOT produce an Artifact_Code_Quality_Score for the report; the report is findings, not runnable code.

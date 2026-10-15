@@ -26,6 +26,7 @@ class Case(str, Enum):
     generate = "generate"  # Reader, no repo: from scratch
     align = "align"  # Reader, has repo: align existing source
     writer = "writer"  # Writer: from uploaded manuscript + source
+    review = "review"  # Review material against the Paper's standard (R12.2)
 
 
 @dataclass
@@ -44,6 +45,41 @@ class ArtifactScore:
 class GenerationInputs:
     experiment_setup: str
     repo_link: str | None = None
+    manuscript_text: str | None = None
+    uploaded_source: str | None = None
+
+
+@dataclass
+class CriterionFinding:
+    """One Criterion of the Paper's Standard_Result, as plain data (R12.4).
+
+    Mirrors the per-Criterion fields of reproducibility-scoring's
+    ``CriterionResult`` without importing it, so this module keeps no dependency
+    on the service layer.
+    """
+
+    id: str
+    title: str
+    status: str
+    evidence_note: str
+
+
+@dataclass
+class ReviewInputs:
+    """Role-aware material plus the Paper's Standard_Result for the Review case.
+
+    Carries the same material the other cases use (per role: a Writer's
+    ``manuscript_text`` + ``uploaded_source``; a Reader's index ``metadata`` +
+    optional ``repo_link``) plus the Paper's ``Standard_Result`` — the selected
+    standard key and its per-``Criterion`` statuses/notes read from
+    reproducibility-scoring (R12.4). It adds **no** new access to full text
+    beyond what the index-only rule already allows (R12.3).
+    """
+
+    standard_key: str
+    criteria: list[CriterionFinding]
+    repo_link: str | None = None
+    metadata: str | None = None
     manuscript_text: str | None = None
     uploaded_source: str | None = None
 
@@ -189,3 +225,72 @@ def score(files: list[GenFile]) -> ArtifactScore:
         )
     except (ValueError, KeyError, TypeError) as exc:
         raise GenerationError(f"could not parse score: {exc}") from exc
+
+
+_MOCK_REVIEW = GenFile(
+    path="REVIEW.md",
+    content=(
+        "# Reproducibility Review (mock)\n\n"
+        "Deterministic mock report. Unverified; nothing was executed.\n\n"
+        "## Gaps and inconsistencies\n\n"
+        "- (mock) No gaps identified against the standard.\n\n"
+        "## Recommended improvements\n\n"
+        "- (mock) No improvements recommended.\n"
+    ),
+)
+
+
+def _build_review_prompt(inputs: ReviewInputs) -> str:
+    criteria_lines = (
+        "\n".join(
+            f"- [{c.status}] {c.id} — {c.title}: {c.evidence_note}" for c in inputs.criteria
+        )
+        or "- (no per-criterion results available)"
+    )
+    parts = [
+        "Review the paper's manuscript and existing code against its applicable "
+        "reproducibility standard. Produce findings only — do NOT write any code, "
+        "do NOT compute or report a numeric score, and do NOT run or compile "
+        "anything. List the gaps and inconsistencies that affect reproducibility, "
+        "then recommend specific improvements to the manuscript and code.",
+        "Reply with a single Markdown document, nothing else. Use these sections:\n"
+        "# Reproducibility Review\n"
+        "## Gaps and inconsistencies\n"
+        "## Recommended improvements",
+        f"Applicable reproducibility standard: {inputs.standard_key}",
+        f"Per-criterion results from the standard:\n{criteria_lines}",
+    ]
+    if inputs.metadata:
+        parts.append(f"Paper index metadata:\n{inputs.metadata}")
+    if inputs.repo_link:
+        parts.append(f"Existing repository: {inputs.repo_link}")
+    if inputs.manuscript_text:
+        parts.append(f"Manuscript:\n{inputs.manuscript_text}")
+    if inputs.uploaded_source:
+        parts.append(f"Uploaded source:\n{inputs.uploaded_source}")
+    return "\n\n".join(parts)
+
+
+def review(inputs: ReviewInputs) -> GenFile:
+    """Review material against the Paper's standard; return a single ``REVIEW.md``.
+
+    Builds a review prompt from the role-aware material (a Writer's manuscript +
+    uploaded source; a Reader's index metadata + optional repo link) grounded in
+    the Paper's ``Standard_Result`` (R12.3, R12.4), calls Bedrock via LangChain,
+    and returns one ``REVIEW.md`` ``GenFile`` listing gaps/inconsistencies against
+    the standard plus recommended improvements (R12.6).
+
+    Produces findings only — never code, never an ``Artifact_Code_Quality_Score``
+    (R12.8); never executes anything (R7.5). Honors ``codegen_mock`` with a fixed
+    report (R10). Raises ``GenerationError`` on any LLM failure.
+    """
+    if get_settings().codegen_mock:
+        return _MOCK_REVIEW  # R10: no Bedrock call
+    try:
+        resp = _client().invoke(_build_review_prompt(inputs))
+    except Exception as exc:
+        raise GenerationError(f"review LLM call failed: {exc}") from exc
+    text = _content_text(resp).strip()
+    if not text:
+        raise GenerationError("review response was empty")
+    return GenFile(path="REVIEW.md", content=text)

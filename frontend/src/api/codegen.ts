@@ -1,6 +1,6 @@
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
 
-export type Case = "generate" | "align" | "writer";
+export type Case = "generate" | "align" | "writer" | "review";
 export type JobState = "pending" | "running" | "succeeded" | "failed" | "refused" | "cancelled";
 
 export interface JobRead {

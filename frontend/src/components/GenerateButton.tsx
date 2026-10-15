@@ -5,6 +5,7 @@ const LABELS: Record<Case, string> = {
   generate: "Generate code",
   align: "Align code",
   writer: "Generate from upload",
+  review: "Review manuscript & code",
 };
 
 export default function GenerateButton({

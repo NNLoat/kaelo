@@ -10,9 +10,13 @@ from hypothesis import strategies as st
 from app.services.repro.code_quality import code_quality
 from app.services.repro.completeness import EXPECTED_FIELDS, completeness
 from app.services.repro.scorer import reproducibility
+from app.services.repro.standards import Evidence
 from app.services.repro.types import ExperimentSetupData, RepoSignals
 
 _SIGNAL_FIELDS = ("has_readme", "has_license", "has_tests", "recent_activity")
+
+# Non-blank text: setup criteria strip whitespace, so blank counts as absent.
+_nonblank = st.text(min_size=1).filter(lambda s: s.strip())
 
 
 def _signals(exists=True, inspectable=True, **flags) -> RepoSignals:
@@ -61,35 +65,42 @@ def test_completeness_is_populated_fraction(values):
     assert completeness(None) == 0.0
 
 
-# Property 4: Reproducibility is deterministic, in range, and monotonic.
+# Property 4: Reproducibility is deterministic and in range.
 # Validates: Requirements 4.2, 4.6
 @settings(max_examples=200)
 @given(
-    st.floats(0, 1),
-    st.floats(0, 1),
-    st.booleans(),
-    st.floats(0.01, 1),
-    st.floats(0.01, 1),
+    st.lists(st.booleans(), min_size=4, max_size=4),
+    st.lists(st.one_of(st.none(), st.text(min_size=1)), min_size=3, max_size=3),
 )
-def test_reproducibility_range_and_monotonic(cq, setup, repo_exists, w_repo, w_setup):
-    score = reproducibility(cq, repo_exists, setup, w_repo=w_repo, w_setup=w_setup)
-    assert 0.0 <= score <= 1.0
-    assert score == reproducibility(cq, repo_exists, setup, w_repo=w_repo, w_setup=w_setup)
-    higher_cq = reproducibility(
-        min(cq + 0.1, 1.0), repo_exists, setup, w_repo=w_repo, w_setup=w_setup
+def test_reproducibility_range_and_deterministic(flags, setup_values):
+    sig = _signals(exists=True, inspectable=True, **dict(zip(_SIGNAL_FIELDS, flags, strict=True)))
+    cq = code_quality(sig)
+    setup = ExperimentSetupData(*setup_values)
+    evidence = Evidence(
+        repo=sig,
+        code_quality=cq,
+        setup=setup,
+        setup_completeness=completeness(setup),
     )
-    assert higher_cq >= score - 1e-9
-    higher_setup = reproducibility(
-        cq, repo_exists, min(setup + 0.1, 1.0), w_repo=w_repo, w_setup=w_setup
-    )
-    assert higher_setup >= score - 1e-9
+    result = reproducibility("unknown", evidence)
+    assert 0.0 <= result.score <= 1.0
+    # Deterministic: same evidence -> same roll-up.
+    assert result.score == reproducibility("unknown", evidence).score
 
 
 # Property 5: A paper with no repo but a setup is still scored.
 # Validates: Requirements 4.3
 @settings(max_examples=100)
-@given(st.floats(0.01, 1))
-def test_no_repo_but_setup_is_scored(setup_completeness):
+@given(_nonblank, _nonblank)
+def test_no_repo_but_setup_is_scored(datasets, environment):
     # repo not inspectable -> code_quality 0.0, repo_exists False
-    score = reproducibility(0.0, False, setup_completeness, w_repo=0.5, w_setup=0.5)
-    assert score > 0.0
+    sig = _signals(exists=False, inspectable=False)
+    setup = ExperimentSetupData(hyperparameters=None, datasets=datasets, environment=environment)
+    evidence = Evidence(
+        repo=sig,
+        code_quality=0.0,
+        setup=setup,
+        setup_completeness=completeness(setup),
+    )
+    result = reproducibility("unknown", evidence)
+    assert result.score > 0.0

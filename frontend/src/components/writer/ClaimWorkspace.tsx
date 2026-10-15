@@ -31,6 +31,7 @@ export default function ClaimWorkspace({
   const [manuscript, setManuscript] = useState<ManuscriptRead | null>(null);
   const [sourcePaths, setSourcePaths] = useState<string[]>([]);
   const [job, setJob] = useState<JobRead | null>(null);
+  const [reviewJob, setReviewJob] = useState<JobRead | null>(null);
 
   useEffect(() => {
     void getClaim(claimId).then((res) => {
@@ -107,6 +108,15 @@ export default function ClaimWorkspace({
           <JobStatusView job={job} onRetry={() => setJob(null)} />
         ) : (
           <GenerateButton paperRef={claim.paper_ref} genCase="writer" onStarted={setJob} />
+        )}
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <h2 className="text-sm font-medium text-ink">Reproducibility review</h2>
+        {reviewJob ? (
+          <JobStatusView job={reviewJob} onRetry={() => setReviewJob(null)} />
+        ) : (
+          <GenerateButton paperRef={claim.paper_ref} genCase="review" onStarted={setReviewJob} />
         )}
       </div>
     </div>

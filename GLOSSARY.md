@@ -128,3 +128,46 @@ working copy are not retained after unpacking.
 **Source**:
 An external index we pull Papers from. Currently OpenAlex and arXiv.
 _Avoid_: Provider, database
+
+## Reproducibility standards
+
+**Domain**:
+The academic field a Paper belongs to, used to select which Reproducibility
+Standard applies: `computer_science`, `medicine`, or `unknown`. Captured at
+ingestion from the source's own field classifier (OpenAlex field id, arXiv
+category), not inferred later. See
+`docs/adr/0007-domain-captured-at-ingestion-from-source-classifiers.md`.
+_Avoid_: Field, subject, discipline, category
+
+**Reproducibility Standard**:
+A published set of reproducibility criteria a Paper is evaluated against,
+selected by its Domain: the **ML Reproducibility Checklist** (Computer Science),
+**FAIR** (Medicine), or a domain-neutral **baseline** (unknown). Each is one
+implementation of a single adapter interface, so a standard can be added or
+swapped without touching the scorer or the Review Report. See
+`docs/adr/0008-reproducibility-standard-adapter.md`.
+_Avoid_: Rubric, guideline, checklist (reserve "checklist" for the ML one)
+
+**Criterion**:
+One item of a Reproducibility Standard (e.g. "training details are reported",
+"dataset is findable and accessible"). Evaluating a Paper against a standard
+yields a status per Criterion.
+
+**Criterion Status**:
+The outcome of evaluating one Criterion for a Paper: **met**, **partial**,
+**unmet**, or **not-applicable**, with a short evidence note. The LLM may supply
+these as data; it never produces the score number. See
+`docs/adr/0009-llm-supplies-evidence-score-rollup-is-deterministic.md`.
+
+**Standard Result**:
+The structured output of evaluating a Paper against a Reproducibility Standard:
+the per-Criterion statuses and notes plus a deterministic `[0,1]` roll-up. The
+shared artifact both features consume — the Reproducibility Score reads the
+number; the Review Report reads the per-Criterion detail.
+
+**Review Report**:
+A Markdown report that reviews a Paper's manuscript and existing code against the
+applicable Reproducibility Standard, identifying gaps and recommending specific
+improvements. A cheaper alternative to full Code Generation that reuses the same
+standard evaluation; it produces findings, not runnable code.
+_Avoid_: Audit, assessment

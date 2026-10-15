@@ -360,6 +360,66 @@ there is no orphaned code. It depends on the `accounts` spec for the
   - Backend gate `cd backend && uv run pytest` passes; manually verify the writer
     generate flow end to end (with `CODEGEN_MOCK=true` for a deterministic run).
 
+## Review Report case (R12, ADR 0008)
+
+Adds `review` as a fourth `Case` on the existing job/artifact machinery: a
+`Review_Helper` produces a single `REVIEW.md` grounded in the Paper's
+`Standard_Result` from `reproducibility-scoring`. No artifact score. Lifecycle,
+ownership, polling, cancellation, listing, and delete are reused unchanged.
+
+- [x] 15. Business logic — `Review_Helper` (`core/codegen.py`)
+  - [x] 15.1 Implement `review(inputs) -> GenFile`
+    - Add `ReviewInputs` (role-aware material + the Paper's `Standard_Result`
+      per-criterion statuses/notes) and `review(...)`: build a review prompt,
+      call Bedrock via LangChain, return a single `REVIEW.md` `GenFile` listing
+      gaps/inconsistencies against the standard and recommended improvements.
+      Honor `codegen_mock` with a fixed `REVIEW.md`. Never produce code or a
+      score; never execute anything. Raise `GenerationError` on failure.
+    - _Requirements: 12.3, 12.4, 12.6, 12.8_
+  - [ ]* 15.2 Tests — mocked model returns a REVIEW.md; mock-mode deterministic;
+    failure raises `GenerationError`.
+    - _Requirements: 12.6, 12.8_
+
+- [x] 16. Backend — the Review case on the job machinery
+  - [x] 16.1 Add `review` to the `Case` enum (no new table; enum value only)
+    - Add `Case.review` in `models/generation.py`. If `case` is a Postgres enum
+      type, add an Alembic revision `ALTER TYPE ... ADD VALUE IF NOT EXISTS
+      'review'` (autocommit) mirroring the `cancelled` migration; else no schema
+      change.
+    - _Requirements: 12.2_
+  - [x] 16.2 Review precondition + worker branch
+    - In `_precondition`, add the `review` arm: require a `Standard_Result` for
+      `paper_ref`; if absent, trigger reproducibility evaluation and proceed when
+      ready, else `refused("standard evaluation unavailable")` (R12.5). In
+      `run_job`, branch on `Case.review`: load the `Standard_Result`, call
+      `review(...)`, persist the `Generation` with the `REVIEW.md` as its sole
+      file and no `Artifact_Code_Quality_Score` (sentinel/zero), reusing the
+      latest-flip + state transitions.
+    - _Requirements: 12.2, 12.3, 12.4, 12.5, 12.6, 12.8_
+  - [ ]* 16.3 Tests — Reader review grounded in index + repo; Writer review uses
+    uploads; missing `Standard_Result` → trigger-or-refuse; the persisted
+    Generation has one `REVIEW.md` and no score; cross-user 404 still holds.
+    - _Requirements: 12.3, 12.4, 12.5, 12.6_
+
+- [x] 17. Frontend — the Review trigger and report view (manual verification)
+  - [x] 17.1 Offer the Review case
+    - Add a **Review manuscript & code** trigger alongside the existing per-paper
+      case trigger (reuse `GenerateButton`/`JobStatusView`, which are
+      case-agnostic), starting a `review` job for the Paper/claim.
+    - _Requirements: 12.1, 12.2_
+  - [x] 17.2 Render the REVIEW.md report
+    - In `ArtifactView` (or a small `ReviewView`), render the `REVIEW.md` as
+      Markdown, keep the amber `Disclaimer` band, offer download, hide the
+      code-quality score for Review, and reuse the owned-generation list +
+      latest-marking + delete. Follow `design.md` visual direction and apply the
+      `frontend-design` skill for the report layout.
+    - _Requirements: 12.7, 12.8_
+
+- [x] 18. Checkpoint — Review case
+  - Backend gate `cd backend && uv run pytest` passes; manually verify (with
+    `CODEGEN_MOCK=true`) a Reader review and a Writer review: trigger → status →
+    REVIEW.md rendered with disclaimer → download → delete.
+
 ## Task Dependency Graph
 
 ```json

@@ -5,10 +5,12 @@ restricts to the CS + Medicine domains. Index metadata/links only — never full
 text (R7.1, R7.2, R7.6). Any failure/timeout raises ``SourceError`` (R7.5).
 """
 
+import re
 from datetime import date
 
 import httpx
 
+from app.models.paper import PaperDomain
 from app.services.sources.base import SourceError, SourceRecord
 
 _API_URL = "https://api.openalex.org/works"
@@ -74,7 +76,24 @@ class OpenAlexAdapter:
             arxiv_id=None,
             source_links=links,
             repo_url=None,
+            domain=_domain(work),
         )
+
+
+# OpenAlex field ids → domain (R9.1). Anything else/missing → unknown (R9.3).
+_FIELD_DOMAINS = {17: PaperDomain.computer_science, 27: PaperDomain.medicine}
+
+
+def _domain(work: dict) -> PaperDomain:
+    """Read ``primary_topic.field.id`` and map the trailing integer id."""
+    field = (work.get("primary_topic") or {}).get("field") or {}
+    raw = field.get("id")
+    if not raw:
+        return PaperDomain.unknown
+    m = re.search(r"(\d+)$", str(raw))  # e.g. ".../fields/17" or "fields/17"
+    if not m:
+        return PaperDomain.unknown
+    return _FIELD_DOMAINS.get(int(m.group(1)), PaperDomain.unknown)
 
 
 def _reconstruct_abstract(inverted: dict | None) -> str | None:

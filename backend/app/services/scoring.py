@@ -13,7 +13,7 @@ from sqlmodel import Session, select
 
 from app.core.config import get_settings
 from app.db.session import engine
-from app.models.paper import Paper, ScoreStatus
+from app.models.paper import Paper, PaperDomain, ScoreStatus
 from app.services import ranking
 from app.services.llm import PaperSummary, assess_relevance, expand_query
 from app.services.merge import MergedPaper, merge_dedup
@@ -89,6 +89,8 @@ def _upsert(merged: MergedPaper, session: Session) -> int:
             if src not in existing.sources:
                 existing.sources = existing.sources + [src]
         existing.repo_url = existing.repo_url or merged.repo_url
+        if existing.domain is PaperDomain.unknown and merged.domain is not PaperDomain.unknown:
+            existing.domain = merged.domain
         session.add(existing)
         session.flush()
         return existing.id
@@ -103,6 +105,7 @@ def _upsert(merged: MergedPaper, session: Session) -> int:
         sources=merged.sources,
         source_links=[{"source": s, "url": u} for s, u in merged.source_links],
         repo_url=merged.repo_url,
+        domain=merged.domain,
     )
     session.add(paper)
     session.flush()
