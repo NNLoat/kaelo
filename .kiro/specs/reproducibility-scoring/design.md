@@ -51,12 +51,17 @@ records `unavailable`). No other `paper-search` module changes.
 
 ### Key design decisions
 
-- **Rule-based number, AI only for extraction + explanation (R2.3, R4.5, R5.2,
-  R6.7).** `Code_Quality_Scorer`, `Setup_Completeness`, and
-  `Reproducibility_Scorer` are pure functions with **no LLM import**. The LLM
-  (`Setup_Extractor`, `Score_Explainer`) produces the structured `Experiment
-  Setup` and a prose explanation only. The explanation takes the already-computed
-  score as a fixed input and can never alter it.
+- **Rule-based number via a domain-selected standard (R2.3, R4, R10).** The
+  `Reproducibility Score` is the deterministic roll-up of a `Standard Result`
+  produced by evaluating the `Paper` against a `Reproducibility Standard` selected
+  by its `Domain` (ML Checklist for CS, FAIR for Medicine, baseline for unknown).
+  Standards live behind one adapter interface in `services/repro/standards/`,
+  selected by `select_standard(domain)`; the `Reproducibility_Scorer` is a thin
+  caller. `Code_Quality_Scorer` and `Setup_Completeness` remain pure contributing
+  signals feeding criteria. The LLM may supply per-criterion *evidence as data*
+  for criteria heuristics cannot judge (`Setup_Extractor`, `Score_Explainer`, and
+  a bounded criterion-evidence helper), but the status→score roll-up has **no LLM
+  import** and the LLM output can never change the number (ADR 0009).
 - **GitHub-only inspection behind an interface (confirmed).** `Repo_Inspector`
   supports GitHub for the first iteration via the GitHub REST API, implemented
   behind a `RepoHost` interface so GitLab/others can be added later without
@@ -281,15 +286,74 @@ def completeness(setup: ExperimentSetupData | None) -> float:
     # None (unavailable) -> 0.0; else populated_fields / len(EXPECTED_FIELDS) (R4.1).
 ```
 
-**`Reproducibility_Scorer`** — `backend/app/services/repro/scorer.py` (no LLM):
+**`Reproducibility Standard` adapter** —
+`backend/app/services/repro/standards/` (no LLM in the roll-up):
 
 ```python
-def reproducibility(
-    code_quality: float, repo_exists: bool, setup_completeness: float,
-    *, w_repo: float, w_setup: float,
-) -> float:
-    # deterministic blend, non-decreasing in each input (R4.2, R4.6); weights from
-    # config. Repo-absent still scores from the setup contribution (R4.3).
+from dataclasses import dataclass
+from enum import Enum
+from typing import Protocol
+
+class CriterionStatus(str, Enum):
+    met = "met"; partial = "partial"; unmet = "unmet"; not_applicable = "not_applicable"
+
+@dataclass(frozen=True)
+class CriterionResult:
+    id: str
+    title: str
+    status: CriterionStatus
+    evidence_note: str
+
+@dataclass(frozen=True)
+class Evidence:
+    """Everything a standard may judge against — gathered once, role-aware."""
+    repo: RepoSignals
+    code_quality: float
+    setup: ExperimentSetupData | None
+    setup_completeness: float
+    manuscript_text: str | None = None   # Writer-claimed papers only (ADR 0003)
+    source_files: list[tuple[str, str]] | None = None
+
+@dataclass(frozen=True)
+class StandardResult:
+    standard_key: str
+    criteria: list[CriterionResult]
+    score: float                          # deterministic roll-up (the number)
+
+class ReproducibilityStandard(Protocol):
+    key: str
+    def criteria(self) -> list[str]: ...                       # criterion ids/titles
+    def evaluate(self, evidence: Evidence) -> StandardResult: ...
+
+def roll_up(criteria: list[CriterionResult]) -> float:
+    # met=1, partial=0.5, unmet=0; not_applicable excluded from the denominator.
+    scored = [c for c in criteria if c.status is not CriterionStatus.not_applicable]
+    if not scored:
+        return 0.0
+    pts = {CriterionStatus.met: 1.0, CriterionStatus.partial: 0.5, CriterionStatus.unmet: 0.0}
+    return sum(pts[c.status] for c in scored) / len(scored)
+
+def select_standard(domain: PaperDomain) -> ReproducibilityStandard:
+    # computer_science -> MLReproducibilityChecklist
+    # medicine         -> FAIRStandard
+    # unknown          -> BaselineStandard
+```
+
+Each concrete standard (`ml_checklist.py`, `fair.py`, `baseline.py`) ships a
+scoped ~6-criterion list and judges each criterion from `Evidence`, calling the
+bounded LLM criterion-evidence helper only where a heuristic cannot decide
+(ADR 0009). Adding a standard is a new file + a `select_standard` entry — nothing
+else changes (R10.4).
+
+**`Reproducibility_Scorer`** — `backend/app/services/repro/scorer.py` (no LLM in
+the roll-up):
+
+```python
+def reproducibility(domain: PaperDomain, evidence: Evidence) -> StandardResult:
+    # Selects the standard via select_standard(domain), evaluates the Paper
+    # against its Criteria, and returns the StandardResult whose `score` is the
+    # deterministic roll-up (R4.2, R4.6). A non-inspectable repo still scores from
+    # the criteria the remaining evidence satisfies (R4.3).
 ```
 
 **`Score_Explainer`** — `backend/app/services/repro/explainer.py` (Bedrock via
@@ -319,10 +383,18 @@ therefore extends the `GET /api/papers/{id}` response with an optional
 ```ts
 // added to PaperDetail (null until reproducibility-scoring has run)
 reproducibilityBreakdown: {
+  standardKey: string;           // selected standard, e.g. "ml_checklist" | "fair" | "baseline"
+  standardName: string;          // display label, e.g. "ML Reproducibility Checklist"
   codeQuality: ScoreCell;        // contributing Code-Quality Score (R8.1)
   setupCompleteness: ScoreCell;  // contributing Setup_Completeness (R8.1)
   repoExists: boolean | null;    // null => not inspected; false => repo-absent (R8.7)
   explanation: string | null;    // Score_Explainer output when available (R8.6)
+  criteria: {                    // per-Criterion Standard Result (R8.8)
+    id: string;
+    title: string;
+    status: "met" | "partial" | "unmet" | "not_applicable";
+    evidenceNote: string;
+  }[];
 } | null;
 ```
 
@@ -334,8 +406,12 @@ client is needed — only this additive field on the existing detail endpoint an
 the matching `PaperDetail` type.
 
 The detail view (`frontend/src/components/PaperDetail.tsx`):
-- Shows the `Reproducibility Score` and its contributing `Code-Quality Score` and
+- Shows the `Reproducibility Score`, the name of the `Reproducibility Standard`
+  it was evaluated against, and its contributing `Code-Quality Score` and
   `Setup_Completeness`, each labeled, replacing the stubbed value (R8.1).
+- Shows the per-`Criterion` list — title, status (met / partial / unmet /
+  not-applicable), and evidence note — so the Reader sees what drove the score
+  (R8.8).
 - Renders the reproducibility score as pending / unavailable via the existing
   Score_Status rendering (R8.2, R8.3).
 - Populates the Experiment Setup section with hyperparameters / datasets /
@@ -368,6 +444,10 @@ class ReproducibilityScore(SQLModel, table=True):
 
     score: float | None = Field(default=None)              # the number (R7.1)
     status: ScoreStatus = Field(default=ScoreStatus.pending)
+    standard_key: str | None = Field(default=None)         # selected standard (R7.1, R10)
+    criteria: list[dict] | None = Field(                   # Standard Result per-criterion (R7.1, R8.8)
+        default=None, sa_column=Column(JSON)
+    )
     code_quality_score: float | None = Field(default=None) # contributing (R7.1)
     repo_exists: bool | None = Field(default=None)
     repo_inspectable: bool | None = Field(default=None)
@@ -437,19 +517,35 @@ No full text is stored in either place (R7.5).
 | --- | --- | --- | --- |
 | reproducibility_scores | `paper_id` | FK papers.id, unique | R7.1, R7.4 |
 | reproducibility_scores | `score` / `status` | float? / enum | R7.1, R6.3, R6.4 |
+| reproducibility_scores | `standard_key` | str? | R7.1, R10 |
+| reproducibility_scores | `criteria` | JSON? (Standard Result per-criterion) | R7.1, R8.8 |
 | reproducibility_scores | `code_quality_score`, `repo_exists`, `repo_inspectable`, `setup_completeness` | breakdown | R7.1, R8.1, R8.7 |
 | reproducibility_scores | `explanation` | str? (nullable) | R5.1, R5.3 |
 | experiment_setups | `paper_id` | FK papers.id, unique | R7.2, R7.4 |
 | experiment_setups | `hyperparameters`/`datasets`/`environment` | str? (None = absent) | R7.2, R8.4 |
 | experiment_setups | `available` | bool | R3.3, R8.5 |
+| papers (existing table) | `domain` | enum `computer_science`/`medicine`/`unknown`, default `unknown` | R9 |
 
-### Alembic migration (R7.3)
+### Paper `domain` column + ingestion capture (R9)
 
-A new revision under `backend/alembic/versions/` (generated via
+A new `PaperDomain` string enum (`computer_science`, `medicine`, `unknown`) and a
+`domain: PaperDomain = unknown` column are added to the existing `papers` table.
+It is populated at ingestion by extending the source adapters (ADR 0007): the
+`SourceRecord`/`MergedPaper` shapes carry a `domain`, OpenAlex `_map` reads
+`primary_topic.field.id` (17→CS, 27→Medicine), and arXiv `_map` reads the Atom
+`<category>`/`<arxiv:primary_category>` (`cs.*`→CS, `q-bio.*`→Medicine). A missing
+or ambiguous classifier yields `unknown` (R9.3). The `Standard_Selector` maps
+`unknown` to the baseline standard so every Paper stays scorable (R9.5).
+
+### Alembic migration (R7.3, R9.4)
+
+A revision under `backend/alembic/versions/` (generated via
 `alembic revision --autogenerate -m "create reproducibility tables"`, then
 reviewed) creates `reproducibility_scores` and `experiment_setups` with the
-unique `paper_id` FKs/indexes. Applied by `alembic upgrade head` (entrypoint),
-never `create_all` (R7.3).
+unique `paper_id` FKs/indexes, now also carrying `standard_key` + `criteria`. A
+second (or combined) revision adds the `papers.domain` column, backfilling
+existing rows to `unknown` (R9.4). Applied by `alembic upgrade head`
+(entrypoint), never `create_all` (R7.3).
 
 ### Configuration (R1.6, R3.5, R7.6)
 

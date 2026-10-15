@@ -308,6 +308,92 @@ the pieces together, so there is no orphaned code.
     indication; confirm a search's reproducibility score fills in from `pending`
     to a real value. Ask the user if questions arise.
 
+## Redesign: standard-based scoring (ADRs 0007/0008/0009)
+
+This section revises the already-implemented scorer to evaluate a `Paper` against
+a `Reproducibility Standard` selected by its `Domain` (ML Checklist for CS, FAIR
+for Medicine, baseline for unknown), replacing the ad-hoc blend. The rule-based
+number, token-security, and paper-search-seam contracts are unchanged.
+
+- [ ] 11. Business logic — the standard adapter and domain selection
+  - [ ] 11.1 Define the standard interface and shared result shapes
+    - Create `backend/app/services/repro/standards/__init__.py` with
+      `CriterionStatus` enum, `CriterionResult`, `Evidence`, `StandardResult`
+      dataclasses, the `ReproducibilityStandard` Protocol, the deterministic
+      `roll_up(criteria)` function (met=1/partial=0.5/unmet=0, N-A excluded), and
+      `select_standard(domain)`. No LLM import in `roll_up`.
+    - _Requirements: 10.1, 10.2, 4.2, 4.6_
+  - [ ] 11.2 Implement the three standards (scoped ~6 criteria each)
+    - `ml_checklist.py`, `fair.py`, `baseline.py`, each judging its criteria from
+      `Evidence`; a criterion a heuristic cannot decide calls the bounded LLM
+      criterion-evidence helper (evidence as data only). Criteria scoped to
+      gatherable evidence (R10.5).
+    - _Requirements: 10.3, 10.4, 10.5, 4.3, 4.5_
+  - [ ] 11.3 Rewrite `Reproducibility_Scorer` (`repro/scorer.py`) to the standard
+    - `reproducibility(domain, evidence) -> StandardResult`: select the standard,
+      evaluate, return the `StandardResult` whose `score` is the roll-up. Keep no
+      LLM import in the roll-up path.
+    - _Requirements: 4.2, 4.3, 4.4, 4.6, 10.3_
+  - [ ]* 11.4 Property tests — roll-up deterministic/in-range; N-A excluded;
+    standard selection by domain; number unaffected by LLM evidence (reuse
+    Properties 4 and 7 against the new shape).
+    - _Requirements: 4.2, 4.5, 4.6, 10.2_
+
+- [ ] 12. Backend — domain capture at ingestion
+  - [ ] 12.1 Add `PaperDomain` enum + `papers.domain` column
+    - Add the enum and `domain` field to `app/models/paper.py`; register for
+      autogenerate.
+    - _Requirements: 9.4_
+  - [ ] 12.2 Carry domain through ingestion
+    - Add `domain` to `SourceRecord` and `MergedPaper`/`_fold` (prefer a known
+      domain over `unknown` on merge); read `primary_topic.field.id` in OpenAlex
+      `_map` and the Atom category in arXiv `_map`; map to the enum, else
+      `unknown` (R9.1–R9.3).
+    - _Requirements: 9.1, 9.2, 9.3_
+  - [ ] 12.3 Alembic migration for `papers.domain`
+    - Generate + review a migration adding the column with default/backfill
+      `unknown`; commit under `backend/alembic/versions/`.
+    - _Requirements: 9.4_
+  - [ ]* 12.4 Example tests — OpenAlex field id / arXiv category → domain mapping,
+    including the `unknown` fallback and merge preference.
+    - _Requirements: 9.1, 9.2, 9.3_
+
+- [ ] 13. Backend — persist and surface the Standard Result
+  - [ ] 13.1 Add `standard_key` + `criteria` JSON to `ReproducibilityScore`
+    - Extend the model and add an Alembic migration (nullable, additive).
+    - _Requirements: 7.1_
+  - [ ] 13.2 Wire the seam to the standard
+    - In `services/reproducibility.py`, build `Evidence` (repo signals,
+      code-quality, setup, completeness, and for a Writer-claimed paper the
+      manuscript/source), load `paper.domain`, call
+      `reproducibility(domain, evidence)`, and persist the `StandardResult`
+      (`score`, `standard_key`, `criteria`) alongside the existing breakdown.
+    - _Requirements: 6.2, 6.7, 7.1_
+  - [ ] 13.3 Extend `reproducibility_breakdown` on `GET /api/papers/{id}`
+    - Add `standardKey`, `standardName`, and the `criteria` list to the additive,
+      nullable breakdown object.
+    - _Requirements: 8.1, 8.8_
+  - [ ]* 13.4 Example tests — a CS paper routes to ML Checklist and a Medicine
+    paper to FAIR; the persisted `criteria` round-trips onto the detail response;
+    `unknown` → baseline.
+    - _Requirements: 9.5, 10.2, 8.8_
+
+- [ ] 14. Frontend — surface the standard and criteria (manual verification)
+  - [ ] 14.1 Extend `PaperDetail` / client with `standardKey`, `standardName`,
+    `criteria`.
+    - _Requirements: 8.1, 8.8_
+  - [ ] 14.2 Render the standard name and the per-Criterion list (title, status
+    badge, evidence note) in `PaperDetail.tsx`, using the `frontend-design` skill
+    for the criteria presentation.
+    - _Requirements: 8.1, 8.8_
+
+- [ ] 15. Redesign checkpoint
+  - Backend: `cd backend && uv run pytest` passes. Frontend: manually verify a CS
+    paper shows "ML Reproducibility Checklist" with its criteria, a Medicine paper
+    shows "FAIR", and an unknown-domain paper shows the baseline — each with
+    per-criterion statuses and notes.
+
+
 ## Notes
 
 - Tasks marked with `*` are optional and can be skipped for a faster MVP; they

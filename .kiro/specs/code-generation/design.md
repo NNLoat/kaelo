@@ -64,6 +64,16 @@ authentication, and on persisted `Writer` uploads (`docs/adr/0003`).
 - **Schema via Alembic, never `create_all`.** The `generation_jobs` and
   `generations` tables are created by committed migrations applied by the
   container entrypoint (`alembic upgrade head`), per tech.md and R8.1.
+- **The Review case reuses the generation machinery (R12).** `Review` is a fourth
+  `Case` on the existing `Generation_Job`/`Generation` tables — not a parallel
+  table pair — so lifecycle, in-flight de-dup, polling, cancellation, ownership,
+  listing, and delete all come for free. The only differences: the worker calls a
+  `Review_Helper` (not `Generation_Helper` + `Scoring_Helper`), the resulting
+  `Generation`'s `files` hold a single `REVIEW.md`, and no
+  `Artifact_Code_Quality_Score` is produced (R12.8) — the score column is set to a
+  sentinel/zero and the UI hides it for Review. The report is grounded in the
+  Paper's existing `Standard_Result` from `reproducibility-scoring` (R12.4),
+  consumed read-only; this spec never computes a `Reproducibility_Score`.
 
 ## Architecture
 
@@ -194,7 +204,7 @@ requirements specify.
 **`api/codegen.ts`** — the single place that talks to `Codegen_API`:
 
 ```ts
-type Case = "generate" | "align" | "writer";
+type Case = "generate" | "align" | "writer" | "review";
 type JobState = "pending" | "running" | "succeeded" | "failed" | "refused";
 
 interface JobRead {
@@ -306,15 +316,23 @@ def start_job(payload: JobCreate, bg: BackgroundTasks,
 `running`, load inputs for the case, call `Generation_Helper` then
 `Scoring_Helper`, persist the `Generation` (flipping the prior latest), set the
 job `succeeded`; on any helper error set `failed` and persist no `Generation`
-(R5.7). It never writes a Paper score (R5.8).
+(R5.7). It never writes a Paper score (R5.8). For the `review` case it instead
+loads the Paper's `Standard_Result`, calls `Review_Helper.review(...)`, and
+persists the returned `REVIEW.md` as the `Generation`'s sole file with no
+`Artifact_Code_Quality_Score` (R12.6, R12.8), reusing the same latest-flip and
+job-state transitions.
 
-**Precondition evaluation** (R4.3–R4.5), per case:
+**Precondition evaluation** (R4.3–R4.5, R12.5), per case:
 - `generate` / `align`: an `Experiment_Setup` must exist for `paper_ref`, else
   `refused("no experiment setup")`.
 - `align`: the Paper index must carry a repository link, else
   `refused("no repository")`.
 - `writer`: the `Writer` must have an uploaded manuscript for the claimed paper,
   else `refused("no upload")`.
+- `review`: the Paper must have a `Standard_Result` from `reproducibility-scoring`;
+  if absent, trigger the evaluation and proceed once available, else
+  `refused("standard evaluation unavailable")` (R12.5). The same role-based
+  material rules as the other cases apply (R12.3).
 
 **Owner scoping** (R6.5): every `/jobs/{id}` and `/generations/{id}` handler
 filters by `owner_id == user.id` and returns `404` otherwise, so existence is not
@@ -344,7 +362,22 @@ def generate(case: Case, inputs: GenerationInputs) -> list[GenFile]:
 def score(files: list[GenFile]) -> ArtifactScore:
     """Ask Bedrock via LangChain to rate the files; return numeric score +
     short rationale (R7.4). Never executes the code (R7.5)."""
+
+def review(inputs: ReviewInputs) -> GenFile:
+    """Build a review prompt from the available material (manuscript/source for a
+    Writer; index metadata + repo link for a Reader) and the Paper's
+    Standard_Result, call Bedrock via LangChain, and return a single REVIEW.md
+    GenFile: identified gaps/inconsistencies against the applicable
+    Reproducibility_Standard plus specific recommended improvements (R12.3, R12.4,
+    R12.6). Produces findings only — never code, never an artifact score (R12.8),
+    never executes anything (R7.5)."""
 ```
+
+`ReviewInputs` carries the same role-aware material the other cases use plus the
+Paper's `Standard_Result` (per-`Criterion` statuses + notes) read from
+`reproducibility-scoring`; it adds no new access to full text. The Review worker
+calls `review(...)` instead of `generate(...)`/`score(...)` and persists the
+returned `REVIEW.md` as the `Generation`'s sole file with no code-quality score.
 
 `GenerationInputs` carries only what the case needs: the `Experiment_Setup` text,
 the optional repository link (align), or the uploaded manuscript text + optional
@@ -366,7 +399,7 @@ from enum import Enum
 from sqlmodel import Field, SQLModel, Column, JSON
 
 class Case(str, Enum):
-    generate = "generate"; align = "align"; writer = "writer"
+    generate = "generate"; align = "align"; writer = "writer"; review = "review"
 
 class JobState(str, Enum):
     pending = "pending"; running = "running"

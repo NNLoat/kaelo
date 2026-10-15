@@ -7,23 +7,42 @@ The `reproducibility-scoring` feature computes the `Reproducibility Score` for a
 that stub behind the same seam, so when it ships the search ranking's
 reproducibility term becomes real with no change to `paper-search` plumbing.
 
-The `Reproducibility Score` is **rule-based**, derived from two signal groups:
+The `Reproducibility Score` is **rule-based** and is produced by evaluating a
+`Paper` against a published `Reproducibility Standard` selected by the `Paper`'s
+`Domain`:
 
-1. **Repository signals** — whether an associated code repository exists and its
-   `Code-Quality Score`, computed from repo-quality heuristics (README presence,
-   license presence, tests presence, and recent activity) read via the Git host
-   API.
-2. **Experiment Setup completeness** — how complete the LLM-extracted
-   `Experiment Setup` is (hyperparameters, datasets, environment) relative to the
-   fields a reproducible paper is expected to describe.
+- **ML Reproducibility Checklist** for Computer Science papers,
+- **FAIR** principles for Medicine papers,
+- a domain-neutral **baseline** standard when the `Domain` is `unknown`.
+
+Each standard is one implementation of a single `Reproducibility Standard`
+adapter interface, selected by a `select_standard(domain)` registry, so a
+standard can be added or swapped without changing the scorer, the persistence
+layer, or any consumer. See
+`docs/adr/0008-reproducibility-standard-adapter.md`.
+
+Evaluating a `Paper` against its standard yields a `Standard Result`: a
+per-`Criterion` status (met / partial / unmet / not-applicable) with an evidence
+note, plus a deterministic `[0,1]` roll-up that is the `Reproducibility Score`.
+Each standard draws on the same evidence pool: the repository signals (via the
+`Repo_Inspector`), the LLM-extracted `Experiment Setup`, and — for a Writer's
+claimed paper — the persisted manuscript/source. The `Code-Quality Score` and
+`Setup_Completeness` remain contributing signals that feed criteria.
 
 The division of labor between AI and non-AI is deliberate and mandatory: the LLM
-(Amazon Bedrock via LangChain) **extracts** the structured `Experiment Setup`
-from the available paper material and **can explain** a computed score in natural
-language, but it **never produces the number**. The `Reproducibility Score` and
-the `Code-Quality Score` are computed by rule-based functions over the signals
-above. This mirrors `paper-search`, where the LLM assesses relevance but the
-`Final Score` blend is non-AI.
+(Amazon Bedrock via LangChain) **extracts** the structured `Experiment Setup`,
+may supply **per-criterion evidence as data** for criteria that heuristics cannot
+judge, and **can explain** a computed score in natural language — but it **never
+produces the number**. The criterion-status → score roll-up is a deterministic
+rule; the LLM output can never change the float. See
+`docs/adr/0009-llm-supplies-evidence-score-rollup-is-deterministic.md`. This
+mirrors `paper-search`, where the LLM assesses relevance but the `Final Score`
+blend is non-AI.
+
+The `Domain` that selects the standard is captured at ingestion from the source's
+own field classifier (OpenAlex field id, arXiv category) and persisted on the
+`Paper`; it is never inferred later from title/abstract. See
+`docs/adr/0007-domain-captured-at-ingestion-from-source-classifiers.md`.
 
 Scoring is asynchronous and its result is cached on the `Paper`, reusing the
 Score_Status lifecycle (`pending` → `ready`/`unavailable`) that `paper-search`
@@ -77,8 +96,28 @@ the `Final Score`, it specifies only its own side of the boundary.
   complete an `Experiment Setup` is relative to the expected fields
   (hyperparameters, datasets, environment). Non-AI.
 - **Reproducibility_Scorer**: The rule-based business-logic function that computes
-  the `Reproducibility Score` in the range 0 to 1 by combining the `Code-Quality
-  Score` (and repo existence) with the `Setup_Completeness`. Non-AI.
+  the `Reproducibility Score` in the range 0 to 1 by evaluating the `Paper`
+  against its selected `Reproducibility Standard` and rolling up the per-`Criterion`
+  statuses. Non-AI (the roll-up); may consume LLM-supplied evidence as data.
+- **Domain**: The academic field a `Paper` belongs to — `computer_science`,
+  `medicine`, or `unknown` — used to select the `Reproducibility Standard`.
+  Captured at ingestion from the source classifier, persisted on the `Paper`.
+- **Reproducibility Standard**: A published set of reproducibility `Criterion`s a
+  `Paper` is evaluated against, selected by its `Domain`: the ML Reproducibility
+  Checklist (Computer Science), FAIR (Medicine), or a domain-neutral baseline
+  (unknown). One implementation of a single adapter interface.
+- **Standard_Selector**: The `select_standard(domain)` registry that maps a
+  `Domain` to its `Reproducibility Standard` implementation. The single place a
+  standard is swapped or added.
+- **Criterion**: One item of a `Reproducibility Standard`. Evaluating a `Paper`
+  against a standard yields a status and evidence note per `Criterion`.
+- **Criterion Status**: The outcome of one `Criterion` for a `Paper`: met,
+  partial, unmet, or not-applicable, with a short evidence note. May be supplied
+  by the LLM as data; never the score number.
+- **Standard Result**: The structured output of evaluating a `Paper` against its
+  `Reproducibility Standard`: the per-`Criterion` statuses and notes plus the
+  deterministic `[0,1]` roll-up (the `Reproducibility Score`). The shared artifact
+  consumed by both scoring and the code-generation Review Report.
 - **Score_Explainer**: The LLM (Bedrock via LangChain) component that produces a
   short natural-language explanation of an already-computed `Reproducibility
   Score` from its input signals. Explains the number; never changes it.
@@ -92,9 +131,10 @@ the `Final Score`, it specifies only its own side of the boundary.
   `Paper`'s associated repository, produced by the `Code_Quality_Scorer`. An
   input to the `Reproducibility Score`.
 - **Reproducibility Score**: A rule-based rating in the range 0 to 1 of how
-  reproducible a `Paper` is, produced by the `Reproducibility_Scorer` from the
-  repository signals and the `Setup_Completeness`. Consumed by `paper-search` as
-  the reproducibility component of the `Final Score`.
+  reproducible a `Paper` is, produced by the `Reproducibility_Scorer` as the
+  deterministic roll-up of the per-`Criterion` statuses from evaluating the
+  `Paper` against its selected `Reproducibility Standard`. Consumed by
+  `paper-search` as the reproducibility component of the `Final Score`.
 - **Score_Status**: The state of a derived value on a cached `Paper`: `pending`
   while being computed, `ready` once attached, or `unavailable` if it could not be
   computed. Established by `paper-search` and reused here.
@@ -145,20 +185,22 @@ measured and the setup can be shown.
 4. THE Setup_Extractor SHALL produce only the derived structured Experiment Setup and SHALL NOT store the Paper's full text, consistent with the index-only rule for Reader-side content.
 5. THE Setup_Extractor SHALL read the Bedrock/LangChain configuration (model and credentials) from the environment and SHALL NOT read those values from committed source.
 
-### Requirement 4: Setup Completeness and Reproducibility Scoring (Business Logic)
+### Requirement 4: Standard-Based Reproducibility Scoring (Business Logic)
 
 **User Story:** As the backend, I want a rule-based reproducibility score that
-combines repository quality and setup completeness, so that the number reflects
-both signals and is never invented by the LLM.
+evaluates a paper against a published standard selected by its domain, so that
+the number reflects recognized reproducibility criteria and is never invented by
+the LLM.
 
 #### Acceptance Criteria
 
-1. WHEN the Setup_Completeness measure is given an Experiment Setup, THE Setup_Completeness SHALL compute a value in the range 0 to 1 equal to the fraction of expected fields (hyperparameters, datasets, environment) that are populated, by a deterministic rule.
-2. WHEN the Reproducibility_Scorer is given a Code-Quality Score (with repository existence) and a Setup_Completeness value, THE Reproducibility_Scorer SHALL compute a Reproducibility Score in the range 0 to 1 by a deterministic rule that is non-decreasing in each input, reading any blend weights from configuration.
-3. WHEN the Reproducibility_Scorer is given a Paper with no inspectable repository but an extracted Experiment Setup, THE Reproducibility_Scorer SHALL still compute a Reproducibility Score from the setup-completeness contribution rather than failing.
-4. IF both the repository is not inspectable and the Experiment Setup is unavailable, THEN THE Reproducibility_Scorer SHALL report that no Reproducibility Score can be computed rather than returning a fabricated value.
-5. THE Reproducibility_Scorer and the Setup_Completeness measure SHALL compute their values by rule and SHALL NOT call the LLM.
-6. WHEN the Reproducibility_Scorer is given identical inputs twice, THE Reproducibility_Scorer SHALL return identical Reproducibility Scores (deterministic).
+1. WHEN the Setup_Completeness measure is given an Experiment Setup, THE Setup_Completeness SHALL compute a value in the range 0 to 1 equal to the fraction of expected fields (hyperparameters, datasets, environment) that are populated, by a deterministic rule, as a contributing signal to the standard's criteria.
+2. WHEN the Reproducibility_Scorer is given a Paper's Domain and its gathered evidence (repository signals, Code-Quality Score, extracted Experiment Setup, and any available manuscript/source), THE Reproducibility_Scorer SHALL select the applicable Reproducibility Standard via the Standard_Selector, evaluate the Paper against each Criterion, and compute a Reproducibility Score in the range 0 to 1 as a deterministic roll-up of the per-Criterion statuses (met=1, partial=0.5, unmet=0, not-applicable excluded from the denominator).
+3. WHEN the Reproducibility_Scorer is given a Paper with no inspectable repository but other available evidence (e.g. an extracted Experiment Setup), THE Reproducibility_Scorer SHALL still compute a Reproducibility Score from the Criteria that the available evidence can satisfy rather than failing.
+4. IF no evidence at all is available for a Paper (the repository is not inspectable AND the Experiment Setup is unavailable AND no manuscript/source is available), THEN THE Reproducibility_Scorer SHALL report that no Reproducibility Score can be computed rather than returning a fabricated value.
+5. WHERE a Criterion cannot be judged by a pure heuristic, THE Reproducibility_Scorer MAY consume LLM-supplied per-Criterion evidence as data, but THE criterion-status → score roll-up SHALL be deterministic and SHALL NOT be produced or altered by the LLM.
+6. WHEN the Reproducibility_Scorer is given identical Domain, evidence, and per-Criterion statuses twice, THE Reproducibility_Scorer SHALL return identical Reproducibility Scores (deterministic roll-up).
+7. THE Reproducibility_Scorer SHALL produce, alongside the Reproducibility Score, a Standard Result recording the selected standard and each Criterion's status and evidence note, for persistence and reuse by dependent features.
 
 ### Requirement 5: Score Explanation (Business Logic)
 
@@ -196,7 +238,7 @@ code-generation and the detail view can rely on them.
 
 #### Acceptance Criteria
 
-1. THE Scoring_API SHALL persist a ReproducibilityScore for a Paper recording the Reproducibility Score value, the contributing Code-Quality Score, the repository-existence signal, the Setup_Completeness value, and each value's Score_Status, associated with the Paper by its stable identifier.
+1. THE Scoring_API SHALL persist a ReproducibilityScore for a Paper recording the Reproducibility Score value, the selected standard key, the per-Criterion Standard Result (each Criterion's status and evidence note), the contributing Code-Quality Score, the repository-existence signal, the Setup_Completeness value, and each value's Score_Status, associated with the Paper by its stable identifier.
 2. THE Scoring_API SHALL persist the extracted ExperimentSetup for a Paper recording the hyperparameters, datasets, and environment fields and which fields are absent, associated with the Paper by its stable identifier.
 3. THE Scoring_System SHALL introduce the ReproducibilityScore and ExperimentSetup tables through an Alembic migration committed under `backend/alembic/versions/`, and SHALL NOT create those tables through runtime schema generation (create_all).
 4. WHEN reproducibility is recomputed for a Paper that already has a persisted ReproducibilityScore or ExperimentSetup, THE Scoring_API SHALL update the existing record for that Paper rather than persisting a duplicate.
@@ -211,10 +253,40 @@ judge and understand a paper's reproducibility.
 
 #### Acceptance Criteria
 
-1. WHEN the Scoring_API has computed a Reproducibility Score for a Paper, THE detail view SHALL display the Reproducibility Score and its contributing Code-Quality Score and Setup_Completeness, each labeled, in place of the previously stubbed value.
+1. WHEN the Scoring_API has computed a Reproducibility Score for a Paper, THE detail view SHALL display the Reproducibility Score, the name of the Reproducibility Standard it was evaluated against, and its contributing Code-Quality Score and Setup_Completeness, each labeled, in place of the previously stubbed value.
 2. WHILE the Reproducibility Score for a Paper has Score_Status `pending`, THE detail view SHALL display it as pending rather than a numeric value, reusing the paper-search Score_Status rendering.
 3. WHEN the Reproducibility Score for a Paper has Score_Status `unavailable`, THE detail view SHALL display it as unavailable rather than a numeric value.
 4. WHEN an Experiment Setup has been extracted for a Paper, THE detail view SHALL populate the Experiment Setup section with its hyperparameters, datasets, and environment, marking each absent field as not provided.
 5. WHEN the Experiment Setup for a Paper is unavailable, THE detail view SHALL indicate that the Experiment Setup could not be extracted rather than showing an empty section.
 6. WHEN a Score_Explainer explanation is available for a Paper, THE detail view SHALL display the explanation alongside the score breakdown.
 7. IF no repository is associated with a Paper, THEN THE detail view SHALL indicate the repository-absent condition in the breakdown so the Reader can see it lowered the score.
+8. WHEN a Standard Result has been computed for a Paper, THE detail view SHALL display the per-Criterion list — each Criterion's title, its status (met / partial / unmet / not-applicable), and its evidence note — so the Reader can see which criteria drove the score.
+
+### Requirement 9: Domain Capture at Ingestion (Backend)
+
+**User Story:** As the backend, I want each Paper's academic Domain captured and
+persisted at ingestion, so that reproducibility scoring can select the right
+standard without inferring the domain later.
+
+#### Acceptance Criteria
+
+1. WHEN a Paper is ingested from OpenAlex, THE ingestion SHALL read the source's field classifier (`primary_topic.field.id`: 17 → `computer_science`, 27 → `medicine`) and record the Paper's Domain accordingly.
+2. WHEN a Paper is ingested from arXiv, THE ingestion SHALL read the source's category (`cs.*` → `computer_science`, `q-bio.*` → `medicine`) and record the Paper's Domain accordingly.
+3. IF a Paper's source classifier is missing, ambiguous, or maps to neither mandated domain, THEN THE ingestion SHALL record the Paper's Domain as `unknown` and SHALL NOT fabricate a domain.
+4. THE Paper SHALL persist its Domain as a column, introduced through an Alembic migration committed under `backend/alembic/versions/`, with existing rows backfilled to `unknown`.
+5. WHEN a Paper's Domain is `unknown`, THE Standard_Selector SHALL select the domain-neutral baseline standard so the Paper remains scorable.
+
+### Requirement 10: Reproducibility Standard Adapter (Business Logic)
+
+**User Story:** As a developer, I want each reproducibility standard behind a
+single adapter interface selected by domain, so that adding or swapping a
+standard touches minimal code and both scoring and the review report use the same
+criteria.
+
+#### Acceptance Criteria
+
+1. THE Scoring_System SHALL define a single Reproducibility Standard interface exposing the standard's Criteria and an evaluation that, given a Paper's gathered evidence, returns a Standard Result (per-Criterion statuses with evidence notes plus the deterministic roll-up).
+2. THE Scoring_System SHALL provide a `select_standard(domain)` registry mapping `computer_science` → the ML Reproducibility Checklist standard, `medicine` → the FAIR standard, and `unknown` → the baseline standard.
+3. THE Reproducibility_Scorer SHALL obtain the applicable standard only through the Standard_Selector and SHALL NOT embed domain-specific criteria logic itself.
+4. WHEN a new Reproducibility Standard is added, THE change SHALL be a new implementation of the interface plus a registry entry, and SHALL NOT require changes to the Reproducibility_Scorer, the persistence layer, or any consumer of the Standard Result.
+5. THE Criteria of each standard SHALL be scoped to evidence the system can actually gather (repository signals, Experiment Setup, abstract/link metadata, and — for a Writer's claimed paper — persisted manuscript/source), and SHALL NOT require paper full text that is not available under the index-only rule.
