@@ -51,7 +51,7 @@ export default function RegisterForm({ onSwitch }: { onSwitch: () => void }) {
         hint="8 to 128 characters."
       />
       {error && (
-        <p role="alert" className="text-sm text-red-700">
+        <p role="alert" className="text-sm text-caution">
           {error}
         </p>
       )}

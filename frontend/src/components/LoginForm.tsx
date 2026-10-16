@@ -39,7 +39,7 @@ export default function LoginForm({ onSwitch }: { onSwitch: () => void }) {
         autoComplete="current-password"
       />
       {error && (
-        <p role="alert" className="text-sm text-red-700">
+        <p role="alert" className="text-sm text-caution">
           {error}
         </p>
       )}

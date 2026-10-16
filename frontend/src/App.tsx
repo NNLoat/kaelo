@@ -50,9 +50,9 @@ function Shell() {
         <div className="mx-auto grid min-h-screen max-w-5xl items-center gap-12 px-6 py-16 lg:grid-cols-2">
           <section className="max-w-md">
             <p className="text-sm font-medium text-accent">Kaelo</p>
-            <h2 className="mt-3 font-serif text-4xl leading-tight text-ink">
+            <h1 className="mt-3 font-serif text-4xl leading-tight text-ink">
               Most papers don't reproduce. Find the ones that do.
-            </h2>
+            </h1>
             <p className="mt-5 text-lg leading-relaxed text-muted">
               Kaelo searches the literature, scores each paper's reproducibility, and generates the
               missing code when a repo isn't there.
@@ -60,9 +60,9 @@ function Shell() {
           </section>
 
           <section className="w-full max-w-sm justify-self-end">
-            <h1 className="mb-5 text-xl font-semibold text-ink">
+            <h2 className="mb-5 text-xl font-semibold text-ink">
               {showRegister ? "Create your account" : "Sign in"}
-            </h1>
+            </h2>
             <div className="rounded-lg border border-hairline bg-white p-6 shadow-sm">
               {showRegister ? (
                 <RegisterForm onSwitch={() => setShowRegister(false)} />
@@ -108,7 +108,7 @@ function Writer() {
         ) : (
           <>
             <header className="mb-8">
-              <p className="font-serif text-3xl text-ink">Your workspace</p>
+              <h1 className="font-serif text-3xl text-ink">Your workspace</h1>
               <p className="mt-1 text-muted">
                 Add a paper you've written and upload its manuscript and code to evaluate its
                 reproducibility.
@@ -192,7 +192,7 @@ function Reader() {
 
         <header className="mb-8 flex items-start justify-between gap-4">
           <div>
-            <p className="font-serif text-3xl text-ink">Discover</p>
+            <h1 className="font-serif text-3xl text-ink">Discover</h1>
             <p className="mt-1 text-muted">
               Find research worth building on, and see how reproducible it is before you do.
             </p>

@@ -72,7 +72,7 @@ export default function SearchBox({
         <p className="mt-4 text-sm text-muted">No papers found. Try a different query.</p>
       )}
       {status.kind === "error" && (
-        <p role="alert" className="mt-4 text-sm text-red-700">
+        <p role="alert" className="mt-4 text-sm text-caution">
           {status.message}
         </p>
       )}

@@ -24,15 +24,14 @@ export default function AuthBar() {
         </div>
         <div className="flex items-center gap-3">
           <div
-            role="radiogroup"
+            role="group"
             aria-label="Mode"
             className="inline-flex rounded-md border border-hairline bg-white p-0.5"
           >
             {(["reader", "writer"] as const).map((m) => (
               <button
                 key={m}
-                role="radio"
-                aria-checked={mode === m}
+                aria-pressed={mode === m}
                 onClick={() => setMode(m)}
                 className={`rounded px-3 py-1 text-sm capitalize transition focus-visible:ring-2 focus-visible:ring-accent/40 ${
                   mode === m ? "bg-accent text-white" : "text-muted hover:text-ink"
@@ -52,7 +51,7 @@ export default function AuthBar() {
         </div>
       </div>
       {error && (
-        <p role="alert" className="mt-2 text-sm text-red-700">
+        <p role="alert" className="mt-2 text-sm text-caution">
           {error}
         </p>
       )}
