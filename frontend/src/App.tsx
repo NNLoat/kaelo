@@ -48,10 +48,11 @@ function Shell() {
     return (
       <div className="min-h-screen bg-paper text-ink">
         <div className="mx-auto grid min-h-screen max-w-5xl items-center gap-12 px-6 py-16 lg:grid-cols-2">
-          <section className="max-w-md">
-            <p className="text-sm font-medium text-accent">Kaelo</p>
-            <h1 className="mt-3 font-serif text-4xl leading-tight text-ink">
-              Most papers don't reproduce. Find the ones that do.
+          <section className="max-w-lg">
+            <p className="font-serif text-2xl font-medium text-accent">Kaelo</p>
+            <h1 className="mt-3 font-serif text-3xl leading-tight text-ink sm:text-4xl">
+              <span className="block whitespace-nowrap">Most papers don't reproduce.</span>
+              <span className="block whitespace-nowrap">Find the ones that do.</span>
             </h1>
             <p className="mt-5 text-lg leading-relaxed text-muted">
               Kaelo searches the literature, scores each paper's reproducibility, and generates the
