@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "./AuthProvider";
 
-export default function AuthBar() {
+export default function AuthBar({ onHome }: { onHome?: () => void }) {
   const { user, mode, setMode, logout } = useAuth();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -18,11 +18,15 @@ export default function AuthBar() {
   return (
     <div className="mb-10 border-b border-hairline pb-5">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-baseline gap-2">
-          <span className="font-serif text-lg text-ink">Kaelo</span>
-          <span className="text-sm text-muted">signed in as {user?.username}</span>
-        </div>
+        <button
+          onClick={onHome}
+          disabled={!onHome}
+          className="font-serif text-2xl text-ink transition hover:text-accent focus-visible:ring-2 focus-visible:ring-accent/40 disabled:cursor-default disabled:hover:text-ink"
+        >
+          Kaelo
+        </button>
         <div className="flex items-center gap-3">
+          {user && <span className="text-sm text-muted">{user.username}</span>}
           <div
             role="group"
             aria-label="Mode"

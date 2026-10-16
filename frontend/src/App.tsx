@@ -91,7 +91,12 @@ function Writer() {
   return (
     <div className="min-h-screen bg-paper text-ink">
       <div className="mx-auto max-w-3xl px-6 py-12">
-        <AuthBar />
+        <AuthBar
+          onHome={() => {
+            setSelected(null);
+            setRefreshKey((k) => k + 1);
+          }}
+        />
 
         {selected ? (
           <ClaimWorkspace
@@ -141,7 +146,7 @@ function Reader() {
     return (
       <div className="min-h-screen bg-paper text-ink">
         <div className="mx-auto max-w-3xl px-6 pt-6">
-          <AuthBar />
+          <AuthBar onHome={() => setView({ name: "search" })} />
         </div>
         <PaperDetail id={view.id} onBack={() => setView({ name: "search" })} />
       </div>
@@ -152,7 +157,7 @@ function Reader() {
     return (
       <div className="min-h-screen bg-paper text-ink">
         <div className="mx-auto max-w-3xl px-6 py-12">
-          <AuthBar />
+          <AuthBar onHome={() => setView({ name: "search" })} />
           <div className="mb-6 flex items-center justify-between">
             <h1 className="text-xl font-semibold text-ink">Your generations</h1>
             <button
@@ -172,7 +177,7 @@ function Reader() {
     return (
       <div className="min-h-screen bg-paper text-ink">
         <div className="mx-auto max-w-3xl px-6 py-12">
-          <AuthBar />
+          <AuthBar onHome={() => setView({ name: "search" })} />
           <button
             onClick={() => setView({ name: "generations" })}
             className="mb-6 text-sm text-accent hover:underline"
@@ -188,7 +193,7 @@ function Reader() {
   return (
     <div className="min-h-screen bg-paper text-ink">
       <div className="mx-auto max-w-3xl px-6 py-12">
-        <AuthBar />
+        <AuthBar onHome={() => setView({ name: "search" })} />
 
         <header className="mb-8 flex items-start justify-between gap-4">
           <div>
