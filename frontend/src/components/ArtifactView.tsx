@@ -76,7 +76,11 @@ export default function ArtifactView({ generation }: { generation: GenerationRea
             ))}
           </ul>
         </nav>
-        <pre className="max-h-[32rem] overflow-auto p-4 font-mono text-xs leading-relaxed text-ink">
+        <pre
+          tabIndex={0}
+          aria-label={active ? `Contents of ${active.path}` : "File contents"}
+          className="max-h-[32rem] overflow-auto p-4 font-mono text-xs leading-relaxed text-ink focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-inset"
+        >
           {active?.content ?? ""}
         </pre>
       </div>

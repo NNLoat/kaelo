@@ -17,6 +17,12 @@ export default function AuthBar({ onHome }: { onHome?: () => void }) {
 
   return (
     <div className="mb-10 border-b border-hairline pb-5">
+      <a
+        href="#main"
+        className="sr-only rounded bg-accent px-3 py-1 text-sm text-white focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-10"
+      >
+        Skip to content
+      </a>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <button
           onClick={onHome}

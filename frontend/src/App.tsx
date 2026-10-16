@@ -99,6 +99,7 @@ function Writer() {
           }}
         />
 
+        <main id="main" tabIndex={-1} className="outline-none">
         {selected ? (
           <ClaimWorkspace
             claimId={selected.id}
@@ -133,6 +134,7 @@ function Writer() {
             <ClaimsList refreshKey={refreshKey} onOpen={setSelected} />
           </>
         )}
+        </main>
       </div>
     </div>
   );
@@ -149,7 +151,9 @@ function Reader() {
         <div className="mx-auto max-w-3xl px-6 pt-6">
           <AuthBar onHome={() => setView({ name: "search" })} />
         </div>
-        <PaperDetail id={view.id} onBack={() => setView({ name: "search" })} />
+        <main id="main" tabIndex={-1} className="outline-none">
+          <PaperDetail id={view.id} onBack={() => setView({ name: "search" })} />
+        </main>
       </div>
     );
   }
@@ -159,16 +163,18 @@ function Reader() {
       <div className="min-h-screen bg-paper text-ink">
         <div className="mx-auto max-w-3xl px-6 py-12">
           <AuthBar onHome={() => setView({ name: "search" })} />
-          <div className="mb-6 flex items-center justify-between">
-            <h1 className="text-xl font-semibold text-ink">Your generations</h1>
-            <button
-              onClick={() => setView({ name: "search" })}
-              className="text-sm text-accent hover:underline"
-            >
-              Back to search
-            </button>
-          </div>
-          <GenerationsList onOpen={(g) => setView({ name: "artifact", generation: g })} />
+          <main id="main" tabIndex={-1} className="outline-none">
+            <div className="mb-6 flex items-center justify-between">
+              <h1 className="text-xl font-semibold text-ink">Your generations</h1>
+              <button
+                onClick={() => setView({ name: "search" })}
+                className="text-sm text-accent hover:underline"
+              >
+                Back to search
+              </button>
+            </div>
+            <GenerationsList onOpen={(g) => setView({ name: "artifact", generation: g })} />
+          </main>
         </div>
       </div>
     );
@@ -179,13 +185,15 @@ function Reader() {
       <div className="min-h-screen bg-paper text-ink">
         <div className="mx-auto max-w-3xl px-6 py-12">
           <AuthBar onHome={() => setView({ name: "search" })} />
-          <button
-            onClick={() => setView({ name: "generations" })}
-            className="mb-6 text-sm text-accent hover:underline"
-          >
-            Back to your generations
-          </button>
-          <ArtifactView generation={view.generation} />
+          <main id="main" tabIndex={-1} className="outline-none">
+            <button
+              onClick={() => setView({ name: "generations" })}
+              className="mb-6 text-sm text-accent hover:underline"
+            >
+              Back to your generations
+            </button>
+            <ArtifactView generation={view.generation} />
+          </main>
         </div>
       </div>
     );
@@ -196,6 +204,7 @@ function Reader() {
       <div className="mx-auto max-w-3xl px-6 py-12">
         <AuthBar onHome={() => setView({ name: "search" })} />
 
+        <main id="main" tabIndex={-1} className="outline-none">
         <header className="mb-8 flex items-start justify-between gap-4">
           <div>
             <h1 className="font-serif text-3xl text-ink">Discover</h1>
@@ -224,6 +233,7 @@ function Reader() {
             </div>
           )
         )}
+        </main>
       </div>
     </div>
   );
