@@ -95,7 +95,7 @@ function Body({ paper }: { paper: Detail }) {
         <div className="grid gap-4 rounded-lg border border-hairline bg-white p-5 shadow-sm sm:grid-cols-3">
           <ScoreBar label="Relevance" cell={paper.relevance} />
           <ScoreBar label="Reproducibility" cell={paper.reproducibility} />
-          <ScoreBar label="Final score" cell={paper.final} emphasis />
+          <ScoreBar label="Overall" cell={paper.final} emphasis />
         </div>
         {paper.blurb && <p className="mt-3 text-sm leading-relaxed text-ink">{paper.blurb}</p>}
 

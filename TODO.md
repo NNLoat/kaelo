@@ -94,6 +94,13 @@ flows, what's left, operational gotchas).
 - [ ] Manual-frontend final-checkpoint tasks remain unchecked for `accounts`,
   `paper-search`, `reproducibility-scoring`, and `code-generation` (tasks 8/10/12)
   — verify each in the browser and tick the final task in its `tasks.md`.
+- [ ] **Score dimension descriptions (business logic → frontend):** the frontend
+  shows an info (ⓘ) tooltip on every score — Relevance, Reproducibility, Overall,
+  Code quality, Setup completeness — but the copy is a **placeholder** (see the
+  `HINTS` map in `frontend/src/components/ScoreBar.tsx`, each tagged "(Final copy
+  pending.)"). Business logic/product needs to define the real, agreed
+  description for each dimension (what it measures, how it's computed); then
+  swap them into that one `HINTS` map.
 - [ ] **Rotate the leaked AWS key** `AKIA6HF7RX3XVOANFSIE` still present in `.env`.
 
 ## The workflow (for reference)
