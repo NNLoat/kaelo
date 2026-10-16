@@ -7,7 +7,13 @@ type Status =
   | { kind: "empty" }
   | { kind: "error"; message: string };
 
-export default function SearchBox({ onResults }: { onResults: (papers: PaperCard[]) => void }) {
+export default function SearchBox({
+  onResults,
+  onLoadingChange,
+}: {
+  onResults: (papers: PaperCard[]) => void;
+  onLoadingChange?: (loading: boolean) => void;
+}) {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const inFlight = useRef<AbortController | null>(null);
@@ -22,8 +28,10 @@ export default function SearchBox({ onResults }: { onResults: (papers: PaperCard
     inFlight.current = controller;
 
     setStatus({ kind: "loading" });
+    onLoadingChange?.(true);
     const res = await search(q, controller.signal);
     if (controller.signal.aborted) return; // a newer search superseded this one
+    onLoadingChange?.(false);
 
     if (res.ok) {
       setStatus({ kind: "idle" });

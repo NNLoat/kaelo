@@ -12,6 +12,13 @@
   --font-serif: Georgia, "Times New Roman", serif;
 }
 
+/* Browsers show the arrow cursor on <button> by default; only <a href> gets the
+   hand. Give every enabled button the pointer cursor so clickable controls read
+   as clickable. Disabled buttons keep their not-allowed cursor. */
+button:not(:disabled) {
+  cursor: pointer;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
