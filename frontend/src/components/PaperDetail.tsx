@@ -55,7 +55,7 @@ export default function PaperDetail({ id, onBack }: { id: number; onBack: () => 
 
       {state.kind === "error" && (
         <div>
-          <p role="alert" className="text-red-700">
+          <p role="alert" className="text-caution">
             Couldn't load this paper.
           </p>
           <button onClick={load} className="mt-2 text-sm text-accent hover:underline">

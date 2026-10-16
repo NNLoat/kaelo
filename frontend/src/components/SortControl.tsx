@@ -20,7 +20,7 @@ export default function SortControl({
     <div className="flex items-center gap-2">
       <span className="text-xs text-muted">Sort by</span>
       <div
-        role="radiogroup"
+        role="group"
         aria-label="Sort results by"
         className="inline-flex rounded-md border border-hairline bg-white p-0.5"
       >
@@ -29,8 +29,7 @@ export default function SortControl({
           return (
             <button
               key={opt.key}
-              role="radio"
-              aria-checked={active}
+              aria-pressed={active}
               onClick={() => onChange(opt.key)}
               className={`rounded px-3 py-1 text-sm transition focus-visible:ring-2 focus-visible:ring-accent/40 ${
                 active ? "bg-accent text-white" : "text-ink hover:bg-paper"
