@@ -7,6 +7,7 @@ import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
 import SearchBox from "./components/SearchBox";
 import ResultList from "./components/ResultList";
+import ResultSkeleton from "./components/ResultSkeleton";
 import PaperDetail from "./components/PaperDetail";
 import GenerationsList from "./components/GenerationsList";
 import ArtifactView from "./components/ArtifactView";
@@ -133,6 +134,7 @@ function Writer() {
 
 function Reader() {
   const [papers, setPapers] = useState<PaperCard[]>([]);
+  const [searching, setSearching] = useState(false);
   const [view, setView] = useState<View>({ name: "search" });
 
   if (view.name === "detail") {
@@ -203,12 +205,18 @@ function Reader() {
           </button>
         </header>
 
-        <SearchBox onResults={setPapers} />
+        <SearchBox onResults={setPapers} onLoadingChange={setSearching} />
 
-        {papers.length > 0 && (
+        {searching ? (
           <div className="mt-8">
-            <ResultList papers={papers} onOpen={(id) => setView({ name: "detail", id })} />
+            <ResultSkeleton />
           </div>
+        ) : (
+          papers.length > 0 && (
+            <div className="mt-8">
+              <ResultList papers={papers} onOpen={(id) => setView({ name: "detail", id })} />
+            </div>
+          )
         )}
       </div>
     </div>
