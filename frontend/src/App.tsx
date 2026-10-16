@@ -195,7 +195,7 @@ function Reader() {
           <div>
             <p className="font-serif text-3xl text-ink">Discover</p>
             <p className="mt-1 text-muted">
-              Search scientific papers and see how reproducible they are.
+              Find research worth building on, and see how reproducible it is before you do.
             </p>
           </div>
           <button
