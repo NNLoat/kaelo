@@ -25,7 +25,7 @@ export default function ResultCard({ paper, onOpen }: { paper: PaperCard; onOpen
       <div className="mt-4 grid gap-4 sm:grid-cols-3">
         <ScoreBar label="Relevance" cell={paper.relevance} />
         <ScoreBar label="Reproducibility" cell={paper.reproducibility} />
-        <ScoreBar label="Final score" cell={paper.final} emphasis />
+        <ScoreBar label="Overall" cell={paper.final} emphasis />
       </div>
     </article>
   );

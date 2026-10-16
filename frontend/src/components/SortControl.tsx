@@ -2,11 +2,11 @@ import type { SortKey } from "./useScorePolling";
 
 const OPTIONS: { key: SortKey; label: string }[] = [
   { key: "relevance", label: "Relevance" },
-  { key: "final", label: "Final score" },
+  { key: "final", label: "Overall" },
 ];
 
 // Segmented toggle for the result sort key. Relevance is the default (it lands
-// first); Final score (relevance + reproducibility) is opt-in and re-sorts on
+// first); Overall (relevance + reproducibility) is opt-in and re-sorts on
 // click. Switching is an explicit event — the list only reorders here, never
 // while reproducibility scores stream in under the reader.
 export default function SortControl({
