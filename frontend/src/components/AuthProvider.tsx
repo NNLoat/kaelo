@@ -16,10 +16,27 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+function readStoredMode(): Mode {
+  try {
+    return localStorage.getItem("mode") === "writer" ? "writer" : "reader";
+  } catch {
+    return "reader";
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserRead | null>(null);
-  const [mode, setMode] = useState<Mode>("reader");
+  const [mode, setMode] = useState<Mode>(() => readStoredMode());
   const [loading, setLoading] = useState(true);
+
+  // remember the mode across a page refresh (login/register still reset it)
+  useEffect(() => {
+    try {
+      localStorage.setItem("mode", mode);
+    } catch {
+      // storage unavailable (private mode / disabled) — persistence is best-effort
+    }
+  }, [mode]);
 
   useEffect(() => {
     void api.me().then((u) => {
