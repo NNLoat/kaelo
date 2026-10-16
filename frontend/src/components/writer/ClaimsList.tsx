@@ -18,9 +18,9 @@ export default function ClaimsList({
     });
   }, [refreshKey]);
 
-  if (error && !claims) return <p className="text-sm text-caution">Couldn't load your claims.</p>;
+  if (error && !claims) return <p className="text-sm text-caution">Couldn't load your papers.</p>;
   if (!claims) return <p className="text-sm text-muted">Loading…</p>;
-  if (claims.length === 0) return <p className="text-sm text-muted">No claims yet. Claim a paper above.</p>;
+  if (claims.length === 0) return <p className="text-sm text-muted">No papers yet. Add one above.</p>;
 
   return (
     <ul className="flex flex-col gap-2">

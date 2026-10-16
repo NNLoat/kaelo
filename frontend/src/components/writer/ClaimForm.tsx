@@ -26,7 +26,7 @@ export default function ClaimForm({ onClaimed }: { onClaimed: (claim: ClaimRead)
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-2">
       <label htmlFor="paper-ref" className="text-sm font-medium text-ink">
-        Claim a paper
+        Add your paper
       </label>
       <div className="flex gap-2">
         <input
@@ -41,7 +41,7 @@ export default function ClaimForm({ onClaimed }: { onClaimed: (claim: ClaimRead)
           disabled={!ref.trim() || busy}
           className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-strong focus-visible:ring-2 focus-visible:ring-accent/40 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {busy ? "Claiming…" : "Claim paper"}
+          {busy ? "Adding…" : "Add paper"}
         </button>
       </div>
       {error && (

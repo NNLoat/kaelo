@@ -45,7 +45,7 @@ export default function ClaimWorkspace({
     });
   }, [claimId]);
 
-  if (error) return <p className="text-sm text-caution">Couldn't load this claim.</p>;
+  if (error) return <p className="text-sm text-caution">Couldn't load this paper.</p>;
   if (!claim) return <p className="text-sm text-muted">Loading…</p>;
 
   return (
@@ -53,12 +53,12 @@ export default function ClaimWorkspace({
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <button onClick={onBack} className="mb-2 text-sm text-accent hover:underline">
-            Back to claims
+            Back to your papers
           </button>
           <h1 className="truncate font-mono text-lg text-ink">{claim.paper_ref}</h1>
         </div>
         <ConfirmDelete
-          label="Delete claim"
+          label="Remove paper"
           confirmLabel="Removes the manuscript and all source."
           onDelete={async () => {
             const res = await deleteClaim(claimId);

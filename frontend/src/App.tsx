@@ -111,7 +111,8 @@ function Writer() {
             <header className="mb-8">
               <p className="font-serif text-3xl text-ink">Your workspace</p>
               <p className="mt-1 text-muted">
-                Claim your papers and upload the manuscript and code to evaluate them.
+                Add a paper you've written and upload its manuscript and code to evaluate its
+                reproducibility.
               </p>
             </header>
 
@@ -192,7 +193,7 @@ function Reader() {
 
         <header className="mb-8 flex items-start justify-between gap-4">
           <div>
-            <p className="font-serif text-3xl text-ink">Kaelo</p>
+            <p className="font-serif text-3xl text-ink">Discover</p>
             <p className="mt-1 text-muted">
               Search scientific papers and see how reproducible they are.
             </p>
