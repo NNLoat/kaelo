@@ -49,14 +49,13 @@ function Shell() {
       <div className="min-h-screen bg-paper text-ink">
         <div className="mx-auto grid min-h-screen max-w-5xl items-center gap-12 px-6 py-16 lg:grid-cols-2">
           <section className="max-w-md">
-            <p className="font-serif text-4xl text-ink">Kaelo</p>
-            <p className="mt-4 text-lg leading-relaxed text-ink">
-              Find scientific papers, see how reproducible they are, and close the gap when the
-              code is missing.
-            </p>
-            <p className="mt-3 text-sm leading-relaxed text-muted">
-              Sign in as a Reader to search and evaluate others' work, or as a Writer to check the
-              reproducibility of your own.
+            <p className="text-sm font-medium text-accent">Kaelo</p>
+            <h2 className="mt-3 font-serif text-4xl leading-tight text-ink">
+              Most papers don't reproduce. Find the ones that do.
+            </h2>
+            <p className="mt-5 text-lg leading-relaxed text-muted">
+              Kaelo searches the literature, scores each paper's reproducibility, and generates the
+              missing code when a repo isn't there.
             </p>
           </section>
 
