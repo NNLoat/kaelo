@@ -51,17 +51,25 @@ records `unavailable`). No other `paper-search` module changes.
 
 ### Key design decisions
 
-- **Rule-based number via a domain-selected standard (R2.3, R4, R10).** The
-  `Reproducibility Score` is the deterministic roll-up of a `Standard Result`
-  produced by evaluating the `Paper` against a `Reproducibility Standard` selected
-  by its `Domain` (ML Checklist for CS, FAIR for Medicine, baseline for unknown).
-  Standards live behind one adapter interface in `services/repro/standards/`,
-  selected by `select_standard(domain)`; the `Reproducibility_Scorer` is a thin
-  caller. `Code_Quality_Scorer` and `Setup_Completeness` remain pure contributing
-  signals feeding criteria. The LLM may supply per-criterion *evidence as data*
-  for criteria heuristics cannot judge (`Setup_Extractor`, `Score_Explainer`, and
-  a bounded criterion-evidence helper), but the status→score roll-up has **no LLM
-  import** and the LLM output can never change the number (ADR 0009).
+- **Rule-based number via a field-selected standard, weighted Q/D (R2.3, R4, R10).**
+  The `Reproducibility Score` is the weighted, confidence-adjusted roll-up
+  `S = 0.30·S_Q + 0.70·S_D` of a `Standard Result` produced by evaluating the
+  `Paper` against a `Reproducibility Standard` selected by its `Field of Study`,
+  implementing the Standards-Conformance Score of `scoring_rule.md` v1.2:
+  **TRIPOD+AI** (26 weighted criteria) for Medicine, the merged **ACM badges + ML
+  Code Completeness + FAIR4RS** standard (25 weighted criteria) for CS, and a
+  baseline for unknown. Every criterion carries a classification tag (`Q`/`D`/`Q/D`),
+  a weight (Q sums to 0.30, D+Q/D sums to 0.70 per field), a display category, and
+  its source reference(s). Each criterion is scored `s ∈ {1, 0.5, 0, NA}`,
+  confidence-adjusted to `ŝ = c·s + (1−c)·π`; NA criteria are dropped and weights
+  renormalized **within their group**. Standards live behind one adapter interface
+  in `services/repro/standards/`, selected by `select_standard(field_of_study)`;
+  the `Reproducibility_Scorer` is a thin caller that runs the weighted roll-up.
+  `Code_Quality_Scorer` and `Setup_Completeness` remain pure contributing signals
+  feeding criteria. The LLM may supply per-criterion *evidence as data* for
+  criteria heuristics cannot judge (`Setup_Extractor`, `Score_Explainer`, and a
+  bounded criterion-evidence helper), but the weighted status→score roll-up has
+  **no LLM import** and the LLM output can never change the number (ADR 0009).
 - **GitHub-only inspection behind an interface (confirmed).** `Repo_Inspector`
   supports GitHub for the first iteration via the GitHub REST API, implemented
   behind a `RepoHost` interface so GitLab/others can be added later without
@@ -86,7 +94,7 @@ records `unavailable`). No other `paper-search` module changes.
   still computed from the `Setup_Completeness` contribution. Only when **both**
   the repo is not inspectable **and** the Experiment Setup is unavailable does the
   scorer report "no score", which the seam maps to Score_Status `unavailable`
-  (R4.4).
+  (R4.7).
 - **Async + persisted, reusing the paper-search lifecycle (R6.5, R6.6).** The
   seam is invoked from the `paper-search` BackgroundTasks orchestration; it does
   not block search/detail responses. Results are persisted on dedicated
@@ -168,10 +176,10 @@ sequenceDiagram
         SE-->>SEAM: unavailable
     end
     alt repo not inspectable AND setup unavailable
-        SEAM-->>ORCH: raise -> status "unavailable" (R4.4, R6.4)
+        SEAM-->>ORCH: raise -> status "unavailable" (R4.7, R6.4)
     else at least one signal
-        SEAM->>RS: reproducibility(code_quality, repo_exists, completeness)
-        RS-->>SEAM: score in [0,1]
+        SEAM->>RS: reproducibility(field_of_study, Evidence)
+        RS-->>SEAM: StandardResult (S = 0.30·S_Q + 0.70·S_D)
         SEAM->>EX: explain(score, signals)
         alt explain ok
             EX-->>SEAM: explanation
@@ -197,7 +205,7 @@ def score_reproducibility(paper_id: int) -> float:
     Runs the full pipeline (inspect -> code-quality -> extract -> completeness
     -> score -> explain), upserts ReproducibilityScore + ExperimentSetup, mirrors
     the number + status onto the Paper, and returns the number. Raises
-    ReproducibilityUnavailable when neither signal is available (R4.4), which the
+    ReproducibilityUnavailable when neither signal is available (R4.7), which the
     paper-search orchestrator maps to Score_Status "unavailable" (R6.4).
     """
 ```
@@ -290,19 +298,46 @@ def completeness(setup: ExperimentSetupData | None) -> float:
 `backend/app/services/repro/standards/` (no LLM in the roll-up):
 
 ```python
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Protocol
 
 class CriterionStatus(str, Enum):
     met = "met"; partial = "partial"; unmet = "unmet"; not_applicable = "not_applicable"
 
+_POINTS = {CriterionStatus.met: 1.0, CriterionStatus.partial: 0.5, CriterionStatus.unmet: 0.0}
+
+class Tag(str, Enum):
+    Q = "Q"            # code/tool quality  -> 0.30 group
+    D = "D"            # paper-to-code discrepancy -> 0.70 group
+    QD = "Q/D"         # both; counted in the D (0.70) group
+
+@dataclass(frozen=True)
+class Criterion:
+    """A weighted scoring-model criterion (scoring_rule.md §3.1 / §4.1)."""
+    id: str                         # e.g. "M-D1", "C-A5"
+    title: str
+    tag: Tag
+    weight: float                   # expert prior; per field Q sums 0.30, D+Q/D sums 0.70
+    category: str                   # display category (§10), e.g. "Run the Code"
+    source_references: list[str]    # e.g. ["R1: item 12c"] or ["R3: Artifacts Available", "R5: F1"]
+
 @dataclass(frozen=True)
 class CriterionResult:
-    id: str
-    title: str
+    criterion: Criterion
     status: CriterionStatus
+    confidence: float               # c in [0,1] (§5.5)
     evidence_note: str
+    paper_value: str | None = None  # for D contradictions (discrepancy report, §7)
+    code_value: str | None = None
+
+    @property
+    def s(self) -> float:           # raw status score
+        return _POINTS[self.status]
+
+    def adjusted(self, base_rate: float = 0.5) -> float:
+        # confidence-adjusted ŝ = c·s + (1−c)·π  (§5.5)
+        return self.confidence * self.s + (1.0 - self.confidence) * base_rate
 
 @dataclass(frozen=True)
 class Evidence:
@@ -315,45 +350,85 @@ class Evidence:
     source_files: list[tuple[str, str]] | None = None
 
 @dataclass(frozen=True)
+class CategoryScore:
+    category: str
+    score: float            # S_k (§10.4)
+    points_lost: float      # L_k
+
+@dataclass(frozen=True)
 class StandardResult:
-    standard_key: str
-    criteria: list[CriterionResult]
-    score: float                          # deterministic roll-up (the number)
+    field_of_study: str                 # "medicine" / "computer_science" / "unknown"
+    standard_key: str                   # "tripod_ai" / "cs_merged" / "baseline"
+    reference_versions: dict            # §8 version pinning
+    results: list[CriterionResult]
+    score: float                        # weighted roll-up S (the number)
+    score_q: float                      # S_Q (0.30 group)
+    score_d: float                      # S_D (0.70 group)
+    categories: list[CategoryScore]     # seven display categories (§10)
+    discrepancies: list[CriterionResult] = field(default_factory=list)
 
 class ReproducibilityStandard(Protocol):
     key: str
-    def criteria(self) -> list[str]: ...                       # criterion ids/titles
+    field_of_study: str
+    reference_versions: dict
+    def criteria(self) -> list[Criterion]: ...
     def evaluate(self, evidence: Evidence) -> StandardResult: ...
 
-def roll_up(criteria: list[CriterionResult]) -> float:
-    # met=1, partial=0.5, unmet=0; not_applicable excluded from the denominator.
-    scored = [c for c in criteria if c.status is not CriterionStatus.not_applicable]
-    if not scored:
-        return 0.0
-    pts = {CriterionStatus.met: 1.0, CriterionStatus.partial: 0.5, CriterionStatus.unmet: 0.0}
-    return sum(pts[c.status] for c in scored) / len(scored)
+def roll_up(results: list[CriterionResult]) -> tuple[float, float, float]:
+    """Weighted, confidence-adjusted Q/D roll-up (scoring_rule.md §6).
 
-def select_standard(domain: PaperDomain) -> ReproducibilityStandard:
-    # computer_science -> MLReproducibilityChecklist
-    # medicine         -> FAIRStandard
+    Returns (S, S_Q, S_D). NA criteria are dropped and the remaining weights are
+    renormalized *within each group*, preserving the 0.30/0.70 split. met=1,
+    partial=0.5, unmet=0; each ŝ is confidence-adjusted. No LLM import.
+    """
+    applicable = [r for r in results if r.status is not CriterionStatus.not_applicable]
+    q = [r for r in applicable if r.criterion.tag is Tag.Q]
+    d = [r for r in applicable if r.criterion.tag in (Tag.D, Tag.QD)]
+
+    def group_mean(rs: list[CriterionResult]) -> float | None:
+        wsum = sum(r.criterion.weight for r in rs)
+        if wsum == 0:
+            return None
+        return sum(r.criterion.weight * r.adjusted() for r in rs) / wsum
+
+    s_q, s_d = group_mean(q), group_mean(d)
+    if s_q is None and s_d is None:
+        return 0.0, 0.0, 0.0
+    if s_q is None:          # whole Q group NA -> S = S_D, flagged by caller
+        return s_d, 0.0, s_d
+    if s_d is None:          # whole D group NA -> S = S_Q, flagged by caller
+        return s_q, s_q, 0.0
+    return 0.30 * s_q + 0.70 * s_d, s_q, s_d
+
+def select_standard(field_of_study: PaperDomain) -> ReproducibilityStandard:
+    # medicine         -> TripodAiStandard      (R1, 26 criteria)
+    # computer_science -> CsMergedStandard       (R3/R4/R5, 25 criteria)
     # unknown          -> BaselineStandard
 ```
 
-Each concrete standard (`ml_checklist.py`, `fair.py`, `baseline.py`) ships a
-scoped ~6-criterion list and judges each criterion from `Evidence`, calling the
-bounded LLM criterion-evidence helper only where a heuristic cannot decide
-(ADR 0009). Adding a standard is a new file + a `select_standard` entry — nothing
-else changes (R10.4).
+Each concrete standard ships the exact weighted criteria table from
+`scoring_rule.md`: `tripod_ai.py` carries the 26 Medicine criteria of §3.1 (tags,
+weights, categories, R1 items + R2 Thai alignment), `cs_merged.py` carries the 25
+CS criteria of §4.1 (the merged ACM/ML/FAIR4RS rows with their R3/R4/R5 source
+references), and `baseline.py` a domain-neutral subset. Each criterion is judged
+from `Evidence`, calling the bounded LLM criterion-evidence helper only where a
+heuristic cannot decide (ADR 0009); standard-specific rules (§5.3 CS, §5.4
+Medicine — e.g. C-A5 capped at 0.5 without a badge/sandbox run, C-A7/C-A8 default
+NA, no-code-released ⇒ all CS criteria 0) are applied inside the standard before
+the roll-up. Adding a standard is a new file + a `select_standard` entry — nothing
+else changes (R10.5).
 
 **`Reproducibility_Scorer`** — `backend/app/services/repro/scorer.py` (no LLM in
 the roll-up):
 
 ```python
-def reproducibility(domain: PaperDomain, evidence: Evidence) -> StandardResult:
-    # Selects the standard via select_standard(domain), evaluates the Paper
-    # against its Criteria, and returns the StandardResult whose `score` is the
-    # deterministic roll-up (R4.2, R4.6). A non-inspectable repo still scores from
-    # the criteria the remaining evidence satisfies (R4.3).
+def reproducibility(field_of_study: PaperDomain, evidence: Evidence) -> StandardResult:
+    # Selects the standard via select_standard(field_of_study), evaluates the
+    # Paper against its weighted Criteria, and returns the StandardResult whose
+    # `score` is the weighted, confidence-adjusted roll-up S = 0.30·S_Q + 0.70·S_D
+    # (R4.2–R4.5, R4.10). A non-inspectable repo still scores from the criteria the
+    # remaining evidence satisfies (R4.6). The scorer also fills the per-display-
+    # category breakdown and the discrepancy report from the CriterionResults.
 ```
 
 **`Score_Explainer`** — `backend/app/services/repro/explainer.py` (Bedrock via
@@ -380,21 +455,44 @@ repo-existence) or the explanation that R8.1/R8.6/R8.7 require. This spec
 therefore extends the `GET /api/papers/{id}` response with an optional
 `reproducibility_breakdown` object sourced from the `reproducibility_scores` row:
 
+The shape mirrors the `Standard Result` of `scoring_rule.md` v1.2 (the frontend
+render of these fields is deferred — see tasks.md task 14):
+
 ```ts
 // added to PaperDetail (null until reproducibility-scoring has run)
 reproducibilityBreakdown: {
-  standardKey: string;           // selected standard, e.g. "ml_checklist" | "fair" | "baseline"
-  standardName: string;          // display label, e.g. "ML Reproducibility Checklist"
+  fieldOfStudy: "medicine" | "computer_science" | "unknown";
+  standardKey: string;           // selected standard: "tripod_ai" | "cs_merged" | "baseline"
+  standardName: string;          // display label, e.g. "TRIPOD+AI" | "ACM + ML Code Completeness + FAIR4RS"
+  scoreQ: number;                // S_Q, the Q (0.30) group sub-score
+  scoreD: number;                // S_D, the D + Q/D (0.70) group sub-score
   codeQuality: ScoreCell;        // contributing Code-Quality Score (R8.1)
   setupCompleteness: ScoreCell;  // contributing Setup_Completeness (R8.1)
   repoExists: boolean | null;    // null => not inspected; false => repo-absent (R8.7)
   explanation: string | null;    // Score_Explainer output when available (R8.6)
   criteria: {                    // per-Criterion Standard Result (R8.8)
-    id: string;
+    id: string;                  // e.g. "M-D1" | "C-A5"
     title: string;
+    tag: "Q" | "D" | "Q/D";      // classification (Q group 0.30 / D group 0.70)
+    weight: number;              // expert-assigned prior from scoring_rule.md
+    category: string;            // display category (§10), e.g. "Run the Code"
+    sourceReferences: string[];  // e.g. ["R1: item 12c"] or ["R3: Artifacts Available", "R5: F1"]
     status: "met" | "partial" | "unmet" | "not_applicable";
+    confidence: number;          // c in [0,1] (§5.5)
     evidenceNote: string;
   }[];
+  categories: {                  // seven display categories (§10.4), ordered by points lost
+    category: string;
+    score: number;               // S_k
+    pointsLost: number;          // L_k
+  }[];
+  discrepancies: {               // D criteria scored 0 by contradiction (§7)
+    criterionId: string;
+    paperValue: string | null;
+    codeValue: string | null;
+    reference: string;
+  }[];
+  referenceVersions: Record<string, string>;  // §8 version pinning
 } | null;
 ```
 
@@ -442,10 +540,22 @@ class ReproducibilityScore(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     paper_id: int = Field(foreign_key="papers.id", unique=True, index=True)  # R7.4
 
-    score: float | None = Field(default=None)              # the number (R7.1)
+    score: float | None = Field(default=None)              # weighted roll-up S (R7.1)
     status: ScoreStatus = Field(default=ScoreStatus.pending)
+    field_of_study: str | None = Field(default=None)       # scored field (R7.1, R9, R10)
     standard_key: str | None = Field(default=None)         # selected standard (R7.1, R10)
-    criteria: list[dict] | None = Field(                   # Standard Result per-criterion (R7.1, R8.8)
+    score_q: float | None = Field(default=None)            # S_Q, Q group (0.30)
+    score_d: float | None = Field(default=None)            # S_D, D + Q/D group (0.70)
+    criteria: list[dict] | None = Field(                   # full per-criterion Standard Result (R7.1, R8.8)
+        default=None, sa_column=Column(JSON)               # id,title,tag,weight,category,source_references,status,confidence,evidence_note
+    )
+    categories: list[dict] | None = Field(                 # seven display categories: {category,score,points_lost} (R7.1, §10)
+        default=None, sa_column=Column(JSON)
+    )
+    discrepancies: list[dict] | None = Field(              # D contradictions: {criterion_id,paper_value,code_value,reference} (R7.1, §7)
+        default=None, sa_column=Column(JSON)
+    )
+    reference_versions: dict | None = Field(               # §8 version pinning (R10.7)
         default=None, sa_column=Column(JSON)
     )
     code_quality_score: float | None = Field(default=None) # contributing (R7.1)
@@ -516,9 +626,14 @@ No full text is stored in either place (R7.5).
 | Table | Field | Type | Requirement |
 | --- | --- | --- | --- |
 | reproducibility_scores | `paper_id` | FK papers.id, unique | R7.1, R7.4 |
-| reproducibility_scores | `score` / `status` | float? / enum | R7.1, R6.3, R6.4 |
-| reproducibility_scores | `standard_key` | str? | R7.1, R10 |
-| reproducibility_scores | `criteria` | JSON? (Standard Result per-criterion) | R7.1, R8.8 |
+| reproducibility_scores | `score` / `status` | float? / enum (weighted roll-up S) | R7.1, R6.3, R6.4 |
+| reproducibility_scores | `field_of_study` | str? ("medicine"/"computer_science"/"unknown") | R7.1, R9, R10 |
+| reproducibility_scores | `standard_key` | str? ("tripod_ai"/"cs_merged"/"baseline") | R7.1, R10 |
+| reproducibility_scores | `score_q` / `score_d` | float? (Q 0.30 group / D+Q/D 0.70 group) | R4.4, R7.1 |
+| reproducibility_scores | `criteria` | JSON? (id,title,tag,weight,category,source_references,status,confidence,evidence_note) | R7.1, R8.8 |
+| reproducibility_scores | `categories` | JSON? (seven display categories: score + points_lost) | R7.1, §10 |
+| reproducibility_scores | `discrepancies` | JSON? (D contradictions for the discrepancy report) | R7.1, §7 |
+| reproducibility_scores | `reference_versions` | JSON? (TRIPOD+AI 2024 / ACM v1.1 / ML 2020 / FAIR4RS v1.0 / rule 1.2) | R10.7, §8 |
 | reproducibility_scores | `code_quality_score`, `repo_exists`, `repo_inspectable`, `setup_completeness` | breakdown | R7.1, R8.1, R8.7 |
 | reproducibility_scores | `explanation` | str? (nullable) | R5.1, R5.3 |
 | experiment_setups | `paper_id` | FK papers.id, unique | R7.2, R7.4 |
@@ -558,9 +673,14 @@ github_token: str | None = None            # optional; when set, auth to raise r
 repo_recency_days: int = 365               # recent-activity window (R1.2)
 repo_inspect_timeout_seconds: float = 10.0
 
-# reproducibility blend weights (non-AI) — R4.2
-repro_repo_weight: float = 0.5
-repro_setup_weight: float = 0.5
+# Standards-Conformance roll-up constants (non-AI) — R4.3, R4.4
+repro_q_group_weight: float = 0.30         # Q (code/tool quality) group total
+repro_d_group_weight: float = 0.70         # D + Q/D (paper-to-code) group total
+repro_default_base_rate: float = 0.5       # π for confidence adjustment (§5.5)
+
+# Per-criterion weights, tags, categories and source references are NOT config:
+# they are fixed by scoring_rule.md v1.2 and live in the standard definitions
+# (services/repro/standards/tripod_ai.py, cs_merged.py, baseline.py).
 
 # Bedrock/LangChain reused from paper-search Settings (R3.5): bedrock_model_id, aws_region, llm_timeout_seconds
 ```
@@ -609,19 +729,39 @@ among hyperparameters/datasets/environment) / 3; an unavailable setup yields 0.0
 
 ### Property 4: Reproducibility Score is deterministic, in range, and monotonic
 
-*For any* `(code_quality, repo_exists, setup_completeness)` with configured
-weights, `reproducibility` returns a value in `[0,1]`, is identical for identical
-inputs, and is non-decreasing in `code_quality` and in `setup_completeness`.
+*For any* set of `CriterionResult`s with weights that respect the per-group
+totals, the weighted roll-up `S = 0.30·S_Q + 0.70·S_D` returns a value in `[0,1]`,
+is identical for identical inputs, and is non-decreasing when any single
+criterion's status improves (unmet→partial→met) with its confidence held fixed.
 
-**Validates: Requirements 4.2, 4.6**
+**Validates: Requirements 4.4, 4.5, 4.10**
+
+### Property 4b: Group weights and NA renormalization preserve the 0.30/0.70 split
+
+*For any* standard whose Q criteria weights sum to 0.30 and D+Q/D weights sum to
+0.70, dropping any not-applicable criteria and renormalizing within each group
+leaves the roll-up a convex combination `0.30·S_Q + 0.70·S_D`; if a whole group is
+NA the roll-up equals the surviving group's score and the dropped group is
+flagged.
+
+**Validates: Requirements 4.5, 10.3**
+
+### Property 4c: Confidence adjustment stays in range
+
+*For any* status `s ∈ {0, 0.5, 1}`, confidence `c ∈ [0,1]`, and base rate
+`π ∈ [0,1]`, the adjusted score `ŝ = c·s + (1−c)·π` lies in `[0,1]` and equals `s`
+when `c = 1`.
+
+**Validates: Requirements 4.3**
 
 ### Property 5: A paper with no repo but a setup is still scored
 
-*For any* input where the repo is not inspectable but `setup_completeness > 0`,
-`reproducibility` returns a value computed from the setup contribution rather than
-raising or returning the absent sentinel.
+*For any* input where the repo is not inspectable but an Experiment Setup is
+available, `reproducibility` returns a value computed from the criteria the
+remaining evidence can satisfy rather than raising or returning the absent
+sentinel.
 
-**Validates: Requirements 4.3**
+**Validates: Requirements 4.6**
 
 ### Property 6: No signals at all means no score, not a fabricated one
 
@@ -629,7 +769,7 @@ raising or returning the absent sentinel.
 unavailable, the seam raises `ReproducibilityUnavailable` (mapped to Score_Status
 `unavailable`) and never returns a fabricated number.
 
-**Validates: Requirements 4.4, 6.4**
+**Validates: Requirements 4.7, 6.4**
 
 ### Property 7: The score number never comes from the LLM
 
@@ -639,7 +779,7 @@ Score` are produced by the rule-based functions; the `Setup_Extractor` and
 output changes the Experiment Setup and the explanation text but not the computed
 scores.
 
-**Validates: Requirements 2.3, 4.5, 5.2, 6.7**
+**Validates: Requirements 2.3, 4.9, 5.2, 6.7**
 
 ### Property 8: Extraction and explanation failures degrade gracefully
 
@@ -700,7 +840,7 @@ modification.
 - **Setup extraction failure (R3.3):** `extract_setup` raising is caught; the
   `experiment_setups` row is marked `available=false`, and scoring proceeds from
   the repo contribution if the repo is inspectable.
-- **No signals at all (R4.4, R6.4):** when the repo is not inspectable and the
+- **No signals at all (R4.7, R6.4):** when the repo is not inspectable and the
   setup is unavailable, the seam raises `ReproducibilityUnavailable`; the
   paper-search orchestrator maps this to Score_Status `unavailable` (never
   `pending` forever).
@@ -786,8 +926,8 @@ referencing its design property, e.g.:
 
 ### Example / edge tests (pytest)
 
-- R4.4/R6.4: no repo + extraction fails → seam raises → status `unavailable`.
-- R4.3: no repo + setup present → a real score from the setup contribution.
+- R4.7/R6.4: no repo + extraction fails → seam raises → status `unavailable`.
+- R4.6: no repo + setup present → a real score from the criteria the setup satisfies.
 - R1.4 vs R1.1: GitHub 404 → `exists=false, inspectable=true`; GitHub timeout /
   rate-limit → `failed=true`.
 - R5.3: explainer fails → score persists with no explanation.

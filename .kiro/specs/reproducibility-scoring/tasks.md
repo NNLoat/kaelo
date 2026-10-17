@@ -70,12 +70,12 @@ the pieces together, so there is no orphaned code.
       (R4.1). No LLM import.
     - _Requirements: 4.1_
 
-  - [x] 1.4 Implement `Reproducibility_Scorer` (`repro/scorer.py`)
-    - `reproducibility(code_quality, repo_exists, setup_completeness, *, w_repo, w_setup) -> float`:
-      deterministic blend in `[0,1]`, non-decreasing in `code_quality` and
-      `setup_completeness`, weights from config (R4.2, R4.6); a non-inspectable
-      repo still scores from the setup contribution (R4.3). No LLM import.
-    - _Requirements: 4.2, 4.3, 4.5, 4.6_
+  - [x] 1.4 Implement `Reproducibility_Scorer` (`repro/scorer.py`) — superseded by the Redesign
+    - *Original (ad-hoc blend) implementation. The weighted Q/D Standards-
+      Conformance model replaces it; see tasks 11.1–11.5 below for the current
+      scorer.* `Code_Quality_Scorer` and `Setup_Completeness` remain as pure
+      contributing signals that feed criteria. No LLM import.
+    - _Requirements: superseded by 4.2–4.12_
 
   - [x]* 1.5 Write property test — code-quality deterministic + monotonic
     - Create `backend/tests/test_repro_scorers_properties.py`.
@@ -308,36 +308,78 @@ the pieces together, so there is no orphaned code.
     indication; confirm a search's reproducibility score fills in from `pending`
     to a real value. Ask the user if questions arise.
 
-## Redesign: standard-based scoring (ADRs 0007/0008/0009)
+## Redesign: Standards-Conformance scoring per scoring_rule.md v1.2 (ADRs 0007/0008/0009)
 
-This section revises the already-implemented scorer to evaluate a `Paper` against
-a `Reproducibility Standard` selected by its `Domain` (ML Checklist for CS, FAIR
-for Medicine, baseline for unknown), replacing the ad-hoc blend. The rule-based
+This section revises the scorer to the weighted Q/D Standards-Conformance model
+of `scoring_rule.md` v1.2: a `Paper` is evaluated against a `Reproducibility
+Standard` selected by its `Field of Study` — **TRIPOD+AI** (26 weighted criteria)
+for Medicine, the merged **ACM badges + ML Code Completeness + FAIR4RS** standard
+(25 weighted criteria) for Computer Science, and a baseline for unknown. Each
+criterion carries a classification tag (`Q`/`D`/`Q/D`), weight, display category,
+and source reference(s); the score is the confidence-adjusted roll-up
+`S = 0.30·S_Q + 0.70·S_D` with NA renormalized within each group. The rule-based
 number, token-security, and paper-search-seam contracts are unchanged.
 
-- [x] 11. Business logic — the standard adapter and domain selection
-  - [x] 11.1 Define the standard interface and shared result shapes
-    - Create `backend/app/services/repro/standards/__init__.py` with
-      `CriterionStatus` enum, `CriterionResult`, `Evidence`, `StandardResult`
-      dataclasses, the `ReproducibilityStandard` Protocol, the deterministic
-      `roll_up(criteria)` function (met=1/partial=0.5/unmet=0, N-A excluded), and
-      `select_standard(domain)`. No LLM import in `roll_up`.
-    - _Requirements: 10.1, 10.2, 4.2, 4.6_
-  - [x] 11.2 Implement the three standards (scoped ~6 criteria each)
-    - `ml_checklist.py`, `fair.py`, `baseline.py`, each judging its criteria from
-      `Evidence`; a criterion a heuristic cannot decide calls the bounded LLM
-      criterion-evidence helper (evidence as data only). Criteria scoped to
-      gatherable evidence (R10.5).
-    - _Requirements: 10.3, 10.4, 10.5, 4.3, 4.5_
-  - [x] 11.3 Rewrite `Reproducibility_Scorer` (`repro/scorer.py`) to the standard
-    - `reproducibility(domain, evidence) -> StandardResult`: select the standard,
-      evaluate, return the `StandardResult` whose `score` is the roll-up. Keep no
-      LLM import in the roll-up path.
-    - _Requirements: 4.2, 4.3, 4.4, 4.6, 10.3_
-  - [ ]* 11.4 Property tests — roll-up deterministic/in-range; N-A excluded;
-    standard selection by domain; number unaffected by LLM evidence (reuse
-    Properties 4 and 7 against the new shape).
-    - _Requirements: 4.2, 4.5, 4.6, 10.2_
+> Tasks 11–13 below supersede any earlier ad-hoc blend / "~6 criteria" / FAIR-for-
+> Medicine wording. Where a task is marked `[x]` from the prior iteration but its
+> body here changed, treat it as **re-opened** against the new acceptance criteria.
+
+- [ ] 11. Business logic — the weighted standard adapter and field selection
+  - [ ] 11.1 Define the standard interface and shared result shapes
+    - In `backend/app/services/repro/standards/__init__.py` define the
+      `CriterionStatus` and `Tag` (`Q`/`D`/`Q/D`) enums; the `Criterion`
+      (id, title, tag, weight, category, source_references), `CriterionResult`
+      (criterion, status, confidence, evidence_note, optional paper/code values),
+      `Evidence`, `CategoryScore`, and `StandardResult` (field_of_study,
+      standard_key, reference_versions, results, score, score_q, score_d,
+      categories, discrepancies) dataclasses; the `ReproducibilityStandard`
+      Protocol; the confidence adjustment `ŝ = c·s + (1−c)·π`; the deterministic
+      weighted `roll_up(results) -> (S, S_Q, S_D)` (0.30·S_Q + 0.70·S_D, NA dropped
+      and renormalized within each group); and `select_standard(field_of_study)`.
+      No LLM import in `roll_up`.
+    - _Requirements: 10.1, 10.2, 4.3, 4.4, 4.5, 4.10_
+  - [ ] 11.2 Implement the Medicine standard — TRIPOD+AI (`standards/tripod_ai.py`)
+    - Encode the 26 criteria of `scoring_rule.md` §3.1 verbatim: exact ids
+      (M-Q*/M-D*), tags, weights (Q sum 0.30, D sum 0.70), display categories
+      (§10.2), and R1 item + R2 Thai-element source references. Apply the §5.4
+      Medicine rules (development-only / evaluation-only / development-and-
+      evaluation applicability and NA; no code repository ⇒ M-D9/M-D10 = 0;
+      restricted-but-documented data ⇒ 0.5) and the §5.2 D-group discrepancy rule.
+      Judge each criterion from `Evidence`, calling the bounded LLM
+      criterion-evidence helper only where a heuristic cannot decide (evidence as
+      data; ADR 0009).
+    - _Requirements: 10.3, 10.6, 4.2, 4.8, 4.9_
+  - [ ] 11.3 Implement the CS standard — merged ACM/ML/FAIR4RS (`standards/cs_merged.py`)
+    - Encode the 25 criteria of `scoring_rule.md` §4.1 verbatim: exact ids
+      (C-A*/C-M*/C-FAIR-*), tags, weights (Q sum 0.30, D+Q/D sum 0.70), display
+      categories (§10.3), and the R3/R4/R5 source references on each (including the
+      merged rows C-A1, C-M1, C-FAIR-F1.2). Apply the §5.3 CS rules (no code
+      released ⇒ all CS criteria 0; merged-row scoring for C-A1/C-M1/C-FAIR-F1.2;
+      cap C-A5 "Exercisable" at 0.5 without a badge or sandbox run; ACM badge
+      shortcuts; default C-A7/C-A8 to NA; C-FAIR-F1.1 NA if monolithic,
+      C-FAIR-A1.2 NA if public) and the §5.2 D-group discrepancy rule. Judge from
+      `Evidence` + bounded LLM evidence helper as above.
+    - _Requirements: 10.3, 10.6, 4.2, 4.8, 4.9_
+  - [ ] 11.4 Implement the baseline standard (`standards/baseline.py`)
+    - A domain-neutral, field-agnostic subset that keeps `unknown`-field papers
+      scorable, with the same weighted Q/D shape (Q sum 0.30, D+Q/D sum 0.70) and
+      criteria scoped to gatherable evidence (R10.6).
+    - _Requirements: 10.2, 10.6, 4.4_
+  - [ ] 11.5 Rewrite `Reproducibility_Scorer` (`repro/scorer.py`) to the model
+    - `reproducibility(field_of_study, evidence) -> StandardResult`: select the
+      standard, evaluate each criterion (status + confidence), run the weighted
+      roll-up, and fill `score_q`/`score_d`, the seven per-display-category
+      `CategoryScore`s (§10.4), the discrepancy report (§7), and the
+      `reference_versions` (§8). No LLM import in the roll-up path.
+    - _Requirements: 4.2, 4.4, 4.5, 4.6, 4.7, 4.11, 4.12, 10.3, 10.7_
+  - [ ]* 11.6 Property tests — the weighted roll-up
+    - Reuse/extend `test_repro_scorers_properties.py`: Property 4 (deterministic,
+      in-range, monotonic), Property 4b (0.30/0.70 split preserved under NA
+      renormalization; whole-group-NA fallback), Property 4c (confidence
+      adjustment in range), and Property 7 (LLM evidence never changes the number)
+      against the new weighted shape. Assert each standard's Q weights sum to 0.30
+      and D+Q/D weights sum to 0.70.
+    - _Requirements: 4.3, 4.4, 4.5, 4.9, 4.10, 10.3_
 
 - [x] 12. Backend — domain capture at ingestion
   - [x] 12.1 Add `PaperDomain` enum + `papers.domain` column
@@ -358,40 +400,59 @@ number, token-security, and paper-search-seam contracts are unchanged.
     including the `unknown` fallback and merge preference.
     - _Requirements: 9.1, 9.2, 9.3_
 
-- [x] 13. Backend — persist and surface the Standard Result
-  - [x] 13.1 Add `standard_key` + `criteria` JSON to `ReproducibilityScore`
-    - Extend the model and add an Alembic migration (nullable, additive).
-    - _Requirements: 7.1_
-  - [x] 13.2 Wire the seam to the standard
+- [ ] 13. Backend — persist and surface the Standards-Conformance result
+  - [ ] 13.1 Extend `ReproducibilityScore` with the full Standard Result fields
+    - Add `field_of_study`, `standard_key`, `score_q`, `score_d`, and the JSON
+      `criteria` (id, title, tag, weight, category, source_references, status,
+      confidence, evidence_note), `categories` (seven display rows: score +
+      points_lost), `discrepancies`, and `reference_versions` to
+      `app/models/reproducibility.py`; add an Alembic migration (all
+      nullable/additive). *(Model fields already added; migration still needed.)*
+    - _Requirements: 7.1, 10.7_
+  - [ ] 13.2 Wire the seam to the weighted standard
     - In `services/reproducibility.py`, build `Evidence` (repo signals,
       code-quality, setup, completeness, and for a Writer-claimed paper the
-      manuscript/source), load `paper.domain`, call
-      `reproducibility(domain, evidence)`, and persist the `StandardResult`
-      (`score`, `standard_key`, `criteria`) alongside the existing breakdown.
-    - _Requirements: 6.2, 6.7, 7.1_
-  - [x] 13.3 Extend `reproducibility_breakdown` on `GET /api/papers/{id}`
-    - Add `standardKey`, `standardName`, and the `criteria` list to the additive,
-      nullable breakdown object.
+      manuscript/source), load `paper.domain` as the Field of Study, call
+      `reproducibility(field_of_study, evidence)`, and persist the full
+      `StandardResult` (`score`, `field_of_study`, `standard_key`, `score_q`,
+      `score_d`, `criteria`, `categories`, `discrepancies`, `reference_versions`)
+      alongside the existing breakdown.
+    - _Requirements: 6.2, 6.7, 7.1, 10.7_
+  - [ ] 13.3 Extend `reproducibility_breakdown` on `GET /api/papers/{id}` (backend)
+    - Add `fieldOfStudy`, `standardKey`, `standardName`, `scoreQ`, `scoreD`, the
+      `criteria` list (with tag, weight, category, source references, status,
+      confidence, note), the `categories` breakdown, and `discrepancies` to the
+      additive, nullable breakdown object. Backend only — the matching frontend
+      render is deferred (task 14).
     - _Requirements: 8.1, 8.8_
-  - [ ]* 13.4 Example tests — a CS paper routes to ML Checklist and a Medicine
-    paper to FAIR; the persisted `criteria` round-trips onto the detail response;
-    `unknown` → baseline.
-    - _Requirements: 9.5, 10.2, 8.8_
+  - [ ]* 13.4 Example tests — a Medicine paper routes to TRIPOD+AI and a CS paper
+    to the merged ACM/ML/FAIR4RS standard; `unknown` → baseline; the persisted
+    `criteria`/`categories`/`score_q`/`score_d` round-trip onto the detail
+    response; a known development-and-evaluation Medicine paper and a no-code CS
+    paper produce the §5.3/§5.4 expected statuses.
+    - _Requirements: 9.5, 10.2, 10.3, 8.8_
 
-- [x] 14. Frontend — surface the standard and criteria (manual verification)
-  - [x] 14.1 Extend `PaperDetail` / client with `standardKey`, `standardName`,
-    `criteria`.
+- [ ] 14. Frontend — surface the standard, categories, and criteria (DEFERRED — not in this update)
+  - The frontend is intentionally **out of scope for this spec update**. R8 and
+    the tasks below describe the eventual UI (standard name, seven display
+    categories ordered by points lost, per-criterion list with tag/category/
+    status/note, discrepancy drill-downs per §10.4). They are left as-is and
+    will be reconciled with the new breakdown shape in a separate frontend pass.
+  - [ ] 14.1 Extend `PaperDetail` / client with the new breakdown fields
+      (`fieldOfStudy`, `standardKey`, `standardName`, `scoreQ`, `scoreD`,
+      `criteria`, `categories`, `discrepancies`).
     - _Requirements: 8.1, 8.8_
-  - [x] 14.2 Render the standard name and the per-Criterion list (title, status
-    badge, evidence note) in `PaperDetail.tsx`, using the `frontend-design` skill
-    for the criteria presentation.
+  - [ ] 14.2 Render the standard name, the seven display categories (ordered by
+    points lost, §10.4), and the per-Criterion list (title, tag, category, status
+    badge, evidence note) in `PaperDetail.tsx`, using the `frontend-design` skill.
     - _Requirements: 8.1, 8.8_
 
-- [x] 15. Redesign checkpoint
-  - Backend: `cd backend && uv run pytest` passes. Frontend: manually verify a CS
-    paper shows "ML Reproducibility Checklist" with its criteria, a Medicine paper
-    shows "FAIR", and an unknown-domain paper shows the baseline — each with
-    per-criterion statuses and notes.
+- [ ] 15. Redesign checkpoint (backend)
+  - Backend: `cd backend && uv run pytest` passes, including the per-standard
+    weight-sum assertions (Q = 0.30, D + Q/D = 0.70 for each field), the NA-
+    renormalization and whole-group-NA fallback, and the standard-selection tests
+    (`medicine` → TRIPOD+AI, `computer_science` → merged ACM/ML/FAIR4RS,
+    `unknown` → baseline). Frontend verification is **deferred** with task 14.
 
 
 ## Notes

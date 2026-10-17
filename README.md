@@ -243,6 +243,14 @@ Run the gate on the host: `cd backend && uv run pytest`. The ranking/merge/sourc
 tests need no Docker; the full suite (API + migrations) needs a reachable Docker
 daemon for testcontainers.
 
+> **Scoring-model update (pending).** `reproducibility-scoring` is being realigned
+> to the **Standards-Conformance Score** in [`scoring_rule.md`](scoring_rule.md)
+> v1.2 — the weighted Q/D model with the TRIPOD+AI (Medicine) and merged
+> ACM/ML/FAIR4RS (CS) standards. The spec, ADR-0008/0009, and the
+> `ReproducibilityScore` model are updated; the `standards/` adapter rewrite and
+> its migration are re-opened tasks (see `.kiro/specs/reproducibility-scoring/tasks.md`,
+> §Redesign). The currently passing scorer tests cover the earlier blend.
+
 ## Planned specs
 
 The product was grilled (`/grill-with-docs`) into shared understanding before any
@@ -315,22 +323,39 @@ Experiment Setup, repo link, conditional code-gen action).
 
 ### Spec 3 — `reproducibility-scoring` — **frontend done**
 
-Compute a `Reproducibility Score` for a `Paper` from: repo existence +
-repo-quality heuristics (README / license / tests / recent activity, via the Git
-host API) **plus** completeness of the LLM-extracted `Experiment Setup`
-(hyperparameters, datasets, environment) from the manuscript/source. Number is
-rule-based over these signals; the LLM extracts the Experiment Setup and can
-explain the score, but does not invent the number.
+Compute a `Reproducibility Score` for a `Paper` by evaluating it against a
+published standard selected by its **field of study**, following the
+**Standards-Conformance Score** defined in [`scoring_rule.md`](scoring_rule.md)
+(v1.2). The number is rule-based; the LLM extracts the `Experiment Setup` and
+supplies per-criterion evidence, and can explain the score, but never invents the
+number.
 
-- Introduces `ReproducibilityScore` and `ExperimentSetup`.
+- **Two fields, different standards:** Medicine → **TRIPOD+AI** (26 weighted
+  criteria); Computer Science → a merged **ACM Artifact Review & Badging v1.1 +
+  ML Code Completeness Checklist + FAIR4RS v1.0** standard (25 weighted criteria);
+  `unknown` → a domain-neutral **baseline**. The field of study is captured at
+  ingestion from the source classifier (OpenAlex field id, arXiv category) and
+  persisted on the `Paper`.
+- **Weighted Q/D roll-up:** each criterion carries a classification tag — **Q**
+  (code/tool quality) or **D** (paper-to-code discrepancy; `Q/D` counts in D) — a
+  weight, a display category, and its source reference(s). Within each field the Q
+  weights sum to `0.30` and the D + Q/D weights sum to `0.70`, so the score is
+  `S = 0.30·S_Q + 0.70·S_D`. Each criterion scores met=1 / partial=0.5 / unmet=0 /
+  NA, confidence-adjusted; NA criteria are dropped and weights renormalized within
+  their group. Repo-quality signals (README / license / tests / recent activity,
+  via the Git host API) and `Experiment Setup` completeness feed the criteria.
+- Introduces `ReproducibilityScore` (which records the field of study, selected
+  standard, `S_Q`/`S_D`, and the full per-criterion result) and `ExperimentSetup`.
 - Runs async (BackgroundTasks); results cached on the `Paper`.
 - **Depends on:** `paper-search` for the `Paper` it scores.
 - **Blocks:** meaningful ranking in `paper-search`; `code-generation` (uses the
-  Experiment Setup).
+  Experiment Setup and the per-criterion `Standard Result`).
 - **Spec:** `.kiro/specs/reproducibility-scoring/`. First iteration is
   **GitHub-only** (behind a `RepoHost` interface) and scores Reader-side material
   only (abstract + links); Writer-uploaded material comes with `writer-workspace`.
-  Replaces the `paper-search` repro stub at the same seam.
+  Replaces the `paper-search` repro stub at the same seam. The scoring model lives
+  behind a `select_standard(field_of_study)` adapter (ADR-0008); the roll-up is
+  deterministic and never produced by the LLM (ADR-0009).
 - **Cross-spec alignment with `paper-search`:** the normalized `experiment_setups`
   table is the source of truth and is **mirrored** into the existing
   `papers.experiment_setup` JSON column (`{hyperparameters, datasets,

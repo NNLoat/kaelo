@@ -97,10 +97,11 @@ between `User`s; and any global opt-in account setting.
   `Reproducibility_Standard` (statuses + evidence notes + the `[0,1]` roll-up),
   produced and persisted by `reproducibility-scoring` and **consumed** by the
   Review case to ground the report. Never produced by this spec.
-- **Reproducibility_Standard**: The published, domain-selected set of criteria a
-  Paper is evaluated against (ML Reproducibility Checklist for Computer Science,
-  FAIR for Medicine, baseline for unknown). Owned by `reproducibility-scoring`;
-  referenced here only via the `Standard_Result`.
+- **Reproducibility_Standard**: The published, field-of-study-selected set of
+  weighted criteria a Paper is evaluated against (TRIPOD+AI for Medicine; the
+  merged ACM-badges + ML-Code-Completeness + FAIR4RS standard for Computer
+  Science; baseline for unknown), per `scoring_rule.md` v1.2. Owned by
+  `reproducibility-scoring`; referenced here only via the `Standard_Result`.
 - **Generation_Job**: The asynchronous unit of work that produces a `Generation`.
   Started on explicit per-action opt-in. Ends in exactly one terminal state:
   **succeeded**, **failed**, or **refused**. At most one in-flight (pending or
