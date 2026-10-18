@@ -94,6 +94,7 @@ def _client() -> ChatBedrock:
     return ChatBedrock(
         model=settings.bedrock_model_id,
         region_name=settings.aws_region,
+        max_tokens=settings.codegen_max_tokens,
     )
 
 
