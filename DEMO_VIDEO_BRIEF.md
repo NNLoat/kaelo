@@ -135,14 +135,15 @@ Split: Problem 65 s (22 %) · Solution 25 s (8 %) · Demos 145 s (49 %) · Kiro/
 
 ## 6. Personas (user stories)
 
-**พล (Pol) — Computer Science (Reader mode)**
+**โอ๊ต (Oat) — Computer Science (Reader mode)**
 Master's student, Faculty of ICT, Mahidol (`TODO(team)`: confirm faculty wording). Needs to reproduce a recent ML paper as the baseline for his thesis.
 *User story:* "As a CS grad student, I want to find papers I can actually reproduce, see why a paper is or isn't reproducible, and get starter code when the authors released none, so I don't lose weeks on a dead-end baseline."
+*Example paper:*  Enhancing citation recommendation using citation network embedding (Have Github), A neural probabilistic model for context based citation recommendation (No github),  Neural citation network for context-aware citation recommendation (Have github)
 
 **น้ำ (Nam) — Medicine (Writer mode)**
 Medical resident / clinical researcher at a Mahidol teaching hospital (`TODO(team)`: e.g. Siriraj or Ramathibodi). She built a clinical prediction model, posted it as a **preprint**, and is revising it for journal submission.
 *User story:* "As a clinical researcher, I want to check my own prediction-model paper and code against TRIPOD+AI before I submit, so reviewers don't find the gaps first."
-
+*Example paper:* DARTS: DenseUnet-based automatic rapid tool for brain segmentation from  https://arxiv.org/pdf/1911.05567
 > Why a preprint: in the prototype, a Writer claims a paper by DOI / arXiv id / URL, and the review is grounded in that paper's indexed record (OpenAlex/arXiv). A preprint with a DOI (e.g. medRxiv, indexed by OpenAlex) fits that flow honestly. `TODO(team)`: confirm the chosen paper resolves and gets the Medicine domain → TRIPOD+AI.
 
 ---
