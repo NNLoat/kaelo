@@ -91,9 +91,13 @@ flows, what's left, operational gotchas).
 - [ ] **writer-workspace tests:** `/api/writer/*` has no dedicated coverage; do at
   least optional tasks 3.3 (migration smoke) and 5.11 (API edge + mocked
   Git-fetch).
-- [ ] Manual-frontend final-checkpoint tasks remain unchecked for `accounts`,
-  `paper-search`, `reproducibility-scoring`, and `code-generation` (tasks 8/10/12)
-  — verify each in the browser and tick the final task in its `tasks.md`.
+- [x] **Manual-frontend final checkpoints verified in the browser** for
+  `accounts`, `paper-search`, `reproducibility-scoring`, and `code-generation`
+  (tasks 8/10/12). Frontend for this iteration is complete and merged (search
+  UX, writer wording, mode headings/persistence, landing hero, accessibility
+  tiers 1–3, AuthBar, score labels + tooltips, and the Standards-Conformance
+  breakdown + review-report rendering). Still tick the matching final task in
+  each spec's own `tasks.md` if not already done.
 - [ ] **Score dimension descriptions (business logic → frontend):** the frontend
   shows an info (ⓘ) tooltip on every score — Relevance, Reproducibility, Overall,
   Code quality, Setup completeness — but the copy is a **placeholder** (see the
