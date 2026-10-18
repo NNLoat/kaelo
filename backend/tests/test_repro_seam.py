@@ -50,7 +50,7 @@ def _patch(monkeypatch, *, signals, setup=FULL_SETUP, extract_raises=False, expl
             raise RuntimeError("llm down")
         return setup
 
-    def fake_explain(score, sig, comp):
+    def fake_explain(score, sig, result):
         if explain_raises:
             raise RuntimeError("llm down")
         return "because reasons"
