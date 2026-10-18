@@ -34,6 +34,24 @@ export interface Criterion {
   title: string;
   status: "met" | "partial" | "unmet" | "not_applicable";
   evidence_note: string;
+  tag: "Q" | "D" | "Q/D";
+  weight: number;
+  category: string;
+  source_references: string[];
+  confidence: number;
+}
+
+export interface CategoryScore {
+  category: string;
+  score: number;
+  points_lost: number;
+}
+
+export interface Discrepancy {
+  criterion_id: string;
+  paper_value: string | null;
+  code_value: string | null;
+  reference: string;
 }
 
 export interface ReproducibilityBreakdown {
@@ -45,6 +63,12 @@ export interface ReproducibilityBreakdown {
   standard_key: string | null;
   standard_name: string | null;
   criteria: Criterion[] | null;
+  // null until reproducibility-scoring has run (R8.1, R8.8)
+  field_of_study: string | null;
+  score_q: number | null;
+  score_d: number | null;
+  categories: CategoryScore[] | null;
+  discrepancies: Discrepancy[] | null;
 }
 
 export interface PaperDetail extends PaperCard {

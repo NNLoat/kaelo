@@ -52,12 +52,15 @@ def score_reproducibility(paper_id: int) -> float:
             raise ReproducibilityUnavailable(f"no signal for paper {paper_id}")
 
         # Evaluate against the Domain's standard (R10.2). Reader-side papers have
-        # no manuscript/source — those stay None (ADR 0003 / Writer-only).
+        # no manuscript/source — manuscript_text/source_files stay None here.
+        # Writer uploads populate those in a separate spec (ADR 0003).
         evidence = Evidence(
             repo=signals,
             code_quality=cq,
             setup=setup,
             setup_completeness=setup_completeness,
+            manuscript_text=None,
+            source_files=None,
         )
         result = reproducibility(paper.domain, evidence)
         score = result.score
@@ -78,15 +81,43 @@ def score_reproducibility(paper_id: int) -> float:
             setup_available=setup_available,
             setup_completeness=setup_completeness,
             explanation=explanation,
+            field_of_study=result.field_of_study,
             standard_key=result.standard_key,
+            score_q=result.score_q,
+            score_d=result.score_d,
+            reference_versions=result.reference_versions,
+            # Full per-Criterion rows. Old keys (id/title/status/evidence_note)
+            # stay present so existing consumers/tests keep working.
             criteria=[
                 {
-                    "id": c.id,
-                    "title": c.title,
+                    "id": c.criterion.id,
+                    "title": c.criterion.title,
+                    "tag": c.criterion.tag.value,
+                    "weight": c.criterion.weight,
+                    "category": c.criterion.category,
+                    "source_references": c.criterion.source_references,
                     "status": c.status.value,
+                    "confidence": c.confidence,
                     "evidence_note": c.evidence_note,
                 }
-                for c in result.criteria
+                for c in result.results
+            ],
+            categories=[
+                {
+                    "category": cat.category,
+                    "score": cat.score,
+                    "points_lost": cat.points_lost,
+                }
+                for cat in result.categories
+            ],
+            discrepancies=[
+                {
+                    "criterion_id": r.criterion.id,
+                    "paper_value": r.paper_value,
+                    "code_value": r.code_value,
+                    "reference": "; ".join(r.criterion.source_references),
+                }
+                for r in result.discrepancies
             ],
         )
         session.commit()
@@ -104,8 +135,14 @@ def _persist(
     setup_available: bool,
     setup_completeness: float,
     explanation: str | None,
+    field_of_study: str | None,
     standard_key: str | None,
+    score_q: float | None,
+    score_d: float | None,
+    reference_versions: dict | None,
     criteria: list[dict] | None,
+    categories: list[dict] | None,
+    discrepancies: list[dict] | None,
 ) -> None:
     """Upsert both rows and mirror onto the Paper in one transaction (R7.4)."""
     now = datetime.now(UTC)
@@ -122,8 +159,14 @@ def _persist(
     repro_row.repo_inspectable = signals.inspectable
     repro_row.setup_completeness = setup_completeness
     repro_row.explanation = explanation
+    repro_row.field_of_study = field_of_study
     repro_row.standard_key = standard_key
+    repro_row.score_q = score_q
+    repro_row.score_d = score_d
+    repro_row.reference_versions = reference_versions
     repro_row.criteria = criteria
+    repro_row.categories = categories
+    repro_row.discrepancies = discrepancies
     repro_row.updated_at = now
     session.add(repro_row)
 
