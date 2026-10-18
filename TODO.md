@@ -113,11 +113,20 @@ flows, what's left, operational gotchas).
   any paper-to-code discrepancies; the caller in
   `backend/app/services/reproducibility.py` passes it through. R5.2 (score fixed)
   and R5.3 (failure → no explanation) preserved; no LLM on the roll-up path
-  (ADR-0009). **Verification caveat:** `test_repro_inspector.py` passes, but the
-  DB-backed seam tests (`test_repro_seam*.py`) and the real-Bedrock prose quality
-  were NOT runnable in-agent (testcontainers need host `uv`). Run
-  `cd backend && uv run pytest` on the host and eyeball a paper's explanation in
-  the browser before merging.
+  (ADR-0009). Merged (PR #35) and verified in the browser — the explanation now
+  names specific gaps. `test_repro_inspector.py` passed in-agent; the DB-backed
+  seam tests still want a host `cd backend && uv run pytest` run for regression
+  safety (testcontainers need host `uv`).
+- [x] **Review/code generation no longer truncated (PR #36).** The `ChatBedrock`
+  client in `backend/app/core/codegen.py` set no `max_tokens`, so long
+  `REVIEW.md` reports (and generated code) hit Bedrock's low default and were
+  cut off mid-output — the stored artifact itself was incomplete, not a display
+  issue. Added `codegen_max_tokens` (default 8192, env `CODEGEN_MAX_TOKENS`,
+  forwarded in `compose.yaml`) and passed it to the shared codegen `_client()`.
+  Merged and verified in the browser (a freshly generated review renders in
+  full). Codegen helper tests passed in-agent; same host-pytest caveat as above.
+  Note: if a configured model's output ceiling is below 8192, lower
+  `CODEGEN_MAX_TOKENS`.
 - [ ] **Rotate the leaked AWS key** `AKIA6HF7RX3XVOANFSIE` still present in `.env`.
 
 ## The workflow (for reference)
