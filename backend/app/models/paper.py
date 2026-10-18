@@ -40,7 +40,15 @@ class ReproducibilityBreakdown(BaseModel):
     explanation: str | None
     standard_key: str | None = None
     standard_name: str | None = None  # display label derived from standard_key
-    criteria: list[dict] | None = None  # per-Criterion: {id, title, status, evidence_note}
+    field_of_study: str | None = None
+    score_q: float | None = None  # S_Q, the Q-group (0.30) sub-score
+    score_d: float | None = None  # S_D, the D + Q/D group (0.70) sub-score
+    # Full per-Criterion fields: {id, title, tag, weight, category,
+    # source_references, status, confidence, evidence_note}.
+    criteria: list[dict] | None = None
+    categories: list[dict] | None = None  # [{category, score, points_lost}]
+    # [{criterion_id, paper_value, code_value, reference}]
+    discrepancies: list[dict] | None = None
 
 
 class PaperBase(SQLModel):

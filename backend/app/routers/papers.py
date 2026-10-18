@@ -15,8 +15,8 @@ _MAX_QUERY_LEN = 512
 
 # Display labels for the selected Reproducibility Standard (R8.8).
 _STANDARD_NAMES = {
-    "ml_checklist": "ML Reproducibility Checklist",
-    "fair": "FAIR",
+    "tripod_ai": "TRIPOD+AI",
+    "cs_merged": "ACM + ML Code Completeness + FAIR4RS",
     "baseline": "Baseline",
 }
 
@@ -139,7 +139,12 @@ def get_paper(paper_id: int, session: Session = Depends(get_session)) -> PaperRe
             explanation=row.explanation,
             standard_key=row.standard_key,
             standard_name=_STANDARD_NAMES.get(row.standard_key),
+            field_of_study=row.field_of_study,
+            score_q=row.score_q,
+            score_d=row.score_d,
             criteria=row.criteria,
+            categories=row.categories,
+            discrepancies=row.discrepancies,
         )
 
     return PaperRead(

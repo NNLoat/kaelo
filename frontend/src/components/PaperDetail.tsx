@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import {
   paper as fetchPaper,
+  type CategoryScore,
   type Criterion,
+  type Discrepancy,
   type PaperDetail as Detail,
   type ReproducibilityBreakdown,
 } from "../api/papers";
@@ -195,11 +197,25 @@ function CodegenSection({ paper }: { paper: Detail }) {
 
 function ReproBreakdown({ breakdown }: { breakdown: ReproducibilityBreakdown }) {
   const criteria = breakdown.criteria ?? [];
+  const categories = breakdown.categories ?? [];
+  const discrepancies = breakdown.discrepancies ?? [];
+  // Weakest angle first: order display categories by points lost, descending.
+  const rankedCategories = [...categories].sort((a, b) => b.points_lost - a.points_lost);
   return (
     <div className="mt-4 rounded-lg border border-hairline bg-white p-5 shadow-sm">
       <h3 className="text-sm font-semibold text-ink">How the reproducibility score was reached</h3>
       {breakdown.standard_name && (
-        <p className="mt-1 text-xs text-muted">Evaluated against {breakdown.standard_name}</p>
+        <p className="mt-1 text-xs text-muted">
+          Evaluated against {breakdown.standard_name}
+          {breakdown.field_of_study && <> in {breakdown.field_of_study}</>}
+        </p>
+      )}
+      {(breakdown.score_q != null || breakdown.score_d != null) && (
+        <p className="mt-1 text-xs text-muted">
+          {breakdown.score_q != null && <>Quality {breakdown.score_q.toFixed(2)}</>}
+          {breakdown.score_q != null && breakdown.score_d != null && <> · </>}
+          {breakdown.score_d != null && <>Agreement {breakdown.score_d.toFixed(2)}</>}
+        </p>
       )}
       <div className="mt-3 grid gap-4 sm:grid-cols-2">
         <ScoreBar label="Code quality" cell={breakdown.code_quality} />
@@ -210,6 +226,16 @@ function ReproBreakdown({ breakdown }: { breakdown: ReproducibilityBreakdown }) 
           No code repository was found, which lowered the code-quality contribution.
         </p>
       )}
+      {rankedCategories.length > 0 && (
+        <div className="mt-5">
+          <h4 className="text-xs font-semibold text-ink">Where this paper lost points</h4>
+          <ul className="mt-3 flex flex-col gap-3">
+            {rankedCategories.map((c) => (
+              <CategoryRow key={c.category} category={c} />
+            ))}
+          </ul>
+        </div>
+      )}
       {criteria.length > 0 && (
         <ul className="mt-4 divide-y divide-hairline border-t border-hairline">
           {criteria.map((c) => (
@@ -217,10 +243,67 @@ function ReproBreakdown({ breakdown }: { breakdown: ReproducibilityBreakdown }) 
           ))}
         </ul>
       )}
+      {discrepancies.length > 0 && (
+        <div className="mt-5 border-t border-hairline pt-4">
+          <h4 className="text-xs font-semibold text-ink">Paper-to-code discrepancies</h4>
+          <ul className="mt-3 flex flex-col gap-3">
+            {discrepancies.map((d) => (
+              <DiscrepancyRow key={`${d.criterion_id}-${d.reference}`} discrepancy={d} />
+            ))}
+          </ul>
+        </div>
+      )}
       {breakdown.explanation && (
         <p className="mt-3 text-sm leading-relaxed text-ink">{breakdown.explanation}</p>
       )}
     </div>
+  );
+}
+
+// Strong ≥ 0.85, Fair 0.60–0.85, Weak < 0.60. Paired with a dot so status
+// isn't carried by color alone.
+function level(score: number): { label: string; dot: string; text: string } {
+  if (score >= 0.85) return { label: "Strong", dot: "bg-accent", text: "text-accent-strong" };
+  if (score >= 0.6) return { label: "Fair", dot: "bg-caution", text: "text-caution" };
+  return { label: "Weak", dot: "bg-red-700", text: "text-red-700" };
+}
+
+function CategoryRow({ category }: { category: CategoryScore }) {
+  const pct = Math.round(Math.min(1, Math.max(0, category.score)) * 100);
+  const l = level(category.score);
+  return (
+    <li className="flex flex-col gap-1">
+      <div className="flex items-baseline justify-between gap-3">
+        <span className="text-sm text-ink">{category.category}</span>
+        <span className="flex items-center gap-2 text-xs">
+          <span className={`inline-flex items-center gap-1.5 font-medium ${l.text}`}>
+            <span aria-hidden="true" className={`h-2 w-2 rounded-full ${l.dot}`} />
+            {l.label}
+          </span>
+          <span className="tabular-nums text-ink">{pct}%</span>
+        </span>
+      </div>
+      <div className="h-1 overflow-hidden rounded-full bg-hairline">
+        <div
+          className="h-full rounded-full bg-ink/40 transition-[width]"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+    </li>
+  );
+}
+
+function DiscrepancyRow({ discrepancy }: { discrepancy: Discrepancy }) {
+  return (
+    <li className="text-sm">
+      <p className="text-ink">
+        <span className="font-medium">{discrepancy.criterion_id}</span>
+        <span className="text-muted"> — {discrepancy.reference}</span>
+      </p>
+      <p className="mt-0.5 text-muted">
+        Paper says {discrepancy.paper_value ?? "—"}; code shows {discrepancy.code_value ?? "—"}.
+      </p>
+    </li>
   );
 }
 
@@ -243,6 +326,16 @@ function CriterionRow({ criterion }: { criterion: Criterion }) {
       </span>
       <div className="min-w-0">
         <p className="text-sm font-medium text-ink">{criterion.title}</p>
+        {(criterion.category || criterion.tag) && (
+          <p className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-muted">
+            {criterion.tag && (
+              <span className="rounded-full bg-hairline px-1.5 py-0.5 text-[11px] text-ink">
+                {criterion.tag}
+              </span>
+            )}
+            {criterion.category && <span>{criterion.category}</span>}
+          </p>
+        )}
         {criterion.evidence_note && (
           <p className="mt-0.5 text-sm leading-relaxed text-muted">{criterion.evidence_note}</p>
         )}

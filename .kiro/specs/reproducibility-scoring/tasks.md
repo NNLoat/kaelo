@@ -324,8 +324,8 @@ number, token-security, and paper-search-seam contracts are unchanged.
 > Medicine wording. Where a task is marked `[x]` from the prior iteration but its
 > body here changed, treat it as **re-opened** against the new acceptance criteria.
 
-- [ ] 11. Business logic — the weighted standard adapter and field selection
-  - [ ] 11.1 Define the standard interface and shared result shapes
+- [x] 11. Business logic — the weighted standard adapter and field selection
+  - [x] 11.1 Define the standard interface and shared result shapes
     - In `backend/app/services/repro/standards/__init__.py` define the
       `CriterionStatus` and `Tag` (`Q`/`D`/`Q/D`) enums; the `Criterion`
       (id, title, tag, weight, category, source_references), `CriterionResult`
@@ -338,7 +338,7 @@ number, token-security, and paper-search-seam contracts are unchanged.
       and renormalized within each group); and `select_standard(field_of_study)`.
       No LLM import in `roll_up`.
     - _Requirements: 10.1, 10.2, 4.3, 4.4, 4.5, 4.10_
-  - [ ] 11.2 Implement the Medicine standard — TRIPOD+AI (`standards/tripod_ai.py`)
+  - [x] 11.2 Implement the Medicine standard — TRIPOD+AI (`standards/tripod_ai.py`)
     - Encode the 26 criteria of `scoring_rule.md` §3.1 verbatim: exact ids
       (M-Q*/M-D*), tags, weights (Q sum 0.30, D sum 0.70), display categories
       (§10.2), and R1 item + R2 Thai-element source references. Apply the §5.4
@@ -349,7 +349,7 @@ number, token-security, and paper-search-seam contracts are unchanged.
       criterion-evidence helper only where a heuristic cannot decide (evidence as
       data; ADR 0009).
     - _Requirements: 10.3, 10.6, 4.2, 4.8, 4.9_
-  - [ ] 11.3 Implement the CS standard — merged ACM/ML/FAIR4RS (`standards/cs_merged.py`)
+  - [x] 11.3 Implement the CS standard — merged ACM/ML/FAIR4RS (`standards/cs_merged.py`)
     - Encode the 25 criteria of `scoring_rule.md` §4.1 verbatim: exact ids
       (C-A*/C-M*/C-FAIR-*), tags, weights (Q sum 0.30, D+Q/D sum 0.70), display
       categories (§10.3), and the R3/R4/R5 source references on each (including the
@@ -360,12 +360,12 @@ number, token-security, and paper-search-seam contracts are unchanged.
       C-FAIR-A1.2 NA if public) and the §5.2 D-group discrepancy rule. Judge from
       `Evidence` + bounded LLM evidence helper as above.
     - _Requirements: 10.3, 10.6, 4.2, 4.8, 4.9_
-  - [ ] 11.4 Implement the baseline standard (`standards/baseline.py`)
+  - [x] 11.4 Implement the baseline standard (`standards/baseline.py`)
     - A domain-neutral, field-agnostic subset that keeps `unknown`-field papers
       scorable, with the same weighted Q/D shape (Q sum 0.30, D+Q/D sum 0.70) and
       criteria scoped to gatherable evidence (R10.6).
     - _Requirements: 10.2, 10.6, 4.4_
-  - [ ] 11.5 Rewrite `Reproducibility_Scorer` (`repro/scorer.py`) to the model
+  - [x] 11.5 Rewrite `Reproducibility_Scorer` (`repro/scorer.py`) to the model
     - `reproducibility(field_of_study, evidence) -> StandardResult`: select the
       standard, evaluate each criterion (status + confidence), run the weighted
       roll-up, and fill `score_q`/`score_d`, the seven per-display-category
@@ -400,8 +400,8 @@ number, token-security, and paper-search-seam contracts are unchanged.
     including the `unknown` fallback and merge preference.
     - _Requirements: 9.1, 9.2, 9.3_
 
-- [ ] 13. Backend — persist and surface the Standards-Conformance result
-  - [ ] 13.1 Extend `ReproducibilityScore` with the full Standard Result fields
+- [x] 13. Backend — persist and surface the Standards-Conformance result
+  - [x] 13.1 Extend `ReproducibilityScore` with the full Standard Result fields
     - Add `field_of_study`, `standard_key`, `score_q`, `score_d`, and the JSON
       `criteria` (id, title, tag, weight, category, source_references, status,
       confidence, evidence_note), `categories` (seven display rows: score +
@@ -409,7 +409,7 @@ number, token-security, and paper-search-seam contracts are unchanged.
       `app/models/reproducibility.py`; add an Alembic migration (all
       nullable/additive). *(Model fields already added; migration still needed.)*
     - _Requirements: 7.1, 10.7_
-  - [ ] 13.2 Wire the seam to the weighted standard
+  - [x] 13.2 Wire the seam to the weighted standard
     - In `services/reproducibility.py`, build `Evidence` (repo signals,
       code-quality, setup, completeness, and for a Writer-claimed paper the
       manuscript/source), load `paper.domain` as the Field of Study, call
@@ -418,36 +418,36 @@ number, token-security, and paper-search-seam contracts are unchanged.
       `score_d`, `criteria`, `categories`, `discrepancies`, `reference_versions`)
       alongside the existing breakdown.
     - _Requirements: 6.2, 6.7, 7.1, 10.7_
-  - [ ] 13.3 Extend `reproducibility_breakdown` on `GET /api/papers/{id}` (backend)
+  - [x] 13.3 Extend `reproducibility_breakdown` on `GET /api/papers/{id}` (backend)
     - Add `fieldOfStudy`, `standardKey`, `standardName`, `scoreQ`, `scoreD`, the
       `criteria` list (with tag, weight, category, source references, status,
       confidence, note), the `categories` breakdown, and `discrepancies` to the
       additive, nullable breakdown object. Backend only — the matching frontend
       render is deferred (task 14).
     - _Requirements: 8.1, 8.8_
-  - [ ]* 13.4 Example tests — a Medicine paper routes to TRIPOD+AI and a CS paper
+  - [x]* 13.4 Example tests — a Medicine paper routes to TRIPOD+AI and a CS paper
     to the merged ACM/ML/FAIR4RS standard; `unknown` → baseline; the persisted
     `criteria`/`categories`/`score_q`/`score_d` round-trip onto the detail
     response; a known development-and-evaluation Medicine paper and a no-code CS
     paper produce the §5.3/§5.4 expected statuses.
     - _Requirements: 9.5, 10.2, 10.3, 8.8_
 
-- [ ] 14. Frontend — surface the standard, categories, and criteria (DEFERRED — not in this update)
+- [x] 14. Frontend — surface the standard, categories, and criteria (DEFERRED — not in this update)
   - The frontend is intentionally **out of scope for this spec update**. R8 and
     the tasks below describe the eventual UI (standard name, seven display
     categories ordered by points lost, per-criterion list with tag/category/
     status/note, discrepancy drill-downs per §10.4). They are left as-is and
     will be reconciled with the new breakdown shape in a separate frontend pass.
-  - [ ] 14.1 Extend `PaperDetail` / client with the new breakdown fields
+  - [x] 14.1 Extend `PaperDetail` / client with the new breakdown fields
       (`fieldOfStudy`, `standardKey`, `standardName`, `scoreQ`, `scoreD`,
       `criteria`, `categories`, `discrepancies`).
     - _Requirements: 8.1, 8.8_
-  - [ ] 14.2 Render the standard name, the seven display categories (ordered by
+  - [x] 14.2 Render the standard name, the seven display categories (ordered by
     points lost, §10.4), and the per-Criterion list (title, tag, category, status
     badge, evidence note) in `PaperDetail.tsx`, using the `frontend-design` skill.
     - _Requirements: 8.1, 8.8_
 
-- [ ] 15. Redesign checkpoint (backend)
+- [x] 15. Redesign checkpoint (backend)
   - Backend: `cd backend && uv run pytest` passes, including the per-standard
     weight-sum assertions (Q = 0.30, D + Q/D = 0.70 for each field), the NA-
     renormalization and whole-group-NA fallback, and the standard-selection tests

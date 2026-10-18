@@ -33,6 +33,21 @@
         "executionId": "3e501494-f34f-4b51-ab31-91342451c22c",
         "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
         "timestamp": 1792059005364
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792298024640
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792298036665
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792298668789
       }
     ],
     "11.2 Implement the three standards (scoped ~6 criteria each)": [
@@ -248,6 +263,233 @@
         "executionId": "3e501494-f34f-4b51-ab31-91342451c22c",
         "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
         "timestamp": 1792060825507
+      }
+    ],
+    "11.2 Implement the Medicine standard — TRIPOD+AI (`standards/tripod_ai.py`)": [
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792298024643
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792298680929
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792299113579
+      }
+    ],
+    "11.3 Implement the CS standard — merged ACM/ML/FAIR4RS (`standards/cs_merged.py`)": [
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792298024645
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792299119785
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792299595967
+      }
+    ],
+    "11.4 Implement the baseline standard (`standards/baseline.py`)": [
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792298024647
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792299602162
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792299826488
+      }
+    ],
+    "11.5 Rewrite `Reproducibility_Scorer` (`repro/scorer.py`) to the model": [
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792298024650
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792299832786
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792300057690
+      }
+    ],
+    "13.1 Extend `ReproducibilityScore` with the full Standard Result fields": [
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792298024652
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792300088759
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792300261841
+      }
+    ],
+    "13.2 Wire the seam to the weighted standard": [
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792298024654
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792300293650
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792300445918
+      }
+    ],
+    "13.3 Extend `reproducibility_breakdown` on `GET /api/papers/{id}` (backend)": [
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792298024656
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792300470038
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792300604817
+      }
+    ],
+    "14.1 Extend `PaperDetail` / client with the new breakdown fields": [
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792298024658
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792300742989
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792300793794
+      }
+    ],
+    "14.2 Render the standard name, the seven display categories (ordered by": [
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792298024660
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792300806790
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792300914617
+      }
+    ],
+    "15. Redesign checkpoint (backend)": [
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792298024662
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792300921488
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792301008734
+      }
+    ],
+    "11. Business logic — the weighted standard adapter and field selection": [
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792300057694
+      }
+    ],
+    "13. Backend — persist and surface the Standards-Conformance result": [
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792300604820
+      }
+    ],
+    "14. Frontend — surface the standard, categories, and criteria (DEFERRED — not in this update)": [
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792300914626
+      }
+    ],
+    "11.6 Property tests — the weighted roll-up": [
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792301028355
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792301361831
+      }
+    ],
+    "12.4 Example tests — OpenAlex field id / arXiv category → domain mapping,": [
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792301034322
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792301363255
+      }
+    ],
+    "13.4 Example tests — a Medicine paper routes to TRIPOD+AI and a CS paper": [
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792301039993
+      },
+      {
+        "executionId": "1120d7a2-19a1-47cc-a30e-e334c7e84efc",
+        "chatSessionId": "sess_467b8d39-f5c0-4480-ba6b-0ce619207650",
+        "timestamp": 1792301364389
       }
     ]
   }
