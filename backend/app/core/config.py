@@ -33,6 +33,11 @@ class Settings(BaseSettings):
     aws_region: str = "us-east-1"
     llm_timeout_seconds: float = 20.0
 
+    # Max output tokens for code/review generation. Without an explicit cap the
+    # Bedrock default is low and long REVIEW.md / generated files get truncated
+    # mid-output. Env-overridable per model's context limit.
+    codegen_max_tokens: int = 8192
+
     # code-generation: fail a job still running past this bound (R7.6).
     codegen_job_timeout_seconds: int = 600
 
