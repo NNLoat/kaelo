@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Markdown from "react-markdown";
 import {
   paper as fetchPaper,
   type CategoryScore,
@@ -253,9 +254,31 @@ function ReproBreakdown({ breakdown }: { breakdown: ReproducibilityBreakdown }) 
           </ul>
         </div>
       )}
-      {breakdown.explanation && (
-        <p className="mt-3 text-sm leading-relaxed text-ink">{breakdown.explanation}</p>
-      )}
+      {breakdown.explanation && <Explanation markdown={breakdown.explanation} />}
+    </div>
+  );
+}
+
+// The backend sends the explanation as Markdown, sometimes with its own
+// top-level heading (e.g. "# Reproducibility Score Explanation"). Drop every
+// heading — the box already has its own title — and render just the prose.
+function Explanation({ markdown }: { markdown: string }) {
+  const body = markdown.replace(/^#{1,6} .*$/gm, "").trim();
+  if (!body) return null;
+  return (
+    <div className="mt-3 text-sm leading-relaxed text-ink">
+      <Markdown
+        components={{
+          h1: ({ children }) => <>{children}</>,
+          h2: ({ children }) => <>{children}</>,
+          h3: ({ children }) => <>{children}</>,
+          p: (props) => <p className="my-2 first:mt-0 last:mb-0" {...props} />,
+          ul: (props) => <ul className="my-2 ml-5 list-disc space-y-1" {...props} />,
+          li: (props) => <li className="leading-relaxed" {...props} />,
+        }}
+      >
+        {body}
+      </Markdown>
     </div>
   );
 }
