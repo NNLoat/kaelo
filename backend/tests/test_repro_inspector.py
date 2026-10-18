@@ -89,11 +89,22 @@ def test_explain_propagates_so_seam_can_swallow(monkeypatch):
             raise RuntimeError("llm down")
 
     import app.services.repro.explainer as ex
+    from app.services.repro.standards import StandardResult
 
     monkeypatch.setattr(ex, "_client", lambda: Boom())
     sig = RepoSignals(True, True, True, True, True, True, False)
+    result = StandardResult(
+        field_of_study="unknown",
+        standard_key="baseline",
+        reference_versions={},
+        results=[],
+        score=0.5,
+        score_q=0.5,
+        score_d=0.5,
+        categories=[],
+    )
     with pytest.raises(RuntimeError):
-        explain(0.5, sig, 0.5)
+        explain(0.5, sig, result)
 
 
 # Property 9: Inspection distinguishes "signal absent" from "inspection failed".

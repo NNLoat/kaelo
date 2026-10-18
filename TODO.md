@@ -105,24 +105,19 @@ flows, what's left, operational gotchas).
   pending.)"). Business logic/product needs to define the real, agreed
   description for each dimension (what it measures, how it's computed); then
   swap them into that one `HINTS` map.
-- [ ] **Reproducibility explanation is too generic (backend / business logic):**
-  the "How the reproducibility score was reached" explanation is produced by
-  `Score_Explainer` in `backend/app/services/repro/explainer.py`. Its prompt
-  only feeds coarse boolean repo signals (`has_readme`, `has_license`,
-  `has_tests`, `recent_activity`, `exists`, `inspectable`) plus the number and
-  setup completeness — so the output is unavoidably generic ("add a README, add
-  a license, add tests…") and tells the reader nothing specific about *this*
-  paper. The richer `StandardResult` now exists (per-`Criterion` results with
-  status/evidence_note/category/weight, the seven `CategoryScore`s with
-  `points_lost`, and the `discrepancies`) but is **not** passed to `explain()`.
-  Action: extend `explain()` (and its caller in
-  `backend/app/services/reproducibility.py`) to feed the top points-lost
-  categories, the specific unmet/partial criteria with their evidence notes, and
-  any paper-to-code discrepancies, so the explanation is specific and
-  actionable. The frontend already renders the returned Markdown (headings
-  stripped) and needs no further change once the copy improves. Keep the
-  "score is fixed, never recompute" guard (R5.2) and the no-LLM-on-roll-up rule
-  (ADR-0009).
+- [x] **Reproducibility explanation now specific (branch `backend-repro-explanation`).**
+  `Score_Explainer` (`backend/app/services/repro/explainer.py`) previously saw
+  only coarse boolean repo signals, so its prose was generic. `explain()` now
+  takes the full `StandardResult` and builds the prompt from the top points-lost
+  categories, the heaviest unmet/partial criteria with their evidence notes, and
+  any paper-to-code discrepancies; the caller in
+  `backend/app/services/reproducibility.py` passes it through. R5.2 (score fixed)
+  and R5.3 (failure → no explanation) preserved; no LLM on the roll-up path
+  (ADR-0009). **Verification caveat:** `test_repro_inspector.py` passes, but the
+  DB-backed seam tests (`test_repro_seam*.py`) and the real-Bedrock prose quality
+  were NOT runnable in-agent (testcontainers need host `uv`). Run
+  `cd backend && uv run pytest` on the host and eyeball a paper's explanation in
+  the browser before merging.
 - [ ] **Rotate the leaked AWS key** `AKIA6HF7RX3XVOANFSIE` still present in `.env`.
 
 ## The workflow (for reference)

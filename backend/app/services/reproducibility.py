@@ -67,7 +67,7 @@ def score_reproducibility(paper_id: int) -> float:
 
         # Explanation is optional; failure must not fail the score (R5.3).
         try:
-            explanation = explain(score, signals, setup_completeness)
+            explanation = explain(score, signals, result)
         except Exception:
             explanation = None
 

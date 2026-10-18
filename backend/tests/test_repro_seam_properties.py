@@ -55,7 +55,7 @@ def _patch(
             raise RuntimeError("down")
         return setup
 
-    def fake_explain(score, sig, comp):
+    def fake_explain(score, sig, result):
         if explain_raises:
             raise RuntimeError("down")
         return explanation
@@ -162,8 +162,8 @@ def test_token_never_leaks(db, monkeypatch, caplog):
     monkeypatch.setattr(seam.inspector, "inspect_repo", lambda url: GOOD_SIGNALS)
     monkeypatch.setattr(seam, "extract_setup", lambda t, a: ExperimentSetupData("a", None, None))
 
-    def spy_explain(score, sig, comp):
-        captured_prompts.append(f"{score}{sig}{comp}")
+    def spy_explain(score, sig, result):
+        captured_prompts.append(f"{score}{sig}{result}")
         return "no secret here"
 
     monkeypatch.setattr(seam, "explain", spy_explain)
