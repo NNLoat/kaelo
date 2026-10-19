@@ -22,3 +22,28 @@ dist/
 
 # Kiro vendored-skill upstream cache (fetched by scripts/update-skills.sh)
 .kiro/skills/.upstream-cache/
+
+# npx skills — regenerable vendored tree + its symlinks under .kiro/skills/
+# (rebuild locally from skills-lock.json via `npx skills add heygen-com/hyperframes`)
+.agents/
+.kiro/skills/embedded-captions
+.kiro/skills/faceless-explainer
+.kiro/skills/figma
+.kiro/skills/general-video
+.kiro/skills/hyperframes
+.kiro/skills/hyperframes-animation
+.kiro/skills/hyperframes-audio
+.kiro/skills/hyperframes-cli
+.kiro/skills/hyperframes-core
+.kiro/skills/hyperframes-creative
+.kiro/skills/hyperframes-keyframes
+.kiro/skills/hyperframes-registry
+.kiro/skills/hyperframes-studio
+.kiro/skills/media-use
+.kiro/skills/motion-graphics
+.kiro/skills/music-to-video
+.kiro/skills/pr-to-video
+.kiro/skills/product-launch-video
+.kiro/skills/remotion-to-hyperframes
+.kiro/skills/slideshow
+.kiro/skills/talking-head-recut
