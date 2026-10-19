@@ -19,8 +19,8 @@ class Settings(BaseSettings):
     db_echo: bool = False
 
     # Ranking weights for the non-AI Final Score blend (R5.7, R8.5).
-    relevance_weight: float = 0.7
-    reproducibility_weight: float = 0.3
+    relevance_weight: float = 0.3
+    reproducibility_weight: float = 0.7
 
     # Source scope + limits (R7.2).
     source_domains: list[str] = ["computer science", "medicine"]
