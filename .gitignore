@@ -47,9 +47,9 @@ dist/
 .kiro/skills/remotion-to-hyperframes
 .kiro/skills/slideshow
 .kiro/skills/talking-head-recut
-
-# npx skills — regenerable symlink + other agents' generated dirs
 .kiro/skills/playwright-cli
+
+# npx skills — other agents' generated dirs
 .claude/
 
 # HyperFrames video projects — track source + assets, ignore regenerable output
