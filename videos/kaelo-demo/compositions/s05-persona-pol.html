@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          background: #f8fafc;
+          color: #0f172a;
+          font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+          overflow: hidden;
+        }
+        #s05-fade {
+          position: absolute; inset: 0; opacity: 0;
+          display: flex; align-items: center; justify-content: center;
+        }
+        #s05-card {
+          position: relative;
+          width: 1240px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px;
+          box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+          padding: 70px 80px; display: flex; align-items: center; gap: 70px;
+        }
+        #s05-avatar { flex: 0 0 240px; }
+        #s05-body { flex: 1; }
+        #s05-name { font-family: Georgia, "Times New Roman", serif; font-size: 60px; color: #0f172a; }
+        #s05-role { font-size: 28px; color: #64748b; margin-top: 12px; }
+        #s05-quote { font-size: 36px; line-height: 1.4; color: #0f172a; margin-top: 34px; font-style: italic; }
+        #s05-pill {
+          position: absolute; right: 80px; top: 60px; background: #1c6b5a; color: #ffffff;
+          font-size: 22px; padding: 10px 24px; border-radius: 999px; opacity: 0;
+        }
+      </style>
+
+      <div data-hf-id="hf-w76k" id="root" data-composition-id="s05" data-width="1920" data-height="1080" data-duration="10.4">
+        <div data-hf-id="hf-1av8" id="s05-fade">
+          <div data-hf-id="hf-v9g8" id="s05-card">
+            <!-- Original generic flat avatar: young man with laptop -->
+            <svg data-hf-id="hf-crxo" id="s05-avatar" width="240" height="240" viewBox="0 0 240 240">
+              <circle data-hf-id="hf-whim" cx="120" cy="120" r="120" fill="#e9f1ef"/>
+              <circle data-hf-id="hf-bztt" cx="120" cy="96" r="46" fill="#1c6b5a"/>
+              <path data-hf-id="hf-mopq" d="M120 150c-48 0-82 26-90 62h180c-8-36-42-62-90-62z" fill="#1c6b5a"/>
+              <rect data-hf-id="hf-4shc" x="66" y="196" width="108" height="30" rx="6" fill="#15584a"/>
+              <rect data-hf-id="hf-uh47" x="74" y="200" width="92" height="22" rx="3" fill="#cfe3de"/>
+            </svg>
+            <div data-hf-id="hf-8zea" id="s05-body">
+              <div data-hf-id="hf-mqjc" id="s05-name">&#3614;&#3621; (Pol)</div>
+              <div data-hf-id="hf-2i19" id="s05-role">CS master&rsquo;s student &middot; Faculty of ICT, Mahidol University</div>
+              <div data-hf-id="hf-tf6k" id="s05-quote">&ldquo;I need a baseline I can actually reproduce for my thesis.&rdquo;</div>
+            </div>
+            <div data-hf-id="hf-9w0r" id="s05-pill">Reader mode</div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        const tl = gsap.timeline({ paused: true });
+        // No fade to/from paper at seams — content present instantly, hard-cut.
+        tl.set("#s05-fade", { opacity: 1 }, 0);
+
+        // Card slides in from the right
+        // Card present at t=0 (hard-cut, no blank seam frame); slides in as motion.
+        tl.fromTo("#s05-card", { x: 120, opacity: 1 }, { x: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, 0);
+        tl.fromTo("#s05-quote", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 1.2);
+        tl.fromTo("#s05-pill", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, 1.8);
+
+        window.__timelines["s05"] = tl;
+        tl.seek(0);
+      </script>
+    </template>
+  </body>
+</html>

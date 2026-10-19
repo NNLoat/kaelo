@@ -1,0 +1,20 @@
+{
+  "voice": "am_michael",
+  "lang": "en-us",
+  "speed": 1.0,
+  "lines": [
+    { "id": "s01", "text": "Every discovery builds on someone else's paper. But what if you can't reproduce it?" },
+    { "id": "s02", "text": "Over seventy percent of researchers have failed to reproduce another scientist's experiments. In the US alone, irreproducible preclinical research costs about twenty-eight billion dollars a year. Of one point four million public notebooks, only four percent reproduced their results. And reproducing a single machine-learning paper takes a median of fifty-three days." },
+    { "id": "s03", "text": "In twenty twenty-five, Mahidol published over four thousand nine hundred papers in Scopus. World-class research must be research others can verify and build on." },
+    { "id": "s04", "text": "Meet Kaelo. AI-assisted paper search that ranks by reproducibility, scores each paper against published standards, and closes the gap, drafting code when none exists and reviewing your own work before submission. Two modes: Reader and Writer." },
+    { "id": "s05", "text": "Meet Pol, a computer science master's student who needs a baseline he can actually reproduce for his thesis." },
+    { "id": "s06", "text": "One search covers OpenAlex and arXiv, ranked by relevance and reproducibility. The top result is highly relevant, but only partly reproducible: it references its datasets, yet ships no runnable code. Open it, and you see exactly where the score comes from and where the paper loses points, before you clone anything." },
+    { "id": "s07", "text": "Some papers ship no code. Pol clicks Generate code, and Kaelo drafts starter code and a README from the paper's experiment setup. It is clearly labelled: unverified, never executed, and never used to inflate the paper's score." },
+    { "id": "s08", "text": "Nam, a medical resident and clinical researcher, is revising her clinical prediction-model preprint before journal submission." },
+    { "id": "s09", "text": "Nam switches to Writer mode, adds her paper, uploads the manuscript, and links her code. Kaelo reviews it against TRIPOD plus A.I., the reporting guideline for clinical prediction models, and lists the gaps and fixes, because published prediction-model papers report only about thirty-nine percent of TRIPOD items." },
+    { "id": "s10", "text": "We built Kaelo spec-first with Kiro: every feature went from requirements, to design, to tasks, with architecture decisions on record. AI supplies the evidence; a fixed, auditable rule computes the score. Passwords are hashed, Writer data is owner-only, the Reader side stores only references and links, and generated code never runs on our servers." },
+    { "id": "s11", "text": "If Kaelo matches the screening savings reported for AI tools, one researcher saves about twenty-one to forty-nine hours a year on search, knows which papers are risky before investing weeks, and checks their own work against all twenty-six criteria before submitting." },
+    { "id": "s12", "text": "Kaelo. Helping Mahidol research become verifiable, reproducible, and ready for real-world impact." }
+  ],
+  "bgm": { "mode": "none" }
+}

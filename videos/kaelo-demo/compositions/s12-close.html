@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          background: #f8fafc;
+          color: #0f172a;
+          font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+          overflow: hidden;
+        }
+        #s12-fade { position: absolute; inset: 0; opacity: 0; }
+
+        /* Phase 1: statement */
+        #s12-stmt {
+          position: absolute; inset: 0; display: flex; flex-direction: column;
+          align-items: center; justify-content: center; padding: 0 240px; text-align: center;
+        }
+        #s12-line1 { font-family: Georgia, serif; font-size: 58px; line-height: 1.25; color: #0f172a; opacity: 0; }
+        #s12-line2 { font-size: 30px; color: #64748b; margin-top: 30px; opacity: 0; }
+
+        /* Phase 2: end card */
+        #s12-end {
+          position: absolute; inset: 0; display: flex; flex-direction: column;
+          align-items: center; justify-content: center; text-align: center; opacity: 0;
+        }
+        #s12-wordmark { font-family: Georgia, serif; font-size: 120px; color: #1c6b5a; line-height: 1; }
+        #s12-tagline { font-family: Georgia, serif; font-size: 36px; color: #0f172a; margin-top: 18px; }
+        #s12-team { font-size: 24px; color: #0f172a; margin-top: 44px; line-height: 1.5; }
+        #s12-team .fac { color: #64748b; }
+        #s12-footer { font-size: 20px; color: #64748b; margin-top: 30px; }
+        #s12-next { font-size: 20px; color: #15584a; margin-top: 18px; background: #e9f1ef; border-radius: 999px; padding: 10px 24px; }
+      </style>
+
+      <div data-hf-id="hf-66m2" id="root" data-composition-id="s12" data-width="1920" data-height="1080" data-duration="10">
+        <div data-hf-id="hf-rz9c" id="s12-fade">
+          <!-- Phase 1 -->
+          <div data-hf-id="hf-2oyo" id="s12-stmt">
+            <div data-hf-id="hf-g2ca" id="s12-line1">Research that others can verify, reproduce, and build on.</div>
+            <div data-hf-id="hf-istp" id="s12-line2">Kaelo: helping Mahidol research create real-world impact. [12][14]</div>
+          </div>
+
+          <!-- Phase 2 end card -->
+          <div data-hf-id="hf-quwx" id="s12-end">
+            <div data-hf-id="hf-pt69" id="s12-wordmark">Kaelo</div>
+            <div data-hf-id="hf-6bu7" id="s12-tagline">Find the ones that do.</div>
+            <div data-hf-id="hf-wrin" id="s12-team">
+              Team Kaelo &mdash; Noppachanin Kongsathitporn &middot; Pisut Manorat &middot; Krisanakorn Rugbumroong<br data-hf-id="hf-x5px" />
+              <span data-hf-id="hf-hvko" class="fac">Faculty of ICT, Mahidol University</span>
+            </div>
+            <div data-hf-id="hf-q6ak" id="s12-footer">Mahidol AI Community 2026 &middot; Track B &middot; Built with Kiro</div>
+            <div data-hf-id="hf-184q" id="s12-next">Next: pilot with ICT grad students and a clinical research unit</div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        const tl = gsap.timeline({ paused: true });
+        // Final scene: content present instantly (no dip at the S11->S12 seam).
+        // No end fade — holds the end card to the end of the timeline.
+        tl.set("#s12-fade", { opacity: 1 }, 0);
+
+        // Phase 1 (0-6): line1 present at t=0 (hard-cut from S11, no blank seam).
+        tl.fromTo("#s12-line1", { opacity: 1, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 0);
+        tl.fromTo("#s12-line2", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 1.4);
+        tl.to("#s12-stmt", { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 5.6);
+
+        // Phase 2 (6-10) end card with slow 3% push-in
+        tl.to("#s12-end", { opacity: 1, duration: 0.5, ease: "power2.inOut" }, 6.0);
+        tl.fromTo("#s12-end", { scale: 1.0 }, { scale: 1.03, duration: 4.0, ease: "power2.inOut" }, 6.0);
+
+        window.__timelines["s12"] = tl;
+        tl.seek(0);
+      </script>
+    </template>
+  </body>
+</html>

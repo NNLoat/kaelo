@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          background: #f8fafc;
+          color: #0f172a;
+          font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+          overflow: hidden;
+        }
+        #s10-fade { position: absolute; inset: 0; opacity: 0; }
+        #s10-wipe { position: absolute; inset: 0; background: #1c6b5a; transform: translateX(0%); z-index: 60; }
+
+        .s10-panel { position: absolute; inset: 0; padding: 120px 200px; opacity: 0; }
+        .s10-kicker { font-size: 20px; letter-spacing: 0.1em; text-transform: uppercase; color: #1c6b5a; margin-bottom: 14px; }
+        .s10-title { font-family: Georgia, serif; font-size: 50px; color: #0f172a; margin-bottom: 36px; }
+        .s10-cap { font-size: 26px; color: #64748b; max-width: 1400px; line-height: 1.45; margin-top: 30px; }
+
+        /* Panel A: file tree */
+        #s10-tree { display: flex; gap: 70px; }
+        .s10-col { font-family: ui-monospace, monospace; font-size: 22px; color: #334155; }
+        .s10-col .dir { color: #15584a; font-weight: 600; }
+        .s10-col .row { padding: 5px 0; opacity: 0; }
+        .s10-col .indent { padding-left: 28px; }
+        .s10-col .indent2 { padding-left: 56px; color: #64748b; }
+
+        /* Panel B: architecture */
+        #s10-arch { display: flex; flex-direction: column; gap: 28px; }
+        .s10-flow { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+        .s10-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 28px; font-size: 24px; color: #0f172a; box-shadow: 0 1px 2px rgba(15,23,42,0.06); opacity: 0; }
+        .s10-box.hi { border: 2px solid #1c6b5a; }
+        .s10-arrow { color: #94a3b8; font-size: 30px; }
+        #s10-rule { background: #e9f1ef; border: 1px solid #1c6b5a; border-radius: 10px; padding: 22px 28px; font-size: 25px; color: #15584a; margin-top: 10px; opacity: 0; line-height: 1.4; }
+        #s10-rule b { font-family: ui-monospace, monospace; }
+        #s10-chips { display: flex; gap: 16px; margin-top: 24px; flex-wrap: wrap; }
+        .s10-chip { background: #fff; border: 1px solid #e2e8f0; border-radius: 999px; padding: 10px 22px; font-size: 20px; color: #475569; opacity: 0; }
+
+        /* Panel C: security rows */
+        #s10-sec { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 60px; }
+        .s10-srow { display: flex; gap: 20px; align-items: flex-start; opacity: 0; }
+        .s10-srow .ic { flex: 0 0 44px; width: 44px; height: 44px; border-radius: 9px; background: #e9f1ef; display: flex; align-items: center; justify-content: center; }
+        .s10-srow .tx { font-size: 23px; color: #0f172a; line-height: 1.4; }
+        .s10-srow .tx b { color: #15584a; }
+      </style>
+
+      <div data-hf-id="hf-9c8c" id="root" data-composition-id="s10" data-width="1920" data-height="1080" data-duration="30.4">
+        <div data-hf-id="hf-d7w2" id="s10-fade">
+          <!-- Panel A: Kiro spec tree -->
+          <div data-hf-id="hf-uj3r" class="s10-panel" id="s10-pa">
+            <div data-hf-id="hf-e9v4" class="s10-kicker">AI / Kiro</div>
+            <div data-hf-id="hf-6cnq" class="s10-title">Built spec-first with Kiro</div>
+            <div data-hf-id="hf-vfgw" id="s10-tree">
+              <div data-hf-id="hf-bzi5" class="s10-col">
+                <div data-hf-id="hf-thy4" class="row"><span data-hf-id="hf-hc28" class="dir">.kiro/steering/</span></div>
+                <div data-hf-id="hf-u23u" class="row indent">product &middot; tech &middot; structure &middot; workflow</div>
+                <div data-hf-id="hf-lt04" class="row"><span data-hf-id="hf-lqhx" class="dir">.kiro/specs/</span></div>
+                <div data-hf-id="hf-ircu" class="row indent">accounts</div>
+                <div data-hf-id="hf-ryfj" class="row indent">paper-search</div>
+                <div data-hf-id="hf-ziu4" class="row indent">reproducibility-scoring</div>
+                <div data-hf-id="hf-ju70" class="row indent">code-generation</div>
+                <div data-hf-id="hf-i70p" class="row indent">writer-workspace</div>
+                <div data-hf-id="hf-aum3" class="row indent2">requirements.md &rarr; design.md &rarr; tasks.md</div>
+                <div data-hf-id="hf-g27r" class="row"><span data-hf-id="hf-fiu9" class="dir">.kiro/hooks/</span> spec-nudge.json</div>
+                <div data-hf-id="hf-km31" class="row"><span data-hf-id="hf-gxyn" class="dir">.kiro/skills/</span></div>
+              </div>
+              <div data-hf-id="hf-csy9" class="s10-col">
+                <div data-hf-id="hf-bzi0" class="row"><span data-hf-id="hf-pmwk" class="dir">docs/adr/</span> &times;9</div>
+                <div data-hf-id="hf-hpaf" class="row">GLOSSARY.md</div>
+              </div>
+            </div>
+            <div data-hf-id="hf-wsjq" class="s10-cap">5 features, each specified in Kiro: requirements &rarr; design &rarr; tasks &rarr; code. 9 architecture decisions on record.</div>
+          </div>
+
+          <!-- Panel B: architecture -->
+          <div data-hf-id="hf-jnm4" class="s10-panel" id="s10-pb">
+            <div data-hf-id="hf-z70o" class="s10-kicker">AI / Kiro</div>
+            <div data-hf-id="hf-05c7" class="s10-title">Sound architecture</div>
+            <div data-hf-id="hf-1ulk" id="s10-arch">
+              <div data-hf-id="hf-gb7t" class="s10-flow">
+                <div data-hf-id="hf-0hzj" class="s10-box" id="s10-b1">React UI</div>
+                <span data-hf-id="hf-2tsr" class="s10-arrow">&rarr;</span>
+                <div data-hf-id="hf-j1z7" class="s10-box" id="s10-b2">FastAPI</div>
+                <span data-hf-id="hf-mqaj" class="s10-arrow">&rarr;</span>
+                <div data-hf-id="hf-dgkc" class="s10-box" id="s10-b3">PostgreSQL</div>
+              </div>
+              <div data-hf-id="hf-lad9" class="s10-flow">
+                <div data-hf-id="hf-7roq" class="s10-box" id="s10-b4">OpenAlex / arXiv</div>
+                <div data-hf-id="hf-4z8r" class="s10-box" id="s10-b5">Amazon Bedrock via LangChain</div>
+                <div data-hf-id="hf-q4w9" class="s10-box" id="s10-b6">GitHub repo signals</div>
+              </div>
+              <div data-hf-id="hf-9yh6" id="s10-rule">AI supplies the evidence. The score is computed by a fixed, auditable rule:<br data-hf-id="hf-x5px" /><b data-hf-id="hf-ok41">S = 0.30&middot;Quality + 0.70&middot;Agreement</b> &nbsp;(ADR-0009)</div>
+              <div data-hf-id="hf-0smx" id="s10-chips">
+                <div data-hf-id="hf-c9d4" class="s10-chip" id="s10-c1">Pluggable standards (adapter) &middot; ADR-0008</div>
+                <div data-hf-id="hf-3xd3" class="s10-chip" id="s10-c2">132 automated tests, property-based</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel C: security & privacy -->
+          <div data-hf-id="hf-mmvp" class="s10-panel" id="s10-pc">
+            <div data-hf-id="hf-y03l" class="s10-kicker">AI / Kiro</div>
+            <div data-hf-id="hf-ljws" class="s10-title">Security &amp; privacy by design</div>
+            <div data-hf-id="hf-1qdz" id="s10-sec">
+              <div data-hf-id="hf-p6ur" class="s10-srow" id="s10-s1"><span data-hf-id="hf-b26f" class="ic">&#128273;</span><span data-hf-id="hf-ao6c" class="tx">Passwords hashed with <b data-hf-id="hf-ynio">Argon2</b>; sessions in signed, <b data-hf-id="hf-ldpm">HTTP-only</b> cookies.</span></div>
+              <div data-hf-id="hf-giyw" class="s10-srow" id="s10-s2"><span data-hf-id="hf-jcew" class="ic">&#128100;</span><span data-hf-id="hf-73nv" class="tx">Writer manuscripts &amp; code are <b data-hf-id="hf-eiph">owner-only</b>: another user&rsquo;s data looks like &ldquo;not found&rdquo;.</span></div>
+              <div data-hf-id="hf-hamp" class="s10-srow" id="s10-s3"><span data-hf-id="hf-bush" class="ic">&#128279;</span><span data-hf-id="hf-5b5l" class="tx">Reader side stores <b data-hf-id="hf-bwpk">only index metadata and links</b>, never others&rsquo; full text (ADR-0001/0003).</span></div>
+              <div data-hf-id="hf-6f52" class="s10-srow" id="s10-s4"><span data-hf-id="hf-hklj" class="ic">&#128465;</span><span data-hf-id="hf-4n53" class="tx">Writer uploads are stored <b data-hf-id="hf-rrav">with the owner&rsquo;s consent</b> and can be deleted any time.</span></div>
+              <div data-hf-id="hf-ckuv" class="s10-srow" id="s10-s5"><span data-hf-id="hf-n4vx" class="ic">&#128451;</span><span data-hf-id="hf-whtg" class="tx">Uploads are <b data-hf-id="hf-kvzg">size- and file-count-capped</b>, path-traversal-safe, binaries dropped; public repos only (ADR-0006).</span></div>
+              <div data-hf-id="hf-1pd8" class="s10-srow" id="s10-s6"><span data-hf-id="hf-wm66" class="ic">&#9939;</span><span data-hf-id="hf-lugm" class="tx">Generated code is <b data-hf-id="hf-g41q">never executed</b> on our servers; secrets live in environment config.</span></div>
+            </div>
+          </div>
+        </div>
+        <div data-hf-id="hf-zurg" id="s10-wipe" data-layout-allow-overflow></div>
+      </div>
+
+      <script>
+        const tl = gsap.timeline({ paused: true });
+        tl.to("#s10-fade", { opacity: 1, duration: 0.01 }, 0);
+
+        // Incoming teal wipe reveal (continues the S09 section break)
+        tl.fromTo("#s10-wipe", { x: "0%" }, { x: "100%", duration: 0.6, ease: "power3.inOut" }, 0);
+
+        // Panel A (0-10)
+        tl.fromTo("#s10-pa", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 0.5);
+        tl.to("#s10-pa .row", { opacity: 1, duration: 0.3, stagger: 0.06, ease: "power2.out" }, 0.8);
+        tl.to("#s10-pa", { opacity: 0, duration: 0.4, ease: "power2.inOut" }, 9.6);
+
+        // Panel B (10-20)
+        tl.fromTo("#s10-pb", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 10.0);
+        tl.to(["#s10-b1","#s10-b2","#s10-b3"], { opacity: 1, duration: 0.4, stagger: 0.1, ease: "power2.out" }, 10.3);
+        tl.to(["#s10-b4","#s10-b5","#s10-b6"], { opacity: 1, duration: 0.4, stagger: 0.1, ease: "power2.out" }, 11.0);
+        tl.fromTo("#s10-rule", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 12.0);
+        tl.to(["#s10-c1","#s10-c2"], { opacity: 1, duration: 0.4, stagger: 0.1, ease: "power2.out" }, 13.2);
+        tl.to("#s10-pb", { opacity: 0, duration: 0.4, ease: "power2.inOut" }, 19.6);
+
+        // Panel C (20-30)
+        tl.fromTo("#s10-pc", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 20.0);
+        tl.to(["#s10-s1","#s10-s2","#s10-s3","#s10-s4","#s10-s5","#s10-s6"],
+          { opacity: 1, duration: 0.4, stagger: 0.08, ease: "power2.out" }, 20.3);
+        // No end fade-to-paper — S10 hard-cuts to S11 on the shared paper bg.
+
+        window.__timelines["s10"] = tl;
+        tl.seek(0);
+      </script>
+    </template>
+  </body>
+</html>

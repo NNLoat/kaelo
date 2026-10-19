@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          background: #f8fafc;
+          color: #0f172a;
+          font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+          overflow: hidden;
+        }
+        #s04-fade { position: absolute; inset: 0; opacity: 0; }
+
+        /* Hero block (M1 landing content) */
+        #s04-hero {
+          position: absolute; left: 200px; top: 300px; width: 1180px;
+          transform-origin: left top;
+        }
+        #s04-wordmark {
+          font-family: Georgia, "Times New Roman", serif;
+          font-size: 54px; color: #1c6b5a; margin-bottom: 40px;
+        }
+        #s04-headline {
+          font-family: Georgia, "Times New Roman", serif;
+          font-size: 76px; line-height: 1.1; color: #0f172a;
+        }
+        #s04-sub { font-size: 30px; line-height: 1.45; color: #64748b; margin-top: 30px; max-width: 980px; }
+
+        /* Feature rows (right side, appear phase 2) */
+        #s04-feats {
+          position: absolute; right: 200px; top: 300px; width: 760px; opacity: 0;
+        }
+        .s04-row { display: flex; gap: 26px; align-items: flex-start; margin-bottom: 40px; opacity: 0; }
+        .s04-row .ic {
+          flex: 0 0 56px; width: 56px; height: 56px; border-radius: 10px;
+          background: #ffffff; border: 1px solid #e2e8f0; display: flex;
+          align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(15,23,42,0.06);
+        }
+        .s04-row .tt { font-size: 30px; font-weight: 600; color: #0f172a; }
+        .s04-row .dd { font-size: 24px; color: #64748b; margin-top: 8px; line-height: 1.4; }
+        .s04-row .dd .src { color: #64748b; }
+
+        /* Bottom reader|writer toggle (M2 style) */
+        #s04-toggle-wrap {
+          position: absolute; left: 50%; bottom: 120px; transform: translateX(-50%);
+          display: flex; flex-direction: column; align-items: center; gap: 18px; opacity: 0;
+        }
+        #s04-toggle {
+          display: inline-flex; border: 1px solid #e2e8f0; border-radius: 999px;
+          background: #ffffff; padding: 6px; box-shadow: 0 1px 2px rgba(15,23,42,0.06);
+        }
+        #s04-toggle .seg {
+          padding: 12px 36px; font-size: 26px; border-radius: 999px; color: #64748b;
+        }
+        #s04-toggle .seg.active { background: #1c6b5a; color: #ffffff; }
+        #s04-toggle-caps { display: flex; gap: 60px; font-size: 22px; color: #64748b; }
+      </style>
+
+      <div data-hf-id="hf-78al" id="root" data-composition-id="s04" data-width="1920" data-height="1080" data-duration="25.4">
+        <div data-hf-id="hf-gylf" id="s04-fade">
+          <div data-hf-id="hf-i20p" id="s04-hero">
+            <div data-hf-id="hf-g554" id="s04-wordmark">Kaelo</div>
+            <div data-hf-id="hf-9oef" id="s04-headline">Most papers don&rsquo;t reproduce.<br data-hf-id="hf-x5px" />Find the ones that do.</div>
+            <div data-hf-id="hf-4bcg" id="s04-sub">Kaelo searches the literature, scores each paper&rsquo;s reproducibility, and generates the missing code when a repo isn&rsquo;t there.</div>
+          </div>
+
+          <div data-hf-id="hf-5hks" id="s04-feats">
+            <div data-hf-id="hf-jvsp" class="s04-row" id="s04-r1">
+              <div data-hf-id="hf-w92w" class="ic">
+                <svg data-hf-id="hf-frs3" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1c6b5a" stroke-width="1.6" stroke-linecap="round"><circle data-hf-id="hf-r9ft" cx="11" cy="11" r="7"/><path data-hf-id="hf-v50r" d="M20 20l-4.3-4.3"/></svg>
+              </div>
+              <div data-hf-id="hf-yeow"><div data-hf-id="hf-7avx" class="tt">Search that ranks by reproducibility</div><div data-hf-id="hf-z43i" class="dd">OpenAlex + arXiv, ranked by relevance <i data-hf-id="hf-vahp">and</i> reproducibility.</div></div>
+            </div>
+            <div data-hf-id="hf-q1ii" class="s04-row" id="s04-r2">
+              <div data-hf-id="hf-yz80" class="ic">
+                <svg data-hf-id="hf-nwkn" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1c6b5a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path data-hf-id="hf-f3zv" d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+              </div>
+              <div data-hf-id="hf-y7yw"><div data-hf-id="hf-3i0m" class="tt">Scores grounded in published standards</div><div data-hf-id="hf-psus" class="dd">TRIPOD+AI for Medicine &middot; ACM Badging + ML Code Completeness + FAIR4RS for CS. <span data-hf-id="hf-e07z" class="src">[15]</span></div></div>
+            </div>
+            <div data-hf-id="hf-tzmj" class="s04-row" id="s04-r3">
+              <div data-hf-id="hf-xsax" class="ic">
+                <svg data-hf-id="hf-alon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1c6b5a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path data-hf-id="hf-1tub" d="M8 6l-5 6 5 6M16 6l5 6-5 6"/></svg>
+              </div>
+              <div data-hf-id="hf-x11t"><div data-hf-id="hf-itfm" class="tt">Closes the gap</div><div data-hf-id="hf-husp" class="dd">Generates starter code when no repo exists, and reviews your own manuscript before submission.</div></div>
+            </div>
+          </div>
+
+          <div data-hf-id="hf-kfo2" id="s04-toggle-wrap">
+            <div data-hf-id="hf-4wsh" id="s04-toggle">
+              <div data-hf-id="hf-x9hq" class="seg active" id="s04-seg-r">reader</div>
+              <div data-hf-id="hf-jmpv" class="seg" id="s04-seg-w">writer</div>
+            </div>
+            <div data-hf-id="hf-qx6x" id="s04-toggle-caps">
+              <span data-hf-id="hf-yk2u">Reader &mdash; evaluate others&rsquo; papers</span>
+              <span data-hf-id="hf-a029">Writer &mdash; check your own</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        const tl = gsap.timeline({ paused: true });
+        // No fade to/from paper at seams — content present instantly, hard-cut.
+        tl.set("#s04-fade", { opacity: 1 }, 0);
+
+        // Phase 1 (0-8s): hero full-frame, centred-ish large
+        // Hero present at t=0 (hard-cut, no blank seam frame); rises as motion.
+        tl.fromTo("#s04-wordmark", { opacity: 1, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0);
+        tl.fromTo("#s04-headline", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 0.9);
+        tl.fromTo("#s04-sub", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 1.6);
+
+        // Phase 2 (8-25s): hero shrinks to left third, feature rows build
+        tl.to("#s04-hero", { scale: 0.62, x: -24, y: -40, duration: 0.9, ease: "power3.inOut" }, 8.0);
+        tl.to("#s04-feats", { opacity: 1, duration: 0.3 }, 8.4);
+        tl.fromTo("#s04-r1", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 8.8);
+        tl.fromTo("#s04-r2", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 8.95);
+        tl.fromTo("#s04-r3", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 9.1);
+
+        // Toggle appears then flips reader->writer once at ~22s
+        tl.fromTo("#s04-toggle-wrap", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 15.0);
+        tl.to("#s04-seg-r", { backgroundColor: "rgba(0,0,0,0)", color: "#64748b", duration: 0.4, ease: "power2.inOut" }, 22.0);
+        tl.to("#s04-seg-w", { backgroundColor: "#1c6b5a", color: "#ffffff", duration: 0.4, ease: "power2.inOut" }, 22.0);
+
+        window.__timelines["s04"] = tl;
+        tl.seek(0);
+      </script>
+    </template>
+  </body>
+</html>

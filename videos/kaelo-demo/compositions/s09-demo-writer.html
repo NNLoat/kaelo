@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          background: #f8fafc;
+          color: #0f172a;
+          font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+          overflow: hidden;
+        }
+        #s09-fade { position: absolute; inset: 0; opacity: 0; }
+
+        .s09-panel {
+          position: absolute; left: 50%; top: 96px; transform: translateX(-50%);
+          width: 1480px; height: 888px; background: #ffffff; border: 1px solid #e2e8f0;
+          border-radius: 12px; box-shadow: 0 10px 40px rgba(15, 23, 42, 0.10); overflow: hidden;
+        }
+        .s09-authbar { display:flex; align-items:center; justify-content:space-between; padding: 18px 36px; border-bottom: 1px solid #e2e8f0; }
+        .s09-wordmark { font-family: Georgia, serif; font-size: 30px; color: #1c6b5a; }
+        .s09-authright { display:flex; align-items:center; gap:18px; }
+        .s09-user { font-size: 20px; color: #64748b; }
+        .s09-toggle { display:inline-flex; border:1px solid #e2e8f0; border-radius:999px; padding:4px; }
+        .s09-toggle .seg { padding:6px 20px; font-size:18px; border-radius:999px; color:#64748b; }
+        .s09-toggle .seg.active { background:#1c6b5a; color:#fff; }
+        .s09-pad { padding: 34px 56px; }
+
+        /* Phase A: M7 workspace */
+        #s09-ws { opacity: 0; }
+        #s09-ws h2 { font-family: Georgia, serif; font-size: 40px; color: #0f172a; }
+        #s09-ws .sub { font-size: 22px; color: #64748b; margin-top: 12px; max-width: 1000px; }
+        #s09-ws .addrow { display: flex; gap: 14px; margin-top: 34px; }
+        #s09-ws .addinput { flex: 1; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px 20px; font-size: 22px; color: #0f172a; min-height: 58px; }
+        #s09-ws .addinput .ph { color: #94a3b8; }
+        #s09-ws .addbtn { background: #1c6b5a; color: #fff; border-radius: 8px; padding: 0 30px; font-size: 22px; display: flex; align-items: center; }
+        #s09-ws .empty { font-size: 20px; color: #64748b; margin-top: 34px; }
+
+        /* Phase B: M8 claim workspace */
+        #s09-claim { opacity: 0; }
+        #s09-claim .back { font-size: 19px; color: #1c6b5a; }
+        #s09-claim .ctitle { font-family: ui-monospace, monospace; font-size: 26px; color: #0f172a; margin-top: 14px; }
+        #s09-claim .cards { display: flex; gap: 24px; margin-top: 28px; }
+        #s09-claim .ccard { flex: 1; border: 1px solid #e2e8f0; border-radius: 10px; padding: 24px; }
+        #s09-claim .ccard h4 { font-size: 22px; color: #0f172a; margin-bottom: 16px; }
+        #s09-claim .upbtn { border: 1px dashed #cbd5e1; border-radius: 8px; padding: 18px; text-align: center; font-size: 19px; color: #64748b; }
+        #s09-file { margin-top: 14px; font-size: 19px; color: #0f172a; display: flex; align-items: center; gap: 10px; opacity: 0; }
+        #s09-claim .tabs { display: flex; gap: 10px; margin-bottom: 14px; }
+        #s09-claim .tab { font-size: 18px; color: #64748b; padding: 6px 14px; border-radius: 6px; }
+        #s09-claim .tab.active { background: #e9f1ef; color: #15584a; }
+        #s09-giturl { border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; font-size: 19px; color: #0f172a; margin-bottom: 10px; }
+        #s09-fetch { display: inline-flex; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 20px; font-size: 18px; color: #0f172a; }
+        #s09-paths { margin-top: 14px; font-family: ui-monospace, monospace; font-size: 17px; color: #475569; opacity: 0; }
+        #s09-paths div { padding: 3px 0; }
+        #s09-reviewbtn { margin-top: 30px; background: #1c6b5a; color: #fff; border-radius: 8px; padding: 14px 32px; font-size: 22px; display: inline-flex; }
+
+        /* Job (compressed) */
+        #s09-job { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; }
+        #s09-job .state { font-family: Georgia, serif; font-size: 48px; color: #0f172a; }
+        #s09-job .dots { display: flex; gap: 14px; margin-top: 30px; }
+        #s09-job .dots .d { width: 18px; height: 18px; border-radius: 50%; background: #1c6b5a; opacity: 0.3; }
+
+        /* Phase C: M9 review report */
+        #s09-report { position: absolute; inset: 0; opacity: 0; display: flex; flex-direction: column; }
+        #s09-report .rhead { display: flex; align-items: center; justify-content: space-between; padding: 20px 56px 0; }
+        #s09-report .rhead h2 { font-family: Georgia, serif; font-size: 34px; color: #0f172a; }
+        #s09-report .rdl { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 20px; font-size: 19px; color: #0f172a; }
+        #s09-report .rdisc { padding: 8px 56px 0; font-size: 18px; color: #b4551d; }
+        #s09-report .rbody { display: flex; gap: 30px; padding: 20px 56px 0; flex: 1; overflow: hidden; }
+        #s09-nav { flex: 0 0 300px; }
+        #s09-nav .navt { font-size: 17px; letter-spacing: 0.06em; text-transform: uppercase; color: #64748b; margin-bottom: 14px; }
+        #s09-nav .navi { font-size: 20px; color: #1c6b5a; padding: 8px 0; }
+        #s09-doc { flex: 1; overflow: hidden; position: relative; }
+        #s09-docinner { }
+        #s09-doc h3 { font-family: Georgia, serif; font-size: 28px; color: #0f172a; margin: 8px 0 14px; }
+        #s09-doc .finding { margin-bottom: 22px; opacity: 0; }
+        #s09-doc .finding .ft { font-size: 21px; font-weight: 600; color: #0f172a; }
+        #s09-doc .finding .fb { font-size: 19px; color: #334155; margin-top: 6px; line-height: 1.45; }
+
+        /* Side overlay (TRIPOD+AI) */
+        #s09-overlay {
+          position: absolute; right: 90px; bottom: 90px; width: 560px; background: #0f172a; color: #fff;
+          border-radius: 12px; padding: 26px 30px; opacity: 0; box-shadow: 0 16px 48px rgba(15,23,42,0.3);
+        }
+        #s09-overlay .ot { font-family: Georgia, serif; font-size: 26px; }
+        #s09-overlay .ot b { color: #7dd3c0; }
+        #s09-overlay .ol { font-size: 18px; color: #cbd5e1; margin-top: 14px; line-height: 1.6; }
+
+        /* Cursor + caption + teal wipe */
+        #s09-cursor { position: absolute; left: 0; top: 0; z-index: 50; opacity: 0; }
+        #s09-ripple { position: absolute; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%; background: #1c6b5a; opacity: 0; z-index: 49; }
+        #s09-cap {
+          position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%);
+          font-size: 28px; color: #0f172a; background: rgba(248,250,252,0.92);
+          padding: 10px 26px; border-radius: 8px; border: 1px solid #e2e8f0; opacity: 0;
+          max-width: 1400px; text-align: center;
+        }
+        #s09-wipe { position: absolute; inset: 0; background: #1c6b5a; transform: translateX(-100%); z-index: 60; }
+      </style>
+
+      <div data-hf-id="hf-h5cq" id="root" data-composition-id="s09" data-width="1920" data-height="1080" data-duration="45.4">
+        <div data-hf-id="hf-aj60" id="s09-fade">
+          <div data-hf-id="hf-rgh7" class="s09-panel">
+            <div data-hf-id="hf-hqxq" class="s09-authbar" id="s09-authbar">
+              <div data-hf-id="hf-ohke" class="s09-wordmark">Kaelo</div>
+              <div data-hf-id="hf-95n9" class="s09-authright">
+                <span data-hf-id="hf-3b07" class="s09-user">test</span>
+                <span data-hf-id="hf-buuy" class="s09-toggle"><span data-hf-id="hf-zxzj" class="seg">reader</span><span data-hf-id="hf-06al" class="seg active">writer</span></span>
+              </div>
+            </div>
+
+            <!-- Phase A: M7 -->
+            <div data-hf-id="hf-6teh" class="s09-pad" id="s09-ws">
+              <h2 data-hf-id="hf-pcsx">Your workspace</h2>
+              <div data-hf-id="hf-65ko" class="sub">Add a paper you&rsquo;ve written and upload its manuscript and code to evaluate its reproducibility.</div>
+              <div data-hf-id="hf-rxq3" class="addrow">
+                <div data-hf-id="hf-wnvv" class="addinput"><span data-hf-id="hf-vplk" id="s09-doi-typed"></span><span data-hf-id="hf-tv8o" class="ph" id="s09-doi-ph">arXiv ID, DOI, or paper URL</span></div>
+                <div data-hf-id="hf-n2r8" class="addbtn">Add paper</div>
+              </div>
+              <div data-hf-id="hf-o1d3" class="empty">No papers yet. Add one above.</div>
+            </div>
+
+            <!-- Phase B: M8 -->
+            <div data-hf-id="hf-50q1" class="s09-pad" id="s09-claim">
+              <div data-hf-id="hf-6mg9" class="back">&larr; Back to your papers</div>
+              <div data-hf-id="hf-jq9e" class="ctitle">10.1101/2026.xx.xx.xxxxxxx</div>
+              <div data-hf-id="hf-5cwd" class="cards">
+                <div data-hf-id="hf-ncxd" class="ccard">
+                  <h4 data-hf-id="hf-addd">Manuscript</h4>
+                  <div data-hf-id="hf-d0g8" class="upbtn" id="s09-upbtn">Upload manuscript</div>
+                  <div data-hf-id="hf-ujnb" id="s09-file">&#128196; manuscript.pdf</div>
+                </div>
+                <div data-hf-id="hf-clr9" class="ccard">
+                  <h4 data-hf-id="hf-yhk9">Source code</h4>
+                  <div data-hf-id="hf-5rmk" class="tabs"><span data-hf-id="hf-uaa1" class="tab" id="s09-tab-archive">Archive file</span><span data-hf-id="hf-lxxq" class="tab active" id="s09-tab-git">Git URL</span></div>
+                  <div data-hf-id="hf-vlhz" id="s09-giturl">https://github.com/owner/repo</div>
+                  <div data-hf-id="hf-uhr6" id="s09-fetch">Fetch</div>
+                  <div data-hf-id="hf-zyvy" id="s09-paths">
+                    <div data-hf-id="hf-ht4d">src/model.py</div>
+                    <div data-hf-id="hf-d3y4">src/train.py</div>
+                    <div data-hf-id="hf-llcc">src/evaluate.R</div>
+                    <div data-hf-id="hf-a89w">scripts/preprocess.py</div>
+                  </div>
+                </div>
+              </div>
+              <div data-hf-id="hf-u8cx" id="s09-reviewbtn">Review manuscript &amp; code</div>
+            </div>
+
+            <!-- Job -->
+            <div data-hf-id="hf-aoiz" id="s09-job">
+              <div data-hf-id="hf-bggn" class="state">Generating&hellip;</div>
+              <div data-hf-id="hf-zx1w" class="dots"><span data-hf-id="hf-5jqr" class="d"></span><span data-hf-id="hf-fjwz" class="d"></span><span data-hf-id="hf-f5ly" class="d"></span></div>
+            </div>
+
+            <!-- Phase C: M9 report -->
+            <div data-hf-id="hf-bo3w" id="s09-report">
+              <div data-hf-id="hf-n13s" class="rhead">
+                <h2 data-hf-id="hf-dqm1">Reproducibility review</h2>
+                <div data-hf-id="hf-dki4" class="rdl">Download report</div>
+              </div>
+              <div data-hf-id="hf-161y" class="rdisc">Advisory review against TRIPOD+AI. Not a guarantee that results replicate.</div>
+              <div data-hf-id="hf-tmw6" class="rbody">
+                <div data-hf-id="hf-o1f9" id="s09-nav">
+                  <div data-hf-id="hf-zkob" class="navt">On this page</div>
+                  <div data-hf-id="hf-lwyp" class="navi">Gaps and inconsistencies</div>
+                  <div data-hf-id="hf-n1ho" class="navi">Recommended improvements</div>
+                </div>
+                <div data-hf-id="hf-xnow" id="s09-doc">
+                  <div data-hf-id="hf-rrg0" id="s09-docinner">
+                    <h3 data-hf-id="hf-lxe9">Gaps and inconsistencies</h3>
+                    <div data-hf-id="hf-sbfx" class="finding" id="s09-f1">
+                      <div data-hf-id="hf-0io1" class="ft">How the Model Was Built (M-D1&ndash;M-D5)</div>
+                      <div data-hf-id="hf-d2fg" class="fb">No model type selected or justified; no hyperparameter tuning methodology documented; no internal validation method described.</div>
+                    </div>
+                    <div data-hf-id="hf-w9jy" class="finding" id="s09-f2">
+                      <div data-hf-id="hf-ph0c" class="ft">Performance Results (M-D6, M-D7)</div>
+                      <div data-hf-id="hf-mi8c" class="fb">No performance metrics (discrimination, calibration, clinical utility) reported; no confidence intervals or subgroup analyses.</div>
+                    </div>
+                    <div data-hf-id="hf-07nz" class="finding" id="s09-f3">
+                      <div data-hf-id="hf-plyx" class="ft">Ethics &amp; Registration (M-Q14, M-Q15)</div>
+                      <div data-hf-id="hf-u99u" class="fb">No fairness assessment or mitigation strategies; no discussion of model limitations specific to generalizability or bias.</div>
+                    </div>
+                    <h3 data-hf-id="hf-q37g">Recommended improvements</h3>
+                    <div data-hf-id="hf-45s0" class="finding" id="s09-f4">
+                      <div data-hf-id="hf-mbkk" class="ft">Provide a complete model card</div>
+                      <div data-hf-id="hf-oylu" class="fb">Document model type and architecture, all hyperparameters and tuning rationale, mathematical specification or reference implementation, and input data requirements.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Side overlay -->
+          <div data-hf-id="hf-jt8a" id="s09-overlay">
+            <div data-hf-id="hf-mjp3" class="ot">Evaluated against <b data-hf-id="hf-hsek">TRIPOD+AI</b> &mdash; 26 weighted criteria</div>
+            <div data-hf-id="hf-ds3x" class="ol">Purpose &amp; Target Patients &middot; Data Used &middot; How the Model Was Built &middot; Performance Results &middot; Code &amp; Model Access &middot; Safe Use &amp; Limits &middot; Ethics &amp; Registration</div>
+          </div>
+
+          <div data-hf-id="hf-nb2k" id="s09-ripple"></div>
+          <svg data-hf-id="hf-ltg9" id="s09-cursor" width="34" height="34" viewBox="0 0 24 24"><path data-hf-id="hf-wzou" d="M5 2l14 7-6 2 3.5 7-2.5 1-3.5-7L6.5 17z" fill="#0f172a" stroke="#fff" stroke-width="1"/></svg>
+          <div data-hf-id="hf-mz8q" id="s09-cap"></div>
+          <div data-hf-id="hf-80ny" id="s09-wipe" data-layout-allow-overflow></div>
+        </div>
+      </div>
+
+      <script>
+        const tl = gsap.timeline({ paused: true });
+        // No fade from paper at the S08->S09 seam; S09 ends with a wipe into S10.
+        tl.set("#s09-fade", { opacity: 1 }, 0);
+
+        function moveCursor(x, y, at, dur) { tl.to("#s09-cursor", { x: x, y: y, duration: dur || 0.6, ease: "power2.inOut" }, at); }
+        function clickAt(x, y, at) {
+          tl.set("#s09-ripple", { x: x, y: y }, at);
+          tl.fromTo("#s09-ripple", { opacity: 0.2, scale: 0.4 }, { opacity: 0, scale: 1.1, duration: 0.12, ease: "power2.out" }, at);
+        }
+        function caption(html, at, until) {
+          tl.call(() => { document.getElementById("s09-cap").innerHTML = html; }, null, at);
+          tl.to("#s09-cap", { opacity: 1, duration: 0.4, ease: "power2.out" }, at);
+          tl.to("#s09-cap", { opacity: 0, duration: 0.4, ease: "power2.inOut" }, until);
+        }
+        tl.set("#s09-cursor", { x: 1200, y: 850 }, 0);
+        tl.to("#s09-cursor", { opacity: 1, duration: 0.3 }, 0.3);
+
+        // Phase A (0-6): M7, type DOI. Workspace present at t=0 (hard-cut from S08).
+        tl.set("#s09-ws", { opacity: 1 }, 0);
+        caption("Writer mode: check your <i>own</i> paper before submission.", 1.0, 6.0);
+        moveCursor(620, 330, 0.8, 0.7);
+        clickAt(620, 330, 1.5);
+        tl.set("#s09-doi-ph", { display: "none" }, 1.6);
+        const doi = "10.1101/2026.xx.xx.xxxxxxx";
+        const doiEl = document.getElementById("s09-doi-typed");
+        const d = { n: 0 };
+        tl.to(d, { n: doi.length, duration: 2.6, ease: "none",
+          onUpdate: () => { doiEl.textContent = doi.slice(0, Math.round(d.n)); } }, 1.8);
+
+        // Phase B (6-16): M8 claim workspace
+        tl.to("#s09-ws", { opacity: 0, duration: 0.4, ease: "power2.inOut" }, 5.6);
+        tl.to("#s09-claim", { opacity: 1, duration: 0.4, ease: "power2.inOut" }, 6.0);
+        caption("Upload the manuscript PDF and point to the code.", 7.0, 15.5);
+        // upload manuscript
+        moveCursor(560, 470, 6.6, 0.7);
+        clickAt(560, 470, 7.4);
+        tl.fromTo("#s09-file", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 7.8);
+        // git url + fetch
+        moveCursor(1150, 560, 9.0, 0.7);
+        clickAt(1150, 560, 9.8);
+        tl.fromTo("#s09-paths", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 10.4);
+        // click review
+        moveCursor(680, 820, 13.5, 0.7);
+        clickAt(680, 820, 14.3);
+
+        // Job (16-20)
+        tl.to("#s09-claim", { opacity: 0, duration: 0.4, ease: "power2.inOut" }, 15.8);
+        tl.to("#s09-job", { opacity: 1, duration: 0.4, ease: "power2.inOut" }, 16.2);
+        tl.set("#s09-cursor", { opacity: 0 }, 16.0);
+        tl.to("#s09-job .dots .d", { opacity: 1, duration: 0.3, stagger: 0.15, repeat: 6, yoyo: true, ease: "power1.inOut" }, 16.4);
+
+        // Phase C (20-40): M9 report
+        tl.to("#s09-job", { opacity: 0, duration: 0.4, ease: "power2.inOut" }, 19.6);
+        tl.set("#s09-authbar", { display: "flex" }, 0);
+        tl.to("#s09-authbar", { opacity: 0, duration: 0.3 }, 19.6);
+        tl.set("#s09-authbar", { display: "none" }, 19.9);
+        tl.to("#s09-report", { opacity: 1, duration: 0.4, ease: "power2.inOut" }, 20.0);
+        caption("A review against TRIPOD+AI, the BMJ reporting guideline for clinical prediction models. [15]", 22.0, 30.0);
+        // findings reveal
+        tl.fromTo("#s09-f1", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 21.0);
+        tl.fromTo("#s09-f2", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 23.5);
+        tl.fromTo("#s09-f3", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 26.0);
+        // slow scroll to recommended improvements
+        tl.fromTo("#s09-docinner", { y: 0 }, { y: -300, duration: 8.0, ease: "none" }, 28.0);
+        tl.fromTo("#s09-f4", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 31.0);
+        caption("Published ML prediction-model papers report a median of only 38.7% of TRIPOD items. [9]", 31.0, 39.0);
+
+        // side overlay + hover download (40-45)
+        tl.fromTo("#s09-overlay", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 39.5);
+        tl.to("#s09-cursor", { opacity: 1, duration: 0.3 }, 41.0);
+        moveCursor(1300, 215, 41.2, 0.7);
+
+        // Section break teal wipe (S09 -> S10) at the very end — fully covers by 45.0
+        tl.fromTo("#s09-wipe", { x: "-100%" }, { x: "0%", duration: 0.6, ease: "power3.inOut" }, 44.4);
+
+        window.__timelines["s09"] = tl;
+        tl.seek(0);
+      </script>
+    </template>
+  </body>
+</html>

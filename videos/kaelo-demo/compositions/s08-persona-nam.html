@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          background: #f8fafc;
+          color: #0f172a;
+          font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+          overflow: hidden;
+        }
+        #s08-fade {
+          position: absolute; inset: 0; opacity: 0;
+          display: flex; align-items: center; justify-content: center;
+        }
+        #s08-card {
+          position: relative;
+          width: 1240px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px;
+          box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+          padding: 70px 80px; display: flex; align-items: center; gap: 70px;
+        }
+        #s08-body { flex: 1; }
+        #s08-name { font-family: Georgia, "Times New Roman", serif; font-size: 60px; color: #0f172a; }
+        #s08-role { font-size: 28px; color: #64748b; margin-top: 12px; }
+        #s08-quote { font-size: 36px; line-height: 1.4; color: #0f172a; margin-top: 34px; font-style: italic; }
+        #s08-avatar { flex: 0 0 240px; }
+
+        /* AuthBar toggle at the top, flips reader->writer */
+        #s08-toggle {
+          position: absolute; right: 80px; top: 54px;
+          display: inline-flex; border: 1px solid #e2e8f0; border-radius: 999px; background: #fff; padding: 5px;
+          box-shadow: 0 1px 2px rgba(15,23,42,0.06);
+        }
+        #s08-toggle .seg { padding: 8px 24px; font-size: 20px; border-radius: 999px; color: #64748b; }
+        #s08-toggle .seg.active { background: #1c6b5a; color: #fff; }
+      </style>
+
+      <div data-hf-id="hf-qvkh" id="root" data-composition-id="s08" data-width="1920" data-height="1080" data-duration="10.4">
+        <div data-hf-id="hf-krfr" id="s08-fade">
+          <div data-hf-id="hf-ky73" id="s08-card">
+            <!-- Original generic flat avatar: young woman in a doctor's coat -->
+            <svg data-hf-id="hf-sgwf" id="s08-avatar" width="240" height="240" viewBox="0 0 240 240">
+              <circle data-hf-id="hf-whim" cx="120" cy="120" r="120" fill="#e9f1ef"/>
+              <circle data-hf-id="hf-bztt" cx="120" cy="96" r="46" fill="#1c6b5a"/>
+              <path data-hf-id="hf-8t38" d="M120 150c-48 0-82 26-90 62h180c-8-36-42-62-90-62z" fill="#ffffff"/>
+              <path data-hf-id="hf-vq3s" d="M120 150c-10 0-19 1.5-27 4.2L120 212l27-57.8c-8-2.7-17-4.2-27-4.2z" fill="#1c6b5a"/>
+              <rect data-hf-id="hf-qorm" x="112" y="152" width="16" height="48" rx="3" fill="#15584a"/>
+              <circle data-hf-id="hf-etll" cx="120" cy="170" r="5" fill="#15584a"/>
+            </svg>
+            <div data-hf-id="hf-x3v5" id="s08-body">
+              <div data-hf-id="hf-hwh4" id="s08-name">&#3609;&#3657;&#3635; (Nam)</div>
+              <div data-hf-id="hf-onj5" id="s08-role">Medical resident &amp; clinical researcher &middot; Mahidol teaching hospital</div>
+              <div data-hf-id="hf-a6ac" id="s08-quote">&ldquo;I want reviewers to find nothing I could have fixed myself.&rdquo;</div>
+            </div>
+            <div data-hf-id="hf-kw59" id="s08-toggle">
+              <span data-hf-id="hf-bx4j" class="seg" id="s08-seg-r">reader</span>
+              <span data-hf-id="hf-fksy" class="seg" id="s08-seg-w">writer</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        const tl = gsap.timeline({ paused: true });
+        // No fade to/from paper at seams — content present instantly, hard-cut.
+        tl.set("#s08-fade", { opacity: 1 }, 0);
+
+        // Card slides in from the LEFT
+        // Card present at t=0 (hard-cut, no blank seam frame); slides in as motion.
+        tl.fromTo("#s08-card", { x: -120, opacity: 1 }, { x: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, 0);
+        tl.fromTo("#s08-quote", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 1.2);
+
+        // toggle starts reader active, flips to writer
+        tl.set("#s08-seg-r", { backgroundColor: "#1c6b5a", color: "#ffffff" }, 1.6);
+        tl.to("#s08-seg-r", { backgroundColor: "rgba(0,0,0,0)", color: "#64748b", duration: 0.4, ease: "power2.inOut" }, 3.2);
+        tl.to("#s08-seg-w", { backgroundColor: "#1c6b5a", color: "#ffffff", duration: 0.4, ease: "power2.inOut" }, 3.2);
+
+        window.__timelines["s08"] = tl;
+        tl.seek(0);
+      </script>
+    </template>
+  </body>
+</html>

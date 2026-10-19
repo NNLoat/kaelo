@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          background: #f8fafc;
+          color: #0f172a;
+          font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+          overflow: hidden;
+        }
+        #s11-fade { position: absolute; inset: 0; opacity: 0; padding: 150px 200px; display: flex; flex-direction: column; justify-content: center; }
+        #s11-head { font-family: Georgia, serif; font-size: 50px; color: #0f172a; margin-bottom: 48px; }
+        #s11-tiles { display: flex; gap: 40px; }
+        .s11-tile {
+          flex: 1; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px;
+          box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06); padding: 46px 44px; position: relative; opacity: 0;
+        }
+        .s11-num { font-family: Georgia, serif; font-size: 96px; line-height: 1; color: #1c6b5a; font-variant-numeric: tabular-nums; }
+        .s11-line { font-size: 26px; color: #0f172a; margin-top: 24px; line-height: 1.4; }
+        .s11-tag { position: absolute; right: 30px; bottom: 24px; font-size: 18px; color: #64748b; }
+        #s11-strip { font-size: 22px; color: #64748b; margin-top: 44px; opacity: 0; }
+      </style>
+
+      <div data-hf-id="hf-m2hw" id="root" data-composition-id="s11" data-width="1920" data-height="1080" data-duration="20.4">
+        <div data-hf-id="hf-2att" id="s11-fade">
+          <div data-hf-id="hf-dsp1" id="s11-head">Expected impact</div>
+          <div data-hf-id="hf-90ua" id="s11-tiles">
+            <div data-hf-id="hf-u0tv" class="s11-tile" id="s11-t1">
+              <div data-hf-id="hf-hhao" class="s11-num"><span data-hf-id="hf-e3ap" id="s11-n1">0</span>&ndash;49 h</div>
+              <div data-hf-id="hf-fl7x" class="s11-line">saved per researcher per year on finding papers.</div>
+              <div data-hf-id="hf-zg8z" class="s11-tag">[10][11]</div>
+            </div>
+            <div data-hf-id="hf-j5c8" class="s11-tile" id="s11-t2">
+              <div data-hf-id="hf-oyot" class="s11-num">1 in 3</div>
+              <div data-hf-id="hf-bjc2" class="s11-line">papers flagged as high-risk <i data-hf-id="hf-2287">before</i> you invest weeks reproducing them.</div>
+              <div data-hf-id="hf-vebv" class="s11-tag">[6][7]</div>
+            </div>
+            <div data-hf-id="hf-jx01" class="s11-tile" id="s11-t3">
+              <div data-hf-id="hf-51yf" class="s11-num"><span data-hf-id="hf-y5kb" id="s11-n3">0</span> criteria</div>
+              <div data-hf-id="hf-e1a9" class="s11-line">TRIPOD+AI pre-submission check, where the published median adherence is 38.7%.</div>
+              <div data-hf-id="hf-okjv" class="s11-tag">[9][15]</div>
+            </div>
+          </div>
+          <div data-hf-id="hf-xk3z" id="s11-strip">Estimates: inputs from cited studies; Kaelo&rsquo;s effect assumed, to be validated in a pilot.</div>
+        </div>
+      </div>
+
+      <script>
+        const tl = gsap.timeline({ paused: true });
+        // No fade to/from paper at seams — content present instantly, hard-cut.
+        tl.set("#s11-fade", { opacity: 1 }, 0);
+
+        // Heading present at t=0 (hard-cut, no blank seam frame); rises as motion.
+        tl.fromTo("#s11-head", { opacity: 1, y: 18 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0);
+        // tiles rise with 0.12s stagger
+        tl.fromTo(["#s11-t1","#s11-t2","#s11-t3"], { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.12, ease: "power2.out" }, 0.8);
+
+        // count-ups
+        function countUp(id, to, at) {
+          const el = document.getElementById(id); const o = { v: 0 };
+          tl.to(o, { v: to, duration: 0.9, ease: "power2.out",
+            onUpdate: () => { el.textContent = Math.round(o.v).toString(); } }, at);
+        }
+        countUp("s11-n1", 21, 1.4);
+        countUp("s11-n3", 26, 1.6);
+
+        tl.fromTo("#s11-strip", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 3.4);
+
+        window.__timelines["s11"] = tl;
+        tl.seek(0);
+      </script>
+    </template>
+  </body>
+</html>

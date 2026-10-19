@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          background: #f8fafc;
+          color: #0f172a;
+          font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+          overflow: hidden;
+        }
+        #s06-fade { position: absolute; inset: 0; opacity: 0; }
+
+        /* ---- App shell framed in the video ---- */
+        .s06-app {
+          position: absolute; left: 50%; top: 96px; transform: translateX(-50%);
+          width: 1480px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px;
+          box-shadow: 0 10px 40px rgba(15, 23, 42, 0.10); overflow: hidden;
+          height: 888px;
+        }
+        /* AuthBar (M2) */
+        .s06-authbar {
+          display: flex; align-items: center; justify-content: space-between;
+          padding: 20px 36px; border-bottom: 1px solid #e2e8f0;
+        }
+        .s06-wordmark { font-family: Georgia, serif; font-size: 30px; color: #1c6b5a; }
+        .s06-authright { display: flex; align-items: center; gap: 20px; }
+        .s06-user { font-size: 20px; color: #64748b; }
+        .s06-toggle { display: inline-flex; border: 1px solid #e2e8f0; border-radius: 999px; padding: 4px; }
+        .s06-toggle .seg { padding: 6px 20px; font-size: 18px; border-radius: 999px; color: #64748b; }
+        .s06-toggle .seg.active { background: #1c6b5a; color: #fff; }
+        .s06-signout { border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 18px; font-size: 18px; color: #0f172a; }
+
+        .s06-pad { padding: 28px 36px; position: relative; height: 800px; overflow: hidden; }
+
+        /* Search row (M3) */
+        .s06-searchrow { display: flex; gap: 14px; }
+        #s06-input {
+          flex: 1; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 20px;
+          font-size: 21px; color: #0f172a; background: #fff; min-height: 54px;
+        }
+        #s06-input .ph { color: #94a3b8; }
+        #s06-caret { display: inline-block; width: 2px; height: 24px; background: #0f172a; vertical-align: -4px; margin-left: 1px; opacity: 0; }
+        #s06-searchbtn { background: #1c6b5a; color: #fff; border-radius: 8px; padding: 0 30px; font-size: 21px; display: flex; align-items: center; }
+        .s06-sortrow { margin-top: 14px; font-size: 17px; color: #64748b; }
+
+        /* Result cards */
+        #s06-results { margin-top: 16px; display: flex; flex-direction: column; gap: 14px; height: 560px; overflow: hidden; }
+        .s06-rc {
+          border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px 22px;
+          box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06); background: #fff; opacity: 0;
+        }
+        .s06-rc .rt { font-family: Georgia, serif; font-size: 22px; color: #0f172a; line-height: 1.2; }
+        .s06-rc .ra { font-size: 15px; color: #64748b; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 1340px; }
+        .s06-badges { display: flex; gap: 8px; margin-top: 8px; }
+        .s06-badge { font-size: 14px; color: #475569; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; padding: 3px 11px; }
+        .s06-blurb { font-size: 15px; color: #334155; margin-top: 8px; line-height: 1.3; max-width: 1200px; }
+        .s06-bars { display: flex; gap: 40px; margin-top: 10px; }
+        .s06-bar { flex: 1; max-width: 280px; }
+        .s06-bar .bl { display: flex; justify-content: space-between; font-size: 16px; color: #64748b; margin-bottom: 6px; }
+        .s06-bar .bl .bv { color: #0f172a; font-variant-numeric: tabular-nums; }
+        .s06-bar.overall .bl { font-weight: 700; }
+        .s06-bar.overall .bl .bv { color: #1c6b5a; }
+        .s06-track { height: 4px; border-radius: 4px; background: #e2e8f0; overflow: hidden; }
+        .s06-fill { height: 100%; width: 0; border-radius: 4px; background: rgba(15, 23, 42, 0.4); transform-origin: left; }
+        .s06-fill.overall { background: #1c6b5a; }
+        .s06-reprostate { font-size: 16px; color: #64748b; }
+
+        /* Skeleton cards */
+        #s06-skel { position: absolute; left: 36px; right: 36px; top: 150px; display: flex; flex-direction: column; gap: 16px; opacity: 0; }
+        .s06-sk { border: 1px solid #e2e8f0; border-radius: 8px; padding: 22px 26px; }
+        .s06-sk .l { height: 18px; border-radius: 6px; background: #eef2f6; margin-bottom: 12px; }
+
+        /* Callout bubble */
+        #s06-callout {
+          position: absolute; right: 60px; top: 300px; background: #0f172a; color: #fff;
+          font-size: 19px; padding: 14px 20px; border-radius: 10px; max-width: 320px; opacity: 0;
+          box-shadow: 0 8px 24px rgba(15,23,42,0.25);
+        }
+        #s06-callout::after { content: ""; position: absolute; left: -10px; top: 24px; border: 8px solid transparent; border-right-color: #0f172a; }
+
+        /* ---- M4 detail (phase 2) ---- */
+        #s06-detail {
+          position: absolute; left: 50%; top: 96px; transform: translateX(-50%);
+          width: 1480px; height: 888px; background: #ffffff; border: 1px solid #e2e8f0;
+          border-radius: 12px; box-shadow: 0 10px 40px rgba(15, 23, 42, 0.10); overflow: hidden; opacity: 0;
+        }
+        #s06-detail .dauthbar { display:flex; align-items:center; justify-content:space-between; padding: 18px 36px; border-bottom: 1px solid #e2e8f0; position: relative; z-index: 5; background: #fff; }
+        #s06-scroll { position: absolute; left: 0; right: 0; top: 74px; bottom: 0; padding: 0 56px; overflow: hidden; }
+        #s06-scrollinner { position: relative; }
+        #s06-detail .dtitle { font-family: Georgia, serif; font-size: 36px; line-height: 1.22; color: #0f172a; margin-top: 30px; }
+        #s06-detail .dauth { font-size: 18px; color: #64748b; margin-top: 10px; }
+        #s06-detail h3 { font-family: Georgia, serif; font-size: 26px; color: #0f172a; margin: 30px 0 14px; }
+        #s06-detail .std { font-size: 19px; color: #64748b; }
+        #s06-detail .qa { font-size: 19px; color: #64748b; margin-top: 6px; }
+        .d-bar { margin-top: 14px; max-width: 760px; }
+        .d-bar .bl { display: flex; justify-content: space-between; font-size: 18px; color: #64748b; margin-bottom: 6px; }
+        .d-bar .bl .bv { color: #0f172a; font-variant-numeric: tabular-nums; }
+        .d-track { height: 4px; border-radius: 4px; background: #e2e8f0; overflow: hidden; }
+        .d-fill { height: 100%; border-radius: 4px; background: rgba(15, 23, 42, 0.4); }
+        .d-note { font-size: 18px; color: #b4551d; margin-top: 16px; }
+        .lost-row { display: flex; align-items: center; gap: 20px; margin-top: 16px; }
+        .lost-row .ln { flex: 0 0 300px; font-size: 20px; color: #0f172a; }
+        .lost-row .lt { flex: 1; max-width: 560px; height: 4px; border-radius: 4px; background: #e2e8f0; overflow: hidden; }
+        .lost-row .lf { height: 100%; background: rgba(15, 23, 42, 0.4); }
+        .lost-row .lw { flex: 0 0 90px; font-size: 18px; text-align: right; }
+        .st-weak { color: #b91c1c; }
+        .st-fair { color: #b4551d; }
+        .st-strong { color: #1c6b5a; }
+        .crit-row { display: flex; gap: 16px; margin-top: 18px; align-items: flex-start; }
+        .dot { flex: 0 0 16px; width: 16px; height: 16px; border-radius: 50%; margin-top: 5px; }
+        .dot.unmet { background: #b91c1c; }
+        .dot.met { background: #1c6b5a; }
+        .dot.na { background: #64748b; }
+        .crit-row .ct { font-size: 20px; color: #0f172a; }
+        .crit-row .ct .cw { font-weight: 600; }
+        .crit-row .ce { font-size: 18px; color: #64748b; margin-top: 4px; font-style: italic; }
+        #s06-hl-match, #s06-hl-run {
+          border-radius: 8px; padding: 8px 12px; margin: 8px -12px 0;
+        }
+
+        /* Lower-third captions */
+        #s06-cap {
+          position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%);
+          font-size: 28px; color: #0f172a; background: rgba(248,250,252,0.92);
+          padding: 10px 26px; border-radius: 8px; border: 1px solid #e2e8f0; opacity: 0;
+          max-width: 1400px; text-align: center;
+        }
+
+        /* Cursor */
+        #s06-cursor { position: absolute; left: 0; top: 0; z-index: 50; opacity: 0; }
+        #s06-ripple {
+          position: absolute; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%;
+          background: #1c6b5a; opacity: 0; z-index: 49;
+        }
+      </style>
+
+      <div data-hf-id="hf-mfdt" id="root" data-composition-id="s06" data-width="1920" data-height="1080" data-duration="45.4">
+        <div data-hf-id="hf-wsad" id="s06-fade">
+          <!-- Phase 1: M2 + M3 -->
+          <div data-hf-id="hf-wsqk" class="s06-app" id="s06-app">
+            <div data-hf-id="hf-l5cb" class="s06-authbar">
+              <div data-hf-id="hf-t1oh" class="s06-wordmark">Kaelo</div>
+              <div data-hf-id="hf-p5mi" class="s06-authright">
+                <span data-hf-id="hf-pcfu" class="s06-user">test</span>
+                <span data-hf-id="hf-4zpn" class="s06-toggle"><span data-hf-id="hf-dlvx" class="seg active">reader</span><span data-hf-id="hf-twyb" class="seg">writer</span></span>
+                <span data-hf-id="hf-zrgp" class="s06-signout">Sign out</span>
+              </div>
+            </div>
+            <div data-hf-id="hf-pumd" class="s06-pad">
+              <div data-hf-id="hf-7u2e" class="s06-searchrow">
+                <div data-hf-id="hf-v1l9" id="s06-input"><span data-hf-id="hf-4s38" id="s06-typed"></span><span data-hf-id="hf-s53x" class="ph" id="s06-ph">Search papers by topic, method, or keyword</span><span data-hf-id="hf-q7lp" id="s06-caret"></span></div>
+                <div data-hf-id="hf-fm49" id="s06-searchbtn">Search</div>
+              </div>
+              <div data-hf-id="hf-xfgs" class="s06-sortrow">Sort by: Relevance</div>
+
+              <!-- skeletons -->
+              <div data-hf-id="hf-8cbm" id="s06-skel">
+                <div data-hf-id="hf-14uc" class="s06-sk"><div data-hf-id="hf-anns" class="l" style="width:70%"></div><div data-hf-id="hf-ifhn" class="l" style="width:40%"></div><div data-hf-id="hf-5fqm" class="l" style="width:90%"></div></div>
+                <div data-hf-id="hf-85j0" class="s06-sk"><div data-hf-id="hf-eizd" class="l" style="width:60%"></div><div data-hf-id="hf-7uhj" class="l" style="width:35%"></div><div data-hf-id="hf-vnx8" class="l" style="width:85%"></div></div>
+              </div>
+
+              <!-- results -->
+              <div data-hf-id="hf-4j2b" id="s06-results">
+                <!-- Card 1 -->
+                <div data-hf-id="hf-esub" class="s06-rc" id="s06-rc1">
+                  <div data-hf-id="hf-kbhd" class="rt">Capsules for Biomedical Image Segmentation</div>
+                  <div data-hf-id="hf-sulq" class="ra">Rodney LaLonde, Ziyue Xu, Ismail Irmakci, Sanjay Jain, Ulas Bagci</div>
+                  <div data-hf-id="hf-jxr2" class="s06-badges"><span data-hf-id="hf-tcoc" class="s06-badge">arXiv</span></div>
+                  <div data-hf-id="hf-8d32" class="s06-blurb">Highly relevant paper introducing SegCaps, a capsule network architecture for biomedical image segmentation that achieves state-of-the-art results with minimal parameters across multiple medical imaging datasets.</div>
+                  <div data-hf-id="hf-l04c" class="s06-bars">
+                    <div data-hf-id="hf-kur9" class="s06-bar"><div data-hf-id="hf-ypvu" class="bl"><span data-hf-id="hf-112k">Relevance</span><span data-hf-id="hf-mbue" class="bv">0.95</span></div><div data-hf-id="hf-0r27" class="s06-track"><div data-hf-id="hf-nf9k" class="s06-fill" id="s06-f1r"></div></div></div>
+                    <div data-hf-id="hf-h78p" class="s06-bar"><div data-hf-id="hf-ar7y" class="bl"><span data-hf-id="hf-de4x">Reproducibility</span><span data-hf-id="hf-pvaj" class="bv" id="s06-r1repro">scoring&hellip;</span></div><div data-hf-id="hf-qtj3" class="s06-track"><div data-hf-id="hf-p94v" class="s06-fill" id="s06-f1rep"></div></div></div>
+                    <div data-hf-id="hf-mgmm" class="s06-bar overall"><div data-hf-id="hf-b5iz" class="bl"><span data-hf-id="hf-9px2">Overall</span><span data-hf-id="hf-3176" class="bv">0.54</span></div><div data-hf-id="hf-qf82" class="s06-track"><div data-hf-id="hf-gd3o" class="s06-fill overall" id="s06-f1o"></div></div></div>
+                  </div>
+                </div>
+                <!-- Card 2 -->
+                <div data-hf-id="hf-3xco" class="s06-rc" id="s06-rc2">
+                  <div data-hf-id="hf-4m9n" class="rt">Image Segmentation Using Deep Learning: A Survey</div>
+                  <div data-hf-id="hf-a8xs" class="ra">Shervin Minaee, Yuri Y. Boykov, Fatih Porikli, Antonio Plaza, Nasser Kehtarnavaz, Demetri Terzopoulos</div>
+                  <div data-hf-id="hf-g39e" class="s06-badges"><span data-hf-id="hf-z8xw" class="s06-badge">arXiv</span></div>
+                  <div data-hf-id="hf-6s44" class="s06-bars">
+                    <div data-hf-id="hf-ie5s" class="s06-bar"><div data-hf-id="hf-bju0" class="bl"><span data-hf-id="hf-lrus">Relevance</span><span data-hf-id="hf-h5v1" class="bv">0.95</span></div><div data-hf-id="hf-q0x1" class="s06-track"><div data-hf-id="hf-wdr9" class="s06-fill" id="s06-f2r"></div></div></div>
+                    <div data-hf-id="hf-hzur" class="s06-bar"><div data-hf-id="hf-8rot" class="bl"><span data-hf-id="hf-i2it">Reproducibility</span><span data-hf-id="hf-yucv" class="bv">0.00</span></div><div data-hf-id="hf-st28" class="s06-track"><div data-hf-id="hf-jjra" class="s06-fill" id="s06-f2rep"></div></div></div>
+                    <div data-hf-id="hf-d6eq" class="s06-bar overall"><div data-hf-id="hf-95zu" class="bl"><span data-hf-id="hf-240q">Overall</span><span data-hf-id="hf-2mw5" class="bv">0.28</span></div><div data-hf-id="hf-ser7" class="s06-track"><div data-hf-id="hf-dgcx" class="s06-fill overall" id="s06-f2o"></div></div></div>
+                  </div>
+                </div>
+                <!-- Card 3 -->
+                <div data-hf-id="hf-6wm9" class="s06-rc" id="s06-rc3">
+                  <div data-hf-id="hf-6ay0" class="rt">Understanding Deep Learning Techniques for Image Segmentation</div>
+                  <div data-hf-id="hf-d6zj" class="ra">Swarnendu Ghosh, Nibaran Das, Ishita Das, Ujjwal Maulik</div>
+                  <div data-hf-id="hf-ghkf" class="s06-badges"><span data-hf-id="hf-y20t" class="s06-badge">arXiv</span></div>
+                  <div data-hf-id="hf-5l71" class="s06-bars">
+                    <div data-hf-id="hf-g0bm" class="s06-bar"><div data-hf-id="hf-9kav" class="bl"><span data-hf-id="hf-kkxp">Relevance</span><span data-hf-id="hf-35b5" class="bv">0.95</span></div><div data-hf-id="hf-s0g6" class="s06-track"><div data-hf-id="hf-p6o6" class="s06-fill" id="s06-f3r"></div></div></div>
+                    <div data-hf-id="hf-fm0l" class="s06-bar"><div data-hf-id="hf-9ylw" class="bl"><span data-hf-id="hf-j9fw">Reproducibility</span><span data-hf-id="hf-ai4v" class="bv">0.00</span></div><div data-hf-id="hf-rm55" class="s06-track"><div data-hf-id="hf-fa25" class="s06-fill" id="s06-f3rep"></div></div></div>
+                    <div data-hf-id="hf-dkpr" class="s06-bar overall"><div data-hf-id="hf-djd5" class="bl"><span data-hf-id="hf-2ibr">Overall</span><span data-hf-id="hf-pcjd" class="bv">0.28</span></div><div data-hf-id="hf-o1dw" class="s06-track"><div data-hf-id="hf-lq1i" class="s06-fill overall" id="s06-f3o"></div></div></div>
+                  </div>
+                </div>
+              </div>
+
+              <div data-hf-id="hf-wqug" id="s06-callout">Ranked by relevance <i data-hf-id="hf-vahp">and</i> reproducibility.</div>
+            </div>
+          </div>
+
+          <!-- Phase 2: M4 detail -->
+          <div data-hf-id="hf-t8kw" id="s06-detail">
+            <div data-hf-id="hf-7rvt" class="dauthbar">
+              <div data-hf-id="hf-jo45" class="s06-wordmark">Kaelo</div>
+              <div data-hf-id="hf-gi8u" class="s06-authright">
+                <span data-hf-id="hf-6d3y" class="s06-user">test</span>
+                <span data-hf-id="hf-1uln" class="s06-toggle"><span data-hf-id="hf-tcn5" class="seg active">reader</span><span data-hf-id="hf-ttgz" class="seg">writer</span></span>
+              </div>
+            </div>
+            <div data-hf-id="hf-k9nc" id="s06-scroll">
+              <div data-hf-id="hf-7bko" id="s06-scrollinner">
+              <div data-hf-id="hf-ox59" class="dtitle">Capsules for Biomedical Image Segmentation</div>
+              <div data-hf-id="hf-ubnm" class="dauth">LaLonde et&nbsp;al. &middot; arXiv &middot; 2020</div>
+
+              <h3 data-hf-id="hf-q0fm">How the reproducibility score was reached</h3>
+              <div data-hf-id="hf-i75w" class="std">Evaluated against Baseline in unknown</div>
+              <div data-hf-id="hf-ve8c" class="qa">Quality 0.05 &middot; Agreement 0.50</div>
+
+              <div data-hf-id="hf-wfus" class="d-bar"><div data-hf-id="hf-dxo6" class="bl"><span data-hf-id="hf-slm1">Code quality</span><span data-hf-id="hf-a3tu" class="bv">0.00</span></div><div data-hf-id="hf-hj1i" class="d-track"><div data-hf-id="hf-9j3x" class="d-fill" style="width:0%"></div></div></div>
+              <div data-hf-id="hf-pyf0" class="d-bar"><div data-hf-id="hf-wfve" class="bl"><span data-hf-id="hf-u2pu">Setup completeness</span><span data-hf-id="hf-xhv1" class="bv">0.33</span></div><div data-hf-id="hf-h7hm" class="d-track"><div data-hf-id="hf-54oj" class="d-fill" style="width:33%"></div></div></div>
+
+              <div data-hf-id="hf-h1mf" class="d-note">No code repository was found, which lowered the code-quality contribution.</div>
+
+              <h3 data-hf-id="hf-gym2">Where this paper lost points</h3>
+              <div data-hf-id="hf-6s0l" class="lost-row"><span data-hf-id="hf-e1gl" class="ln">Reproduce the Results</span><span data-hf-id="hf-y59d" class="lt" id="s06-hl-match"><span data-hf-id="hf-k21c" class="lf" style="width:50%"></span></span><span data-hf-id="hf-xboc" class="lw st-weak">Weak</span></div>
+              <div data-hf-id="hf-2d8p" class="lost-row"><span data-hf-id="hf-04oo" class="ln">Run the Code</span><span data-hf-id="hf-muap" class="lt" id="s06-hl-run"><span data-hf-id="hf-bodk" class="lf" style="width:5%"></span></span><span data-hf-id="hf-u89g" class="lw st-weak">Weak</span></div>
+
+              <h3 data-hf-id="hf-765d">Criteria</h3>
+              <div data-hf-id="hf-7vsj" class="crit-row"><span data-hf-id="hf-o0kr" class="dot unmet"></span><div data-hf-id="hf-yeow"><div data-hf-id="hf-mbwm" class="ct"><span data-hf-id="hf-wl3e" class="cw">Unmet</span> &middot; Run the Code &mdash; Code available.</div><div data-hf-id="hf-xd24" class="ce">no inspectable repository</div></div></div>
+              <div data-hf-id="hf-0r2r" class="crit-row"><span data-hf-id="hf-b74b" class="dot unmet"></span><div data-hf-id="hf-y7yw"><div data-hf-id="hf-oaux" class="ct"><span data-hf-id="hf-1uoe" class="cw">Unmet</span> &middot; Run the Code &mdash; Documentation present.</div><div data-hf-id="hf-8ztg" class="ce">no README found</div></div></div>
+              <div data-hf-id="hf-0crq" class="crit-row"><span data-hf-id="hf-wug9" class="dot unmet"></span><div data-hf-id="hf-x11t"><div data-hf-id="hf-1h9l" class="ct"><span data-hf-id="hf-jsyh" class="cw">Unmet</span> &middot; Reproduce the Results &mdash; Dependencies / environment described.</div><div data-hf-id="hf-jymq" class="ce">no environment described</div></div></div>
+              <div data-hf-id="hf-mt4p" class="crit-row"><span data-hf-id="hf-k8rn" class="dot met"></span><div data-hf-id="hf-vb3e"><div data-hf-id="hf-9wla" class="ct"><span data-hf-id="hf-q2dx" class="cw">Met</span> &middot; Reproduce the Results &mdash; Data referenced.</div><div data-hf-id="hf-plmt" class="ce">datasets referenced in setup</div></div></div>
+
+              <div data-hf-id="hf-9bcd" style="height:120px"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cursor + ripple -->
+          <div data-hf-id="hf-z821" id="s06-ripple"></div>
+          <svg data-hf-id="hf-re3e" id="s06-cursor" width="34" height="34" viewBox="0 0 24 24"><path data-hf-id="hf-wzou" d="M5 2l14 7-6 2 3.5 7-2.5 1-3.5-7L6.5 17z" fill="#0f172a" stroke="#fff" stroke-width="1"/></svg>
+
+          <!-- Captions -->
+          <div data-hf-id="hf-d359" id="s06-cap"></div>
+        </div>
+      </div>
+
+      <script>
+        const tl = gsap.timeline({ paused: true });
+        // No fade to/from paper at seams — content present instantly, hard-cut.
+        tl.set("#s06-fade", { opacity: 1 }, 0);
+
+        // Cursor helpers
+        function moveCursor(x, y, at, dur) {
+          tl.to("#s06-cursor", { x: x, y: y, duration: dur || 0.6, ease: "power2.inOut" }, at);
+        }
+        function clickAt(x, y, at) {
+          tl.set("#s06-ripple", { x: x, y: y }, at);
+          tl.fromTo("#s06-ripple", { opacity: 0.2, scale: 0.4 }, { opacity: 0, scale: 1.1, duration: 0.12, ease: "power2.out" }, at);
+        }
+        // init cursor
+        tl.set("#s06-cursor", { x: 1500, y: 900 }, 0);
+        tl.to("#s06-cursor", { opacity: 1, duration: 0.3 }, 0.3);
+
+        // Caption helper
+        function caption(text, at, until) {
+          tl.call(() => { document.getElementById("s06-cap").innerHTML = text; }, null, at);
+          tl.to("#s06-cap", { opacity: 1, duration: 0.4, ease: "power2.out" }, at);
+          tl.to("#s06-cap", { opacity: 0, duration: 0.4, ease: "power2.inOut" }, until);
+        }
+
+        // ---- Phase 1: type the query (0-6) ----
+        // Search input center: field spans root x≈256..1522 (shell left 220 +36 pad
+        // .. row right 1664 minus the button), vertical center y≈236. Click near
+        // where typing begins.
+        moveCursor(620, 236, 0.4, 0.7);
+        clickAt(620, 236, 1.1);
+        tl.to("#s06-caret", { opacity: 1, duration: 0.1 }, 1.2);
+        tl.set("#s06-ph", { display: "none" }, 1.2);
+        const query = "Machine learning Image Segmentation Artificial intelligence";
+        const typed = document.getElementById("s06-typed");
+        const steps = query.length;
+        const o = { n: 0 };
+        tl.to(o, { n: steps, duration: 3.6, ease: "none",
+          onUpdate: () => { typed.textContent = query.slice(0, Math.round(o.n)); } }, 1.4);
+        // caret blink off while typing done
+        tl.to("#s06-caret", { opacity: 0, duration: 0.1 }, 5.3);
+
+        // ---- Click Search (6-9): searching -> skeleton ----
+        // Search button center in root space: shell left 220 + width 1480 -> right
+        // edge 1700, minus 36px pad = row right 1664; button ~126px wide, so
+        // center x≈1600, row vertical center y≈236 (measured from render).
+        moveCursor(1600, 236, 5.6, 0.6);
+        clickAt(1600, 236, 6.2);
+        tl.call(() => { document.getElementById("s06-searchbtn").textContent = "Searching\u2026"; }, null, 6.3);
+        tl.to("#s06-skel", { opacity: 1, duration: 0.3 }, 6.6);
+        tl.to("#s06-skel", { opacity: 0, duration: 0.3 }, 8.8);
+        tl.call(() => { document.getElementById("s06-searchbtn").textContent = "Search"; }, null, 8.9);
+        caption("One search across OpenAlex and arXiv.", 6.6, 10.5);
+
+        // ---- Results cascade (9-20) ----
+        tl.fromTo("#s06-rc1", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 9.0);
+        tl.fromTo("#s06-rc2", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 9.15);
+        tl.fromTo("#s06-rc3", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 9.3);
+        // Fill relevance + overall bars (values 0..1 -> %)
+        tl.to("#s06-f1r", { width: "95%", duration: 0.8, ease: "power2.out" }, 9.6);
+        tl.to("#s06-f2r", { width: "95%", duration: 0.8, ease: "power2.out" }, 9.7);
+        tl.to("#s06-f3r", { width: "95%", duration: 0.8, ease: "power2.out" }, 9.8);
+        tl.to("#s06-f1o", { width: "54%", duration: 0.8, ease: "power2.out" }, 9.6);
+        tl.to("#s06-f2o", { width: "28%", duration: 0.8, ease: "power2.out" }, 9.7);
+        tl.to("#s06-f3o", { width: "28%", duration: 0.8, ease: "power2.out" }, 9.8);
+        // Card 1 reproducibility: scoring... -> 0.36 (partial: datasets referenced, no runnable code)
+        tl.call(() => { document.getElementById("s06-r1repro").textContent = "0.36"; }, null, 13.0);
+        tl.to("#s06-f1rep", { width: "36%", duration: 0.8, ease: "power2.out" }, 13.0);
+        // callout points at the bars
+        tl.fromTo("#s06-callout", { opacity: 0, x: 10 }, { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 14.0);
+        tl.to("#s06-callout", { opacity: 0, duration: 0.4, ease: "power2.inOut" }, 19.4);
+
+        // ---- Open top card (20-24) ----
+        // First result card title "Capsules for Biomedical Image Segmentation":
+        // card sits inside the pad (left ≈256), title text center ≈ (600, 335) in
+        // root space (measured from render).
+        moveCursor(600, 335, 19.8, 0.7);
+        clickAt(600, 335, 20.6);
+        caption("See exactly <i>why</i> a paper scores the way it does.", 20.8, 27.0);
+        // cross-fade app -> detail
+        tl.to("#s06-app", { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 21.4);
+        tl.to("#s06-detail", { opacity: 1, duration: 0.5, ease: "power2.inOut" }, 21.8);
+        tl.set("#s06-cursor", { opacity: 0 }, 21.6);
+
+        // ---- Detail slow scroll (24-42) ----
+        // Scroll the inner content upward to reveal breakdown + lost-points + criteria
+        tl.fromTo("#s06-scrollinner", { y: 0 }, { y: -220, duration: 16.0, ease: "none" }, 24.0);
+        caption("High relevance, partial reproducibility &mdash; datasets referenced, but no runnable code.", 32.0, 41.5);
+
+        // Highlight Match-the-Paper + Run-the-Code weak rows near the end
+        tl.fromTo("#s06-hl-match", { backgroundColor: "rgba(28,107,90,0)" }, { backgroundColor: "rgba(28,107,90,0.10)", duration: 0.6, ease: "power2.out" }, 38.0);
+        tl.fromTo("#s06-hl-run", { backgroundColor: "rgba(28,107,90,0)" }, { backgroundColor: "rgba(28,107,90,0.10)", duration: 0.6, ease: "power2.out" }, 38.3);
+
+        window.__timelines["s06"] = tl;
+        tl.seek(0);
+      </script>
+    </template>
+  </body>
+</html>

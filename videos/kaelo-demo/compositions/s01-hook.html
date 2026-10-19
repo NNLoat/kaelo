@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          background: #f8fafc;
+          color: #0f172a;
+          font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+          overflow: hidden;
+        }
+        #s01-fade { position: absolute; inset: 0; opacity: 0; }
+        /* Journal paper page, slightly tilted, centred */
+        #s01-page {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 520px;
+          height: 650px;
+          margin-left: -260px;
+          margin-top: -290px;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 8px;
+          box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+          transform: rotate(-3deg);
+          padding: 44px 44px;
+        }
+        #s01-page .p-title {
+          font-family: Georgia, "Times New Roman", serif;
+          font-size: 26px;
+          line-height: 1.22;
+          color: #0f172a;
+          margin-bottom: 7px;
+        }
+        #s01-page .p-auth { font-size: 15px; color: #64748b; margin-bottom: 24px; }
+        #s01-page .p-h { font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: #64748b; margin: 18px 0 10px; }
+        #s01-page .line { height: 9px; border-radius: 4px; background: #e2e8f0; margin-bottom: 11px; }
+        #s01-fig {
+          height: 150px; background: #f1f5f9; border: 1px solid #e2e8f0;
+          border-radius: 6px; margin: 14px 0 6px; position: relative; overflow: hidden;
+        }
+        #s01-fig .bar { position: absolute; bottom: 14px; width: 34px; background: #cbd5e1; border-radius: 3px 3px 0 0; }
+        /* Results table */
+        #s01-table {
+          margin-top: 10px; border: 1px solid #e2e8f0; border-radius: 6px;
+          overflow: hidden; transition: none;
+        }
+        #s01-table .trow { display: flex; height: 26px; border-bottom: 1px solid #eef2f6; }
+        #s01-table .trow:last-child { border-bottom: 0; }
+        #s01-table .tcell { flex: 1; margin: 7px 10px; height: 9px; border-radius: 4px; background: #e2e8f0; }
+        #s01-table .trow.head .tcell { background: #cbd5e1; }
+        #s01-qbadge {
+          position: absolute; width: 58px; height: 58px; border-radius: 50%;
+          background: #fff7ed; border: 2px solid #b4551d; color: #b4551d;
+          font-family: Georgia, serif; font-size: 34px; font-weight: 700;
+          display: flex; align-items: center; justify-content: center;
+          right: -18px; top: 430px; opacity: 0; box-shadow: 0 6px 18px rgba(180,85,29,0.25);
+        }
+        /* Headlines */
+        .s01-head {
+          position: absolute; left: 50%; transform: translateX(-50%);
+          width: 1400px; text-align: center;
+          font-family: Georgia, "Times New Roman", serif;
+          font-size: 60px; line-height: 1.12; color: #0f172a;
+        }
+        #s01-h1 { top: 56px; opacity: 0; }
+        #s01-h2 { bottom: 70px; opacity: 0; }
+      </style>
+
+      <div data-hf-id="hf-6paz" id="root" data-composition-id="s01" data-width="1920" data-height="1080" data-duration="15.4">
+        <div data-hf-id="hf-54r4" id="s01-fade">
+          <h1 data-hf-id="hf-6ewq" id="s01-h1" class="s01-head">Every discovery is built on someone else&rsquo;s paper.</h1>
+
+          <div data-hf-id="hf-dvav" id="s01-page">
+            <div data-hf-id="hf-txr9" class="p-title">On the reproducibility of published research</div>
+            <div data-hf-id="hf-tvxi" class="p-auth">A. Author, B. Researcher&nbsp;&middot;&nbsp;2024</div>
+            <div data-hf-id="hf-e0p1" class="p-h">Abstract</div>
+            <div data-hf-id="hf-upi6" class="line" style="width:100%"></div>
+            <div data-hf-id="hf-qtsq" class="line" style="width:96%"></div>
+            <div data-hf-id="hf-c0b8" class="line" style="width:90%"></div>
+            <div data-hf-id="hf-dqd0" class="p-h">Figure 1</div>
+            <div data-hf-id="hf-rmn8" id="s01-fig">
+              <div data-hf-id="hf-hqcs" class="bar" style="left:60px;height:64px"></div>
+              <div data-hf-id="hf-uk8a" class="bar" style="left:120px;height:96px"></div>
+              <div data-hf-id="hf-mhrh" class="bar" style="left:180px;height:48px"></div>
+              <div data-hf-id="hf-bw9m" class="bar" style="left:240px;height:112px"></div>
+              <div data-hf-id="hf-0qpi" class="bar" style="left:300px;height:78px"></div>
+              <div data-hf-id="hf-ecpo" class="bar" style="left:360px;height:124px"></div>
+            </div>
+            <div data-hf-id="hf-dz9b" class="p-h">Results</div>
+            <div data-hf-id="hf-b1pi" id="s01-table">
+              <div data-hf-id="hf-wen2" class="trow head"><div data-hf-id="hf-y8bc" class="tcell"></div><div data-hf-id="hf-8quo" class="tcell"></div><div data-hf-id="hf-7jxl" class="tcell"></div></div>
+              <div data-hf-id="hf-m4c0" class="trow"><div data-hf-id="hf-7y8m" class="tcell"></div><div data-hf-id="hf-6rbj" class="tcell"></div><div data-hf-id="hf-75mk" class="tcell"></div></div>
+              <div data-hf-id="hf-y53c" class="trow"><div data-hf-id="hf-5yph" class="tcell"></div><div data-hf-id="hf-6d0i" class="tcell"></div><div data-hf-id="hf-563f" class="tcell"></div></div>
+              <div data-hf-id="hf-wy69" class="trow"><div data-hf-id="hf-5keg" class="tcell"></div><div data-hf-id="hf-er7k" class="tcell"></div><div data-hf-id="hf-ecwj" class="tcell"></div></div>
+            </div>
+          </div>
+          <div data-hf-id="hf-0szp" id="s01-qbadge">?</div>
+
+          <h1 data-hf-id="hf-98jr" id="s01-h2" class="s01-head">But what if you can&rsquo;t reproduce it?</h1>
+        </div>
+      </div>
+
+      <script>
+        const tl = gsap.timeline({ paused: true });
+        // Scene fade in / out (soft cross-fade on paper)
+        // Opening fade-in from paper (kept: nice intro). No end fade-to-paper —
+        // scene hard-cuts to the next on the shared paper bg so there's no dead air.
+        tl.fromTo("#s01-fade", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0);
+
+        // Paper drifts up 20px over the scene
+        tl.fromTo("#s01-page", { y: 10 }, { y: -10, duration: 15.0, ease: "none" }, 0);
+
+        // H1 in 0.5-6s
+        tl.fromTo("#s01-h1", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 0.5);
+        tl.to("#s01-h1", { opacity: 0, y: -16, duration: 0.5, ease: "power2.inOut" }, 6.0);
+
+        // H2 in 6.5s; table desaturates + amber ? pops
+        tl.fromTo("#s01-h2", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 6.5);
+        tl.to("#s01-table", { filter: "grayscale(1) opacity(0.55)", duration: 0.6, ease: "power2.inOut" }, 6.9);
+        tl.fromTo("#s01-qbadge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, 7.3);
+
+        window.__timelines["s01"] = tl;
+        tl.seek(0);
+      </script>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          background: #f8fafc;
+          color: #0f172a;
+          font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+          overflow: hidden;
+        }
+        #s03-fade { position: absolute; inset: 0; opacity: 0; }
+        #s03-wrap {
+          position: absolute; inset: 0;
+          display: flex; align-items: center; justify-content: center;
+          gap: 120px; padding: 0 200px;
+        }
+        #s03-left { flex: 0 0 760px; opacity: 0; }
+        #s03-num {
+          font-family: Georgia, "Times New Roman", serif;
+          font-size: 220px; line-height: 1; color: #1c6b5a;
+          font-variant-numeric: tabular-nums; letter-spacing: -0.01em;
+        }
+        #s03-left .label { font-size: 30px; color: #64748b; margin-top: 18px; max-width: 640px; }
+        #s03-left .src { font-size: 18px; color: #64748b; margin-top: 10px; }
+        #s03-right { flex: 1; }
+        #s03-head {
+          font-family: Georgia, "Times New Roman", serif;
+          font-size: 50px; line-height: 1.25; color: #0f172a; opacity: 0;
+        }
+        #s03-head b { color: #1c6b5a; }
+        #s03-chips { display: flex; align-items: center; gap: 0; margin-top: 44px; }
+        .s03-chip {
+          background: #ffffff; border: 1px solid #e2e8f0; border-radius: 999px;
+          padding: 18px 34px; font-size: 30px; color: #0f172a; opacity: 0;
+          box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06); white-space: nowrap;
+        }
+        #s03-join { height: 2px; width: 0; background: #1c6b5a; }
+        #s03-cap { font-size: 26px; color: #64748b; margin-top: 30px; max-width: 640px; opacity: 0; }
+        #s03-cap .csrc { color: #64748b; }
+      </style>
+
+      <div data-hf-id="hf-ajrt" id="root" data-composition-id="s03" data-width="1920" data-height="1080" data-duration="15.4">
+        <div data-hf-id="hf-e88y" id="s03-fade">
+          <div data-hf-id="hf-yogc" id="s03-wrap">
+            <div data-hf-id="hf-m8tv" id="s03-left">
+              <div data-hf-id="hf-7gk8" id="s03-num">4,909</div>
+              <div data-hf-id="hf-a9pf" class="label">Mahidol publications indexed in Scopus, 2025.</div>
+              <div data-hf-id="hf-k17i" class="src">[13]</div>
+            </div>
+            <div data-hf-id="hf-p5y6" id="s03-right">
+              <div data-hf-id="hf-zuqi" id="s03-head">World-class research means research others can <b data-hf-id="hf-8maq">verify and build on</b>.</div>
+              <div data-hf-id="hf-onqh" id="s03-chips">
+                <div data-hf-id="hf-kxj3" class="s03-chip" id="s03-chipA">Medicine</div>
+                <div data-hf-id="hf-llw0" id="s03-join"></div>
+                <div data-hf-id="hf-nryx" class="s03-chip" id="s03-chipB">Computer Science &amp; AI</div>
+              </div>
+              <div data-hf-id="hf-mzxs" id="s03-cap">Two fields at the heart of Mahidol&rsquo;s research and AI-in-healthcare push. <span data-hf-id="hf-sc3o" class="csrc">[12][14]</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        const tl = gsap.timeline({ paused: true });
+        // No fade to/from paper at seams — content present instantly, hard-cut.
+        tl.set("#s03-fade", { opacity: 1 }, 0);
+
+        // 0-7s: numeral + label count up. Opening content is present at t=0 so
+        // the S02->S03 cut lands on content (no blank seam frame); the x-slide is
+        // pure motion from an already-visible state.
+        tl.fromTo("#s03-left", { opacity: 1, x: -24 }, { opacity: 1, x: 0, duration: 0.6, ease: "power2.out" }, 0);
+        const o = { v: 0 };
+        const numEl = document.getElementById("s03-num");
+        tl.to(o, { v: 4909, duration: 1.0, ease: "power2.out",
+          onUpdate: () => { numEl.textContent = Math.round(o.v).toLocaleString("en-US"); } }, 0.2);
+
+        // 7-15s: headline + chips + line + caption
+        tl.fromTo("#s03-head", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 7.0);
+        tl.fromTo("#s03-chipA", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 8.0);
+        tl.to("#s03-join", { width: 60, duration: 0.5, ease: "power3.inOut" }, 8.4);
+        tl.fromTo("#s03-chipB", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 8.7);
+        tl.fromTo("#s03-cap", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 9.6);
+
+        window.__timelines["s03"] = tl;
+        tl.seek(0);
+      </script>
+    </template>
+  </body>
+</html>
