@@ -47,3 +47,7 @@ dist/
 .kiro/skills/remotion-to-hyperframes
 .kiro/skills/slideshow
 .kiro/skills/talking-head-recut
+.kiro/skills/playwright-cli
+
+# npx skills — other agents' generated dirs
+.claude/
