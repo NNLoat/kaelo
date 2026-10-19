@@ -44,3 +44,26 @@ These were authored as Claude Code skills. Changes made when vendoring into Kiro
   vendored.
 - Harness-specific files from the sources (e.g. `agents/openai.yaml`) were not
   vendored; they are irrelevant to Kiro.
+
+## HyperFrames skills (npx-managed, not committed)
+
+The HyperFrames skill set (`hyperframes`, `hyperframes-*`, `embedded-captions`,
+`faceless-explainer`, `figma`, `general-video`, `media-use`, `motion-graphics`,
+`music-to-video`, `pr-to-video`, `product-launch-video`, `remotion-to-hyperframes`,
+`slideshow`, `talking-head-recut`) is managed by the **`npx skills`** tool, not by
+the vendoring model above.
+
+Unlike the pinned sources above, these are **not committed**: the content lives
+under `.agents/skills/` (~21 MB, gitignored) and is surfaced into `.kiro/skills/`
+as symlinks (also gitignored). Only the lockfile `skills-lock.json` (repo root) is
+committed — it pins each skill's source and content hash.
+
+**After cloning, materialize them once:**
+
+```bash
+npx skills add heygen-com/hyperframes
+```
+
+This rebuilds `.agents/skills/` and the `.kiro/skills/` symlinks from the committed
+`skills-lock.json`. Re-run the same command to update; commit the changed
+`skills-lock.json`.
