@@ -1,0 +1,189 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "3.1 Implement the SQLModel tables": [
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961016513
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961039051
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961242875
+      }
+    ],
+    "3.2 Generate and review the Alembic migration": [
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961016517
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961253711
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961567448
+      }
+    ],
+    "4. Checkpoint — models, migration": [
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961016520
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961980214
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791962134313
+      }
+    ],
+    "5.1 Implement reference normalization and the claim endpoints": [
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961016522
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961593422
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961914642
+      }
+    ],
+    "5.2 Implement the manuscript upload and delete endpoints": [
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961016526
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791962162908
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791962427715
+      }
+    ],
+    "5.3 Implement the source upload and delete endpoints": [
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961016529
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791962163635
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791962849552
+      }
+    ],
+    "5.4 Implement the claim delete endpoint": [
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961016531
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791962855801
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791963051584
+      }
+    ],
+    "5.5 Register the writer router in `main.py`": [
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961016534
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791963057269
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791963218117
+      }
+    ],
+    "6. Checkpoint — backend Writer_API": [
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961016537
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791963224567
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791963449279
+      }
+    ],
+    "8. Final checkpoint": [
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961016541
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791963455877
+      },
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791963644602
+      }
+    ],
+    "3. Data models and migration (`PaperClaim`, `WriterManuscript`, `WriterSourceFile`)": [
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791961567453
+      }
+    ],
+    "5. `Writer_API` router (backend)": [
+      {
+        "executionId": "c2dbb79e-0b22-49e3-b488-e528191744fa",
+        "chatSessionId": "sess_eb313b31-082b-4837-8d69-520441d4b3e4",
+        "timestamp": 1791963218121
+      }
+    ]
+  }
+}
