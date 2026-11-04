@@ -1,0 +1,6 @@
+# Scripted demo queries, one per line, in presentation order.
+# Blank lines and lines starting with '#' are ignored.
+# `scripts/demo-record.sh` runs each line live and saves it to the Cassette;
+# `scripts/demo-reset.sh` then replays them with no network or AWS access.
+# A query not listed here is NOT in the Cassette (it would go live in replay).
+Machine Learning Medical Image Segmentation Artificial Intelligence

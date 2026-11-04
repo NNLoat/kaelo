@@ -240,19 +240,20 @@ demo. There is no frontend change, no table and no migration.
     unset (the `off` regression gate) and with the new tests; ask the user if
     anything is unclear.
 
-- [ ] 8. Demo tooling
-  - [ ] 8.1 Write `scripts/demo-env.sh` and `scripts/demo-reset.sh`
+- [x] 8. Demo tooling
+  - [x] 8.1 Write `scripts/demo-env.sh` and `scripts/demo-reset.sh`
     - `demo-env.sh` (sourced): exports `QUERY_EXPANSION_ENABLED=false` and
       `CODEGEN_MOCK=true`, and defines the demo account constants and a
       `wait_healthy` helper (poll `GET /health`, bounded at 120 s, non-zero on
-      timeout).
-    - `demo-reset.sh`: `set -euo pipefail`; `docker compose down -v`; export
-      `DEMO_MODE=replay`; `docker compose up -d --build`; `wait_healthy`; `POST
-      /api/auth/register` for the demo account, treating a conflict (409) as success.
-      Mark executable.
+      timeout). It also holds a shared `demo_up <mode>` function (the reset steps
+      below) so reset and record don't duplicate them.
+    - `demo-reset.sh`: `set -euo pipefail`; `demo_up replay`, i.e. `docker compose
+      down -v`; export `DEMO_MODE=replay`; `docker compose up -d --build`;
+      `wait_healthy`; `POST /api/auth/register` for the demo account, treating a
+      conflict (409) as success. Mark executable.
     - _Requirements: 7.1, 7.2_
 
-  - [ ] 8.2 Write `scripts/demo-record.sh`
+  - [x] 8.2 Write `scripts/demo-record.sh`
     - Same reset with `DEMO_MODE=record`; log in with a cookie jar; for each
       non-blank, non-`#` line of `demo/queries.txt`, `POST /api/papers/search` with
       `curl -m 900`; print the ordered `title  final-score` table via a small
@@ -262,9 +263,10 @@ demo. There is no frontend change, no table and no migration.
       `git add` or commit anything. Mark executable.
     - _Requirements: 7.3, 7.4, 7.6_
 
-  - [ ] 8.3 Write `demo/queries.txt` and `demo/SCRIPT.md`
+  - [x] 8.3 Write `demo/queries.txt` and `demo/SCRIPT.md`
     - `queries.txt`: comment header explaining the format and **placeholder**
-      lines; ask the user for the real queries (do not invent them).
+      lines; ask the user for the real queries (do not invent them). The user gave
+      one: `Machine Learning Medical Image Segmentation Artificial Intelligence`.
     - `SCRIPT.md`: queries in presentation order with the expected top results (to
       be filled after the first record), required settings (`DEMO_MODE=replay`,
       `QUERY_EXPANSION_ENABLED=false`, `CODEGEN_MOCK=true`), which sort the presenter
