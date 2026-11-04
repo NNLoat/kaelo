@@ -64,8 +64,8 @@ demo. There is no frontend change, no table and no migration.
       `monkeypatch.setenv`; do not rely on the cached `get_settings()`.
     - _Requirements: 1.1, 1.2, 1.4, 8.1, 8.3_
 
-- [ ] 2. Business logic — `Cassette_Store` and `cached()` (`services/demo/cassette.py`)
-  - [ ] 2.1 Implement the store and request keys
+- [x] 2. Business logic — `Cassette_Store` and `cached()` (`services/demo/cassette.py`)
+  - [x] 2.1 Implement the store and request keys
     - Create `backend/app/services/demo/__init__.py` and
       `backend/app/services/demo/cassette.py` with no FastAPI/SQLModel/domain
       imports.
@@ -86,7 +86,7 @@ demo. There is no frontend change, no table and no migration.
       `get_settings().demo_cassette_path` (and can be reset in tests).
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 8.2, 8.4_
 
-  - [ ] 2.2 Implement `cached()`
+  - [x] 2.2 Implement `cached()`
     - In the same module add `cached(seam, key_input, live, encode, decode, label="")`
       exactly as the design's state machine: `off` calls `live()` and never touches
       the store; `replay` returns `decode(entry["recorded"])` on a hit, and on a miss
@@ -99,7 +99,7 @@ demo. There is no frontend change, no table and no migration.
       others.
     - _Requirements: 1.3, 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.3, 4.4, 4.5_
 
-  - [ ]* 2.3 Write property tests — request keys and serialization
+  - [x]* 2.3 Write property tests — request keys and serialization
     - `backend/tests/test_demo_cassette_properties.py`, using a `tmp_path` Cassette.
     - **Property 1** — keys are canonical (insertion-order independent, distinct
       inputs differ).
@@ -107,7 +107,7 @@ demo. There is no frontend change, no table and no migration.
       insertion order.
     - _Requirements: 2.1, 2.2, 2.3_
 
-  - [ ]* 2.4 Write property tests — record, replay, miss, off
+  - [x]* 2.4 Write property tests — record, replay, miss, off
     - **Property 3** — record then replay returns an equal result with zero live
       calls.
     - **Property 4** — a replay miss calls `live` once, logs exactly one warning
@@ -120,7 +120,7 @@ demo. There is no frontend change, no table and no migration.
       Cassette path.
     - _Requirements: 1.3, 3.1, 3.2, 3.3, 3.4, 4.1, 4.3, 4.4, 4.5_
 
-  - [ ]* 2.5 Write property tests — secrets and corrupt files
+  - [x]* 2.5 Write property tests — secrets and corrupt files
     - **Property 9** — an entry containing a configured secret raises and leaves the
       file unchanged; one without it is written.
     - **Property 10** — a non-Cassette file raises `CassetteError` naming the path
