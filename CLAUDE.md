@@ -44,8 +44,9 @@ backend (0002); Writer uploads persisted (0003); generated code never feeds a
 Paper's reproducibility score (0004); synchronous upload ingestion (0005); Git
 URLs fetched as codeload tarballs (0006); domain captured at ingestion (0007);
 reproducibility standard adapter (0008); LLM supplies evidence, the score roll-up
-is deterministic (0009). Auth is username + password with a signed HTTP-only
-session cookie.
+is deterministic (0009); demo mode records and replays at the outside-world seams
+(0010, see README "Demo mode"). Auth is username + password with a signed
+HTTP-only session cookie.
 
 ## Layout and conventions
 

@@ -138,6 +138,30 @@ docker compose exec backend bash    # shell into the backend
 docker compose exec db psql -U app  # psql into the database
 ```
 
+## Demo mode
+
+For a repeatable live demo, `DEMO_MODE` records the app's three outside-world calls
+(OpenAlex/arXiv, Bedrock, GitHub) into a committed **Cassette** and replays them
+later with no network or AWS access. Results are scored inline and ordered
+deterministically, so the same query shows the same cards in the same order every
+time. See `docs/adr/0010-demo-mode-records-and-replays-at-the-seams.md` and
+`specs/demo-mode/`.
+
+| Setting | Values | Notes |
+| --- | --- | --- |
+| `DEMO_MODE` | `off` (default), `record`, `replay` | `off` leaves the app untouched |
+| `DEMO_CASSETTE_PATH` | default `/demo/fixtures/cassette.json` | `./demo` is bind-mounted at `/demo` |
+| `QUERY_EXPANSION_ENABLED` | `true` (default) / `false` | `false` skips the LLM query rewrite |
+
+```bash
+scripts/demo-record.sh   # run demo/queries.txt live, write the Cassette, print the order
+scripts/demo-reset.sh    # empty DB, DEMO_MODE=replay, demo account (demo / demo-password-1)
+```
+
+The scripts set `QUERY_EXPANSION_ENABLED=false` and `CODEGEN_MOCK=true` themselves.
+Both run `docker compose down -v`, so they **wipe the local database**. The
+presenter's walkthrough is in `demo/SCRIPT.md`.
+
 ## Backend without Docker (optional)
 
 ```bash

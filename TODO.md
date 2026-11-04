@@ -43,7 +43,7 @@ Done:
 
 All five specs are drafted. Build order was `accounts` → `paper-search` (stubbed
 repro) → `reproducibility-scoring` (unstub) → `code-generation` →
-`writer-workspace`. ADRs run `docs/adr/0001..0006`. Status below reflects what is
+`writer-workspace`. ADRs run `docs/adr/0001..0010`. Status below reflects what is
 merged to `main`.
 
 - [x] **#1 `accounts`** — backend auth (register/login/logout/session), frontend,
@@ -73,6 +73,12 @@ merged to `main`.
   list/delete all work (verified via API + UI). Remaining: 7 optional (`*`) test
   tasks (1.5, 3.3, 5.6–5.11) — the `/api/writer/*` surface has no dedicated
   coverage yet.
+
+- [ ] **#6 `demo-mode`** (branch `demo/deterministic-search`, not on `main`) —
+  record/replay Cassette at the Source, LLM and GitHub seams, inline scoring and
+  deterministic ordering, demo scripts and `demo/SCRIPT.md` (ADR 0010). Tasks 1–9.1
+  done; remaining: **9.2 manual rehearsal** (record the real query, commit the
+  Cassette, replay with network/AWS off, check *Final score* doesn't reorder).
 
 See `summary-1st-prototype.md` for the full first-prototype handoff (verified
 flows, what's left, operational gotchas).

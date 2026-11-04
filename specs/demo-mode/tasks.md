@@ -275,7 +275,7 @@ demo. There is no frontend change, no table and no migration.
     - _Requirements: 7.5_
 
 - [ ] 9. Docs and final verification
-  - [ ] 9.1 Capture the decision and document the feature
+  - [x] 9.1 Capture the decision and document the feature
     - Write `docs/adr/0010-demo-mode-records-and-replays-at-the-seams.md` using the
       `domain-modeling` skill's ADR format. Add a short "Demo mode" section to
       `README.md` (settings, scripts) and a one-line pointer in `CLAUDE.md`. Add a
