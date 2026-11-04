@@ -7,6 +7,7 @@ mocked LLM — external Sources and the LLM are never called for real.
 import pytest
 from fastapi.testclient import TestClient
 
+from app.core.config import get_settings
 from app.services import scoring
 from app.services.llm import RelevanceResult
 from app.services.sources.base import SourceError, SourceRecord
@@ -113,3 +114,25 @@ def test_detail_404_for_unknown(client: TestClient) -> None:
     resp = client.get("/api/papers/999999")
     assert resp.status_code == 404
     assert resp.json()["detail"] == "paper not found"
+
+
+@pytest.mark.parametrize("enabled", [True, False])
+def test_query_expansion_flag(client: TestClient, monkeypatch, enabled: bool) -> None:
+    seen: list[str] = []
+    adapter = FakeAdapter("openalex", [])
+    adapter_fetch = adapter.fetch
+
+    def spy_fetch(query, **kw):
+        seen.append(query)
+        return adapter_fetch(query, **kw)
+
+    monkeypatch.setattr(adapter, "fetch", spy_fetch)
+    monkeypatch.setattr(scoring, "expand_query", lambda raw: raw + " EXPANDED")
+    monkeypatch.setattr(
+        scoring,
+        "get_settings",
+        lambda: get_settings().model_copy(update={"query_expansion_enabled": enabled}),
+    )
+    _set_adapters(monkeypatch, [adapter])
+    assert client.post("/api/papers/search", json={"query": "q"}).status_code == 200
+    assert seen == ["q EXPANDED" if enabled else "q"]

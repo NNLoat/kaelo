@@ -46,10 +46,12 @@ def run_search(query: str, session: Session) -> SearchResult:
     """
     settings = get_settings()
 
-    try:
-        effective_query = expand_query(query)
-    except Exception:
-        effective_query = query  # fall back to the raw query (R8.2)
+    effective_query = query  # fall back to the raw query on failure (R8.2)
+    if settings.query_expansion_enabled:
+        try:
+            effective_query = expand_query(query)
+        except Exception:
+            pass
 
     groups: list[list] = []
     failed: list[str] = []

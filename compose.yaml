@@ -32,6 +32,8 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
       SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET in your .env}
+      # LLM query rewrite before retrieval; set false for repeatable results.
+      QUERY_EXPANSION_ENABLED: ${QUERY_EXPANSION_ENABLED:-true}
       # code-generation mock mode (dev/test): canned artifact, no Bedrock call.
       CODEGEN_MOCK: ${CODEGEN_MOCK:-false}
       # Max output tokens for code/review generation (avoids truncated reports).

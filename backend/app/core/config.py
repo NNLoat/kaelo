@@ -45,6 +45,10 @@ class Settings(BaseSettings):
     # calling Bedrock — deterministic dev/test flow (R10). Off by default.
     codegen_mock: bool = False
 
+    # paper-search: when false, skip the LLM query rewrite and send the raw query
+    # to the sources, so retrieval is repeatable (demo). On by default (R8.2).
+    query_expansion_enabled: bool = True
+
     # Signs session cookies. REQUIRED — no default, so a missing value fails
     # startup rather than reading a secret from committed source (R7.6).
     session_secret: str
