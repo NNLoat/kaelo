@@ -38,3 +38,21 @@ def sort_by_final_score(papers: list, key=lambda p: p.final_score) -> list:
         papers,
         key=lambda p: (key(p) is None, -(key(p) or 0.0)),
     )
+
+
+def sort_deterministic(papers: list) -> list:
+    """Final Score descending, not-ready last, ``id`` ascending as the tie-break.
+
+    Used in demo record/replay, where every paper is already scored. Every
+    not-ready paper (pending/unavailable/None) ranks equally, so ``id`` orders
+    them. The frontend's "Final score" sort is value-if-ready else -1, descending
+    and stable, so this order is a fixed point of it (no reshuffle on switching).
+    ``final_status`` is a ``str`` enum, so compare to ``"ready"`` rather than
+    importing the model into this pure module.
+    """
+
+    def key(p):
+        ready = p.final_status == "ready" and p.final_score is not None
+        return (not ready, -p.final_score if ready else 0.0, p.id)
+
+    return sorted(papers, key=key)

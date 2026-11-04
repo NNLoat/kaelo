@@ -190,16 +190,16 @@ demo. There is no frontend change, no table and no migration.
   - Run `cd backend && uv run pytest`. Ensure it passes, including the existing
     monkeypatch-based tests; ask the user if anything is unclear.
 
-- [ ] 6. Backend — inline scoring and deterministic ordering
-  - [ ] 6.1 Add `ranking.sort_deterministic`
+- [x] 6. Backend — inline scoring and deterministic ordering
+  - [x] 6.1 Add `ranking.sort_deterministic`
     - In `backend/app/services/ranking.py` add the pure function from the design:
-      key `(not ready, -(final_score or 0.0), id)` where `ready` is
-      `final_status is ScoreStatus.ready and final_score is not None`. Keep the file
-      free of LLM, HTTP and DB imports (import only the enum). Leave
-      `sort_by_final_score` untouched.
+      key `(not ready, -final_score if ready else 0.0, id)` where `ready` is
+      `final_status == "ready" and final_score is not None` (`ScoreStatus` is a `str`
+      enum, so no model import is needed and the file stays free of LLM, HTTP and DB
+      imports). Leave `sort_by_final_score` untouched.
     - _Requirements: 6.3_
 
-  - [ ] 6.2 Score inline and branch the router
+  - [x] 6.2 Score inline and branch the router
     - In `services/scoring.py` add `score_inline(paper_ids, query)` looping
       `run_scoring_for_paper(pid, query)` in order.
     - In `routers/papers.py` `search`, after the unchanged `all_failed` check: when
@@ -209,7 +209,7 @@ demo. There is no frontend change, no table and no migration.
       `ranking.sort_deterministic`. Response shape and status codes are unchanged.
     - _Requirements: 6.1, 6.2, 6.4, 6.7_
 
-  - [ ]* 6.3 Write property test — ordering is total and a fixed point of the frontend sort
+  - [x]* 6.3 Write property test — ordering is total and a fixed point of the frontend sort
     - **Property 11** — for any papers with arbitrary statuses and scores,
       `sort_deterministic` orders ready papers by Final Score descending then id
       ascending with non-ready/`None` last, and a Python mirror of the frontend
@@ -218,7 +218,7 @@ demo. There is no frontend change, no table and no migration.
       comment.
     - _Requirements: 6.3, 6.6_
 
-  - [ ]* 6.4 Write integration tests — inline scoring
+  - [x]* 6.4 Write integration tests — inline scoring
     - `backend/tests/test_demo_search.py` through `TestClient` with fake adapters and
       fake chat/repo seams, `DEMO_MODE=replay` via a patched `get_settings`.
     - **Property 12** — every score cell in the response is `ready` or
@@ -228,7 +228,7 @@ demo. There is no frontend change, no table and no migration.
       opened (6.7, 1.3).
     - _Requirements: 6.1, 6.2, 6.4, 6.7, 8.5_
 
-  - [ ]* 6.5 Write integration test — replay is repeatable end to end
+  - [x]* 6.5 Write integration test — replay is repeatable end to end
     - **Property 13** — record a search with fakes, then search twice in `replay`
       with every live fake made to fail the test; the three responses are identical
       in cards, order and values. Include a `Replay_Miss` example that goes live and

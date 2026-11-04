@@ -121,6 +121,12 @@ def schedule_scoring(paper_ids: list[int], query: str, tasks: BackgroundTasks) -
         tasks.add_task(run_scoring_for_paper, pid, query)
 
 
+def score_inline(paper_ids: list[int], query: str) -> None:
+    """Score each paper to completion, in order (demo record/replay)."""
+    for pid in paper_ids:
+        run_scoring_for_paper(pid, query)
+
+
 def run_scoring_for_paper(paper_id: int, query: str) -> None:
     """Compute and persist the component scores for one paper.
 

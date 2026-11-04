@@ -1,7 +1,7 @@
 """Shared helpers for the demo-mode tests."""
 
 import logging
-from contextlib import contextmanager
+from contextlib import ExitStack, contextmanager
 from pathlib import Path
 from unittest import mock
 
@@ -10,10 +10,16 @@ from app.services.demo import cassette
 
 
 @contextmanager
-def demo(mode: str, path: Path):
-    """Run with Demo_Mode ``mode`` and a Cassette at ``path`` (fresh store)."""
+def demo(mode: str, path: Path, also=()):
+    """Run with Demo_Mode ``mode`` and a Cassette at ``path`` (fresh store).
+
+    ``also`` lists other modules whose ``get_settings`` should see the same settings
+    (for example the papers router).
+    """
     s = get_settings().model_copy(update={"demo_mode": mode, "demo_cassette_path": str(path)})
-    with mock.patch.object(cassette, "get_settings", lambda: s):
+    with ExitStack() as stack:
+        for module in (cassette, *also):
+            stack.enter_context(mock.patch.object(module, "get_settings", lambda: s))
         cassette.reset_store()
         try:
             yield

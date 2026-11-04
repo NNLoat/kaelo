@@ -323,8 +323,8 @@ run (success or `unavailable`), so no value from an earlier search can survive i
 def sort_deterministic(papers: list) -> list:
     """Final Score desc; non-ready/None last; id asc as tie-break (R6.3)."""
     def key(p):
-        ready = p.final_status is ScoreStatus.ready and p.final_score is not None
-        return (not ready, -(p.final_score or 0.0), p.id)
+        ready = p.final_status == "ready" and p.final_score is not None  # str enum: no model import
+        return (not ready, -p.final_score if ready else 0.0, p.id)  # all not-ready tie, then by id
     return sorted(papers, key=key)
 ```
 
