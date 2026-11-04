@@ -4,9 +4,6 @@ description: >
   Grill the user relentlessly about a plan, decision, or idea to reach shared
   understanding before building. Use when the user wants to stress-test their
   thinking, sharpen requirements, or uses any 'grill' trigger phrase.
-metadata:
-  source: https://github.com/mattpocock/skills/tree/main/skills/productivity/grilling
-  vendored_sha: 49dd158d1076134a641b33efb035946536778336
 ---
 
 Interview the user relentlessly until you reach a shared understanding. Map this as a **design tree**: every decision branches into the decisions that hang off it.

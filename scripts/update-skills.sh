@@ -1,31 +1,26 @@
 #!/usr/bin/env bash
 #
-# Vendored-skill update helper for .kiro/skills.
+# Vendored-skill update helper for .claude/skills.
 #
-# These skills were adapted for Kiro (slash-command phrasing, reference paths, a
-# rewritten dispatcher), so they are NOT auto-overwritten from upstream. Instead
-# this script fetches the pinned upstream copies into a gitignored cache and
-# shows you how your vendored copy differs, so you can apply upstream changes by
-# hand and keep the Kiro adaptations intact.
+# These skills carry local edits (trimmed frontmatter, a rewritten dispatcher),
+# so they are NOT auto-overwritten from upstream. Instead this script
+# fetches the pinned upstream copies into a gitignored cache and shows you how your vendored copy differs, so you can apply upstream changes by
+# hand and keep the local edits intact.
 #
 # Workflow to update a skill:
-#   1. Bump its SHA below (and in .kiro/skills/SKILLS.md).
+#   1. Bump its SHA below (and in .claude/skills/SKILLS.md).
 #   2. Run this script.
 #   3. Read the diffs it prints: upstream-at-new-SHA vs. your vendored copy.
-#   4. Hand-apply any upstream changes worth taking, preserving Kiro edits.
-#   5. Update the date in .kiro/skills/SKILLS.md.
+#   4. Hand-apply any upstream changes worth taking, preserving local edits.
+#   5. Update the date in .claude/skills/SKILLS.md.
 #
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
-SKILLS_DIR=".kiro/skills"
+SKILLS_DIR=".claude/skills"
 CACHE_DIR="$SKILLS_DIR/.upstream-cache"
 
-# --- pinned sources (keep in sync with .kiro/skills/SKILLS.md) ---------------
-PONYTAIL_REPO="DietrichGebert/ponytail"
-PONYTAIL_SHA="9b58c1ffb790c075ca32e70a89cf1d80588f4abf"
-PONYTAIL_PATH="skills/ponytail/SKILL.md"
-
+# --- pinned sources (keep in sync with .claude/skills/SKILLS.md) ---------------
 FRONTEND_REPO="anthropics/claude-code"
 FRONTEND_SHA="3deb873687379f0c199a69fdaccc65f0865f7a29"
 FRONTEND_PATH="plugins/frontend-design/skills/frontend-design/SKILL.md"
@@ -53,7 +48,7 @@ fetch_and_diff() {
   if diff -u "$cache_file" "$vendored" >/dev/null 2>&1; then
     echo "  vendored copy is byte-identical to upstream@$sha"
   else
-    echo "  differs from upstream@$sha (expected: Kiro frontmatter + adaptations)"
+    echo "  differs from upstream@$sha (expected: trimmed frontmatter)"
     echo "  review: diff $cache_file $vendored"
   fi
   echo
@@ -61,10 +56,6 @@ fetch_and_diff() {
 
 echo "Fetching pinned upstream copies into $CACHE_DIR (gitignored)..."
 echo
-
-fetch_and_diff "ponytail" \
-  "ponytail.SKILL.md" "$SKILLS_DIR/ponytail/SKILL.md" \
-  "$PONYTAIL_REPO" "$PONYTAIL_SHA" "$PONYTAIL_PATH"
 
 fetch_and_diff "frontend-design" \
   "frontend-design.SKILL.md" "$SKILLS_DIR/frontend-design/SKILL.md" \
@@ -86,5 +77,5 @@ fetch_and_diff "domain-modeling/GLOSSARY-FORMAT" \
   "domain-modeling.GLOSSARY-FORMAT.md" "$SKILLS_DIR/domain-modeling/references/GLOSSARY-FORMAT.md" \
   "$MATTPOCOCK_REPO" "$MATTPOCOCK_SHA" "$DOMAIN_GLOSSARY_PATH"
 
-echo "Done. Nothing was overwritten. grill-with-docs is Kiro-specific and has no"
-echo "single upstream file to diff; maintain it by hand."
+echo "Done. Nothing was overwritten. grill-with-docs and spec are project-maintained and have no"
+echo "single upstream file to diff; maintain them by hand."

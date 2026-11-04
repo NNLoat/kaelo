@@ -10,7 +10,7 @@ status" below.
 
 Done:
 
-1. **Foundation steering files** in `.kiro/steering/` (always-included):
+1. **Foundation steering** (now consolidated into `CLAUDE.md`, always loaded):
    - [x] `product.md` — filled in; corrected for the Writer-content storage
      exception (see `docs/adr/0003`).
    - [x] `tech.md` — filled in; the four "to decide" items (data sources, LLM
@@ -19,19 +19,25 @@ Done:
      `models/` for tables, `components/` for frontend).
 2. [x] **A `workflow.md` steering file** encoding the dev loop (litmus test,
    "feature code has a spec", two modes, full spec loop, verification gates).
-3. [x] Decided: **advisory** for the hackathon. An advisory nudge hook lives at
-   `.kiro/hooks/spec-nudge.json` (asks on feature-sized work without a spec;
-   does not hard-block).
+3. [x] Decided: **advisory** for the hackathon. The rule "ask before starting
+   feature-sized work without a spec" lives in `CLAUDE.md` (it was a Kiro hook,
+   `spec-nudge.json`, until the move to Claude Code); it does not hard-block.
 4. [x] **Grilled the product** with `/grill-with-docs` → `GLOSSARY.md` and
    `docs/adr/0001-0003`.
 5. [x] **Planned the feature split** into five specs (see README "Planned
    specs").
 6. [x] **All five specs drafted** end to end (requirements → design → tasks)
-   under `.kiro/specs/`: #1 `accounts`, #2 `paper-search`,
+   under `specs/`: #1 `accounts`, #2 `paper-search`,
    #3 `reproducibility-scoring`, #4 `code-generation`, #5 `writer-workspace`.
    `paper-search` + `reproducibility-scoring` came in via `main` (merged into
    this branch); `writer-workspace` was grilled with `/grill-with-docs` →
    ADR-0005, ADR-0006, and four new glossary terms.
+
+> **Tooling note.** The prototype was built in Kiro. The repo now targets Claude
+> Code: steering is `CLAUDE.md`, specs moved `.kiro/specs/` → `specs/`, the
+> workflow is the `/spec` skill (`new` / `run` / `status`), and Kiro-only files
+> (`.config.kiro`, `tasks.meta.json`, the hook) were dropped. The Kiro layout
+> remains in git history on `main`.
 
 ## Implementation status
 

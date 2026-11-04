@@ -4,9 +4,6 @@ description: >
   Build and sharpen a project's domain model. Use when discussing codebase
   terminology, writing or editing a GLOSSARY.md, or recording or editing an ADR
   (architecture decision record).
-metadata:
-  source: https://github.com/mattpocock/skills/tree/main/skills/engineering/domain-modeling
-  vendored_sha: 49dd158d1076134a641b33efb035946536778336
 ---
 
 # Domain Modeling

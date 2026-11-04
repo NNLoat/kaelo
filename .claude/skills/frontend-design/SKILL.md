@@ -7,9 +7,6 @@ description: >
   building frontend UI, choosing palettes/typography/layout, or when the user
   asks for a non-generic, polished visual design.
 license: See source repository (anthropics/claude-code)
-metadata:
-  source: https://github.com/anthropics/claude-code/tree/main/plugins/frontend-design/skills/frontend-design
-  vendored_sha: 3deb873687379f0c199a69fdaccc65f0865f7a29
 ---
 
 # Frontend Design
