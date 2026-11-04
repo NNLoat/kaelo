@@ -5,10 +5,8 @@ must not run raises AssertionError.
 """
 
 import json
-import logging
 import os
 import tempfile
-from contextlib import contextmanager
 from pathlib import Path
 from unittest import mock
 
@@ -19,6 +17,7 @@ from hypothesis import strategies as st
 from app.core.config import get_settings
 from app.services.demo import cassette
 from app.services.demo.cassette import CassetteError, CassetteStore, cached, request_key
+from tests.demo_helpers import captured_warnings, demo
 
 _scalars = st.none() | st.booleans() | st.integers() | st.text()
 _json = st.recursive(
@@ -39,38 +38,6 @@ _FAIL = AssertionError("live call must not run")
 
 def _must_not_run():
     raise _FAIL
-
-
-@contextmanager
-def demo(mode: str, path: Path):
-    """Run with Demo_Mode ``mode`` and a Cassette at ``path`` (fresh store)."""
-    s = get_settings().model_copy(update={"demo_mode": mode, "demo_cassette_path": str(path)})
-    with mock.patch.object(cassette, "get_settings", lambda: s):
-        cassette.reset_store()
-        try:
-            yield
-        finally:
-            cassette.reset_store()
-
-
-class _Capture(logging.Handler):
-    def __init__(self):
-        super().__init__(logging.DEBUG)
-        self.messages: list[str] = []
-
-    def emit(self, record):
-        if record.levelno >= logging.WARNING:
-            self.messages.append(record.getMessage())
-
-
-@contextmanager
-def captured_warnings():
-    handler = _Capture()
-    cassette.log.addHandler(handler)
-    try:
-        yield handler.messages
-    finally:
-        cassette.log.removeHandler(handler)
 
 
 def _identity(x):

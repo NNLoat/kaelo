@@ -15,6 +15,7 @@ from app.core.config import get_settings
 from app.db.session import engine
 from app.models.paper import Paper, PaperDomain, ScoreStatus
 from app.services import ranking
+from app.services.demo.seams import wrap_source
 from app.services.llm import PaperSummary, assess_relevance, expand_query
 from app.services.merge import MergedPaper, merge_dedup
 from app.services.reproducibility import score_reproducibility
@@ -34,7 +35,7 @@ class SearchResult:
 
 
 def _adapters() -> list[SourceAdapter]:
-    return _ADAPTERS
+    return [wrap_source(a) for a in _ADAPTERS]
 
 
 def run_search(query: str, session: Session) -> SearchResult:

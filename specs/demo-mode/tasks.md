@@ -131,8 +131,8 @@ demo. There is no frontend change, no table and no migration.
   - Run `cd backend && uv run pytest`. Ensure it passes; ask the user if anything is
     unclear. (The seams are not wired yet, so no behavior has changed.)
 
-- [ ] 4. Business logic — seam wrappers (`services/demo/seams.py`) and wiring
-  - [ ] 4.1 Implement the codecs and wrappers
+- [x] 4. Business logic — seam wrappers (`services/demo/seams.py`) and wiring
+  - [x] 4.1 Implement the codecs and wrappers
     - Create `backend/app/services/demo/seams.py`.
     - `_encode_records` / `_decode_records` for `list[SourceRecord]`: `published_date`
       to ISO string or null and back, `domain` to its enum value and back,
@@ -153,7 +153,7 @@ demo. There is no frontend change, no table and no migration.
       repo_url.strip()}`.
     - _Requirements: 4.2, 4.6, 5.1, 5.2, 5.3, 5.5_
 
-  - [ ] 4.2 Wire the LLM seam
+  - [x] 4.2 Wire the LLM seam
     - In `services/llm.py`, `services/repro/extractor.py` and
       `services/repro/explainer.py`, change the **body** of each `_client()` to
       `return wrap_chat(lambda: ChatBedrock(model=..., region_name=...))`. Keep the
@@ -161,24 +161,24 @@ demo. There is no frontend change, no table and no migration.
       unchanged. Do **not** touch `core/codegen.py`.
     - _Requirements: 4.2, 5.2, 5.4, 5.5_
 
-  - [ ] 4.3 Wire the source seam
+  - [x] 4.3 Wire the source seam
     - In `services/scoring.py`, make `_adapters()` return
       `[wrap_source(a) for a in _ADAPTERS]`. `run_search` is unchanged.
     - _Requirements: 5.1, 5.5_
 
-  - [ ] 4.4 Wire the repo seam
+  - [x] 4.4 Wire the repo seam
     - In `services/repro/inspector.py` `inspect_repo`, keep the early return for an
       absent or blank URL first (no lookup), and wrap the host call:
       `cached_repo(repo_url, lambda: _HOST.inspect(repo_url, timeout=...))`.
     - _Requirements: 5.3, 5.5, 5.6_
 
-  - [ ]* 4.5 Write property test — codecs round-trip
+  - [x]* 4.5 Write property test — codecs round-trip
     - **Property 8** — for any `SourceRecord` (date `None` or set, every
       `PaperDomain`, any `source_links`), any `RepoSignals`, and any LLM string
       (empty, non-ASCII), `decode(encode(x)) == x`.
     - _Requirements: 4.6, 5.1, 5.2, 5.3_
 
-  - [ ]* 4.6 Write example tests — seam wiring
+  - [x]* 4.6 Write example tests — seam wiring
     - `backend/tests/test_demo_seams.py`: a paper with no repo URL performs no repo
       lookup in `replay` (5.6); codegen's `_client` is unchanged and still follows
       `CODEGEN_MOCK` in every mode (5.4); with `DEMO_MODE=off`, `wrap_chat` returns

@@ -14,6 +14,7 @@ from functools import lru_cache
 from langchain_aws import ChatBedrock
 
 from app.core.config import get_settings
+from app.services.demo.seams import CassetteChat, wrap_chat
 
 
 @dataclass
@@ -29,11 +30,13 @@ class RelevanceResult:
 
 
 @lru_cache
-def _client() -> ChatBedrock:
+def _client() -> ChatBedrock | CassetteChat:
     settings = get_settings()
-    return ChatBedrock(
-        model=settings.bedrock_model_id,
-        region_name=settings.aws_region,
+    return wrap_chat(
+        lambda: ChatBedrock(
+            model=settings.bedrock_model_id,
+            region_name=settings.aws_region,
+        )
     )
 
 
