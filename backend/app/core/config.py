@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Literal
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -48,6 +49,11 @@ class Settings(BaseSettings):
     # paper-search: when false, skip the LLM query rewrite and send the raw query
     # to the sources, so retrieval is repeatable (demo). On by default (R8.2).
     query_expansion_enabled: bool = True
+
+    # demo-mode: off = normal; record = live calls are saved to the Cassette;
+    # replay = calls are answered from it (a miss falls back to live).
+    demo_mode: Literal["off", "record", "replay"] = "off"
+    demo_cassette_path: str = "demo/fixtures/cassette.json"
 
     # Signs session cookies. REQUIRED — no default, so a missing value fails
     # startup rather than reading a secret from committed source (R7.6).

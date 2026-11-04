@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, HTTPException
@@ -17,6 +18,10 @@ async def lifespan(app: FastAPI):
     # Schema is managed by Alembic migrations, applied by the container
     # entrypoint (alembic upgrade head) before the server starts. Nothing
     # to do here at startup.
+    if settings.demo_mode != "off":
+        logging.getLogger("uvicorn.error").info(
+            "demo mode=%s cassette=%s", settings.demo_mode, settings.demo_cassette_path
+        )
     yield
 
 

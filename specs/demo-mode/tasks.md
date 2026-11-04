@@ -31,8 +31,8 @@ demo. There is no frontend change, no table and no migration.
 
 ## Tasks
 
-- [ ] 1. Backend — settings, startup log, compose wiring
-  - [ ] 1.1 Add the `Settings` fields
+- [x] 1. Backend — settings, startup log, compose wiring
+  - [x] 1.1 Add the `Settings` fields
     - In `backend/app/core/config.py` add `demo_mode: Literal["off", "record",
       "replay"] = "off"` and `demo_cassette_path: str = "demo/fixtures/cassette.json"`
       (import `Literal` from `typing`). Pydantic's validation provides the
@@ -40,13 +40,13 @@ demo. There is no frontend change, no table and no migration.
       values.
     - _Requirements: 1.1, 1.2, 1.4, 8.1_
 
-  - [ ] 1.2 Log the mode at startup
+  - [x] 1.2 Log the mode at startup
     - In `backend/app/main.py` `lifespan`, when `settings.demo_mode != "off"`, log
       one line `demo mode=<mode> cassette=<path>` on the `uvicorn.error` logger at
       INFO. Log nothing for `off`.
     - _Requirements: 8.3_
 
-  - [ ] 1.3 Wire compose and document the settings
+  - [x] 1.3 Wire compose and document the settings
     - In `compose.yaml` (backend service) add `DEMO_MODE: ${DEMO_MODE:-off}` and
       `DEMO_CASSETTE_PATH: ${DEMO_CASSETTE_PATH:-/demo/fixtures/cassette.json}` with
       a short comment, and a `volumes:` entry `- ./demo:/demo`.
@@ -56,7 +56,7 @@ demo. There is no frontend change, no table and no migration.
       exist in a fresh clone.
     - _Requirements: 1.5, 1.6_
 
-  - [ ]* 1.4 Write example tests — settings and startup log
+  - [x]* 1.4 Write example tests — settings and startup log
     - In `backend/tests/test_demo_settings.py`: defaults are `off` and the documented
       path (1.1, 1.4); `DEMO_MODE=bogus` raises a validation error that names
       `demo_mode` and the accepted values (1.2); the startup log line appears for
