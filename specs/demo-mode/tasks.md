@@ -127,7 +127,7 @@ demo. There is no frontend change, no table and no migration.
       and is not modified by a later `put`.
     - _Requirements: 2.5, 2.6, 2.7, 8.2, 8.4_
 
-- [ ] 3. Checkpoint — Cassette and settings
+- [x] 3. Checkpoint — Cassette and settings
   - Run `cd backend && uv run pytest`. Ensure it passes; ask the user if anything is
     unclear. (The seams are not wired yet, so no behavior has changed.)
 
