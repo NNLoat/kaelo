@@ -235,7 +235,7 @@ demo. There is no frontend change, no table and no migration.
       leaves the Cassette bytes unchanged.
     - _Requirements: 4.1, 4.2, 6.5, 8.5_
 
-- [ ] 7. Checkpoint — backend Search_API
+- [x] 7. Checkpoint — backend Search_API
   - Run `cd backend && uv run pytest`. Ensure the full suite passes with `DEMO_MODE`
     unset (the `off` regression gate) and with the new tests; ask the user if
     anything is unclear.
