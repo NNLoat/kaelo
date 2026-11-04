@@ -186,7 +186,7 @@ demo. There is no frontend change, no table and no migration.
       empty AWS credentials and a hit, no `ChatBedrock` is constructed (4.2).
     - _Requirements: 4.2, 5.4, 5.5, 5.6_
 
-- [ ] 5. Checkpoint — seams
+- [x] 5. Checkpoint — seams
   - Run `cd backend && uv run pytest`. Ensure it passes, including the existing
     monkeypatch-based tests; ask the user if anything is unclear.
 
