@@ -35,11 +35,14 @@ from app.models.generation import (
     JobRead,
     JobState,
 )
-from app.models.paper import Paper, ScoreStatus
+from app.models.paper import Paper, PaperDomain, ScoreStatus
 from app.models.reproducibility import ExperimentSetup, ReproducibilityScore
 from app.models.user import User
 from app.models.writer import PaperClaim, WriterManuscript, WriterSourceFile
 from app.routers.writer import normalize_reference
+from app.services.repro.scorer import reproducibility
+from app.services.repro.standards import Evidence, StandardResult
+from app.services.repro.types import RepoSignals
 from app.services.reproducibility import score_reproducibility
 
 router = APIRouter(prefix="/api/codegen", tags=["codegen"])
@@ -145,6 +148,35 @@ def _writer_inputs(
     )
 
 
+def _claim_material(
+    session: Session, paper_ref: str, owner_id: int
+) -> tuple[str, list[tuple[str, str]]] | None:
+    """The owner's uploaded manuscript text + ``(path, content)`` source files for
+    the claim on ``paper_ref``, or None when there is no claim or manuscript."""
+    normalized = normalize_reference(paper_ref)
+    if normalized is None:
+        return None
+    claim = session.exec(
+        select(PaperClaim).where(
+            PaperClaim.owner_id == owner_id,
+            PaperClaim.paper_ref_normalized == normalized,
+        )
+    ).first()
+    if claim is None:
+        return None
+    manuscript = session.exec(
+        select(WriterManuscript).where(WriterManuscript.claim_id == claim.id)
+    ).first()
+    if manuscript is None:
+        return None
+    sources = session.exec(
+        select(WriterSourceFile)
+        .where(WriterSourceFile.claim_id == claim.id)
+        .order_by(WriterSourceFile.path)  # type: ignore[arg-type]
+    ).all()
+    return (manuscript.text, [(f.path, f.content) for f in sources])
+
+
 def _writer_material(
     session: Session, paper_ref: str, owner_id: int
 ) -> tuple[str | None, str | None]:
@@ -155,31 +187,45 @@ def _writer_material(
     refuses: it is additive material for the Review case (R12.3), which also admits
     Reader material from the Paper index.
     """
-    normalized = normalize_reference(paper_ref)
-    if normalized is None:
+    material = _claim_material(session, paper_ref, owner_id)
+    if material is None:
         return (None, None)
-    claim = session.exec(
-        select(PaperClaim).where(
-            PaperClaim.owner_id == owner_id,
-            PaperClaim.paper_ref_normalized == normalized,
-        )
-    ).first()
-    if claim is None:
-        return (None, None)
-    manuscript = session.exec(
-        select(WriterManuscript).where(WriterManuscript.claim_id == claim.id)
-    ).first()
-    if manuscript is None:
-        return (None, None)
-    sources = session.exec(
-        select(WriterSourceFile)
-        .where(WriterSourceFile.claim_id == claim.id)
-        .order_by(WriterSourceFile.path)  # type: ignore[arg-type]
-    ).all()
-    uploaded_source = (
-        "\n\n".join(f"=== {f.path} ===\n{f.content}" for f in sources) if sources else None
+    text, files = material
+    uploaded_source = "\n\n".join(f"=== {p} ===\n{c}" for p, c in files) if files else None
+    return (text, uploaded_source)
+
+
+def _manuscript_standard(
+    session: Session, paper_ref: str, owner_id: int
+) -> StandardResult | None:
+    """Grade a Writer's uploaded manuscript directly, for a claim with no indexed Paper.
+
+    In-memory only: nothing is persisted, so the Paper index and its scores are
+    untouched. shortcut: no repo signals or setup extraction and the domain is fixed
+    to computer science; add a domain field on the claim when non-CS writers appear.
+    """
+    material = _claim_material(session, paper_ref, owner_id)
+    if material is None:
+        return None
+    text, files = material
+    no_repo = RepoSignals(
+        exists=False,
+        has_readme=False,
+        has_license=False,
+        has_tests=False,
+        recent_activity=False,
+        inspectable=False,
+        failed=False,
     )
-    return (manuscript.text, uploaded_source)
+    evidence = Evidence(
+        repo=no_repo,
+        code_quality=0.0,
+        setup=None,
+        setup_completeness=0.0,
+        manuscript_text=text,
+        source_files=files or None,
+    )
+    return reproducibility(PaperDomain.computer_science, evidence)
 
 
 def _standard_result(session: Session, paper: Paper | None) -> ReproducibilityScore | None:
@@ -215,7 +261,11 @@ def _review_inputs(
     from the owner's uploaded manuscript + source; whatever is present is included.
     """
     result = _standard_result(session, paper)
-    if result is None:
+    manuscript_result = None
+    if result is None and paper is None:
+        # Writer's own paper, not in the index: grade the uploaded manuscript.
+        manuscript_result = _manuscript_standard(session, paper_ref, owner_id)
+    if result is None and manuscript_result is None:
         # Trigger the Paper's reproducibility evaluation (rule-based seam; no live
         # Bedrock) and re-read. Any failure leaves us without a Standard_Result.
         if paper is not None:
@@ -228,15 +278,29 @@ def _review_inputs(
         if result is None:
             return ("Standard evaluation unavailable for this paper.", None)
 
-    criteria = [
-        CriterionFinding(
-            id=str(c.get("id", "")),
-            title=str(c.get("title", "")),
-            status=str(c.get("status", "")),
-            evidence_note=str(c.get("evidence_note", "")),
-        )
-        for c in (result.criteria or [])
-    ]
+    if manuscript_result is not None:
+        standard_key = manuscript_result.standard_key
+        criteria = [
+            CriterionFinding(
+                id=r.criterion.id,
+                title=r.criterion.title,
+                status=r.status.value,
+                evidence_note=r.evidence_note,
+            )
+            for r in manuscript_result.results
+        ]
+    else:
+        assert result is not None
+        standard_key = result.standard_key
+        criteria = [
+            CriterionFinding(
+                id=str(c.get("id", "")),
+                title=str(c.get("title", "")),
+                status=str(c.get("status", "")),
+                evidence_note=str(c.get("evidence_note", "")),
+            )
+            for c in (result.criteria or [])
+        ]
 
     # Reader material from the Paper index (metadata only; no full text, R12.3).
     metadata = None
@@ -251,7 +315,7 @@ def _review_inputs(
     return (
         None,
         ReviewInputs(
-            standard_key=result.standard_key,
+            standard_key=standard_key,
             criteria=criteria,
             repo_link=repo_link,
             metadata=metadata,
