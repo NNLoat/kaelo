@@ -20,7 +20,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.72,\n  \"blurb\": \"Highly relevant for AI and medical imaging, this paper addresses bias evaluation in deep learning models for medical image analysis, though it focuses on fairness assessment rather than segmentation techniques specifically.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.72,\n  \"blurb\": \"Highly relevant work on bias evaluation in medical imaging AI models, though focused on bias assessment rather than the core segmentation task itself, demonstrating CNN applications and mitigation strategies in medical imaging contexts.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -36,7 +36,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.95, \"blurb\": \"Directly addresses machine learning-based medical image segmentation using deep neural networks with a novel context feedback loop approach to improve segmentation robustness and accuracy across multiple clinical datasets.\"}\n```"
+        "content": "```json\n{\n  \"score\": 0.95,\n  \"blurb\": \"Highly relevant paper proposing a deep learning framework with context feedback loops for robust medical image segmentation, directly addressing machine learning and AI applications in medical imaging.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -52,7 +52,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.35,\n  \"blurb\": \"This paper evaluates explainable AI methods through user studies in medical diagnostics contexts, but focuses on XAI interpretability rather than medical image segmentation or core ML techniques.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.35,\n  \"blurb\": \"While this paper addresses explainability in medical AI applications, it focuses on evaluating XAI methods through user studies rather than on the core topics of medical image segmentation or machine learning segmentation techniques themselves.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -60,7 +60,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": \"real patient data from an electronic health record\",\n  \"environment\": \"partially observable environments with missing observations or data; online agent that plans and re-plans\"\n}\n```"
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": \"Real patient data from an electronic health record\",\n  \"environment\": \"Partially observable environments with missing observations or data; online agent that plans and re-plans\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -84,7 +84,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThe abstract describes a user study evaluating XAI methods but does not provide specific details about hyperparameters, datasets, or computational environment. While it mentions \"state-of-the-art methods\" were tested through a user study with proxy tasks, the specific configurations, datasets used, or technical environment are not detailed in the metadata provided."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThe abstract describes a user study on XAI methods and their helpfulness for human decision-making, but does not provide specific details about hyperparameters, datasets used, or the computational environment. The paper focuses on the methodology and findings of the human-centered evaluation rather than technical implementation details."
       },
       "seam": "llm"
     },
@@ -140,7 +140,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.92,\n  \"blurb\": \"Highly relevant comprehensive review covering machine learning and deep learning approaches for medical image analysis, including explicit discussion of segmentation as a crucial step in radiomics and practical considerations for clinical AI implementation.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.95,\n  \"blurb\": \"Highly relevant comprehensive review covering machine learning and deep learning applications to medical image analysis, including explicit discussion of image segmentation, feature extraction, neural networks, and practical considerations for clinical implementation.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -148,7 +148,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a review paper that surveys artificial intelligence and machine learning methods for medical imaging. The abstract does not describe a specific experimental setup with hyperparameters, datasets, or computational environment details. Instead, it outlines the scope and goals of the review itself."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a technology review paper that surveys AI and machine learning methods for medical imaging. The metadata provided (title and abstract) does not describe a specific experimental setup with hyperparameters, datasets, or computational environment details."
       },
       "seam": "llm"
     },
@@ -156,7 +156,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.85,\n  \"blurb\": \"Highly relevant survey covering AI and machine learning techniques for medical image analysis, including neural networks, fuzzy logic, and optimization algorithms for classification and segmentation tasks across various imaging modalities.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.85,\n  \"blurb\": \"Highly relevant survey covering AI techniques for medical image classification including neural networks, fuzzy logic, and optimization algorithms, with explicit discussion of segmentation methods like fuzzy C-means for brain imaging.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -220,7 +220,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a survey paper that reviews existing literature rather than conducting a specific experiment with defined hyperparameters, datasets, or computational environment. The abstract describes the scope of the survey (AI techniques for medical image classification) but does not specify any experimental setup parameters."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a survey paper that reviews existing literature on AI approaches for medical image classification. The metadata provided does not describe a specific experimental setup with particular hyperparameters, datasets, or computational environments used in original experiments."
       },
       "seam": "llm"
     },
@@ -236,7 +236,15 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.65, \"blurb\": \"This paper discusses machine learning and AI applications in lung cancer immunotherapy prediction, including biomarker assessment, but focuses on predictive modeling rather than medical image segmentation techniques.\"}\n```"
+        "content": "```json\n{\"score\": 0.65, \"blurb\": \"Discusses AI/ML applications in lung cancer immunotherapy prediction using multimodal medical data, but focuses on biomarker and clinical outcome prediction rather than medical image segmentation specifically.\"}\n```"
+      },
+      "seam": "llm"
+    },
+    "llm:2604c4054bee1151f958b2bba9cb1e3cd82886ff01dd53c2b6dcf8ad10bdd04a": {
+      "label": "In three or four sentences, explain this reproducibility score to a researcher d",
+      "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "recorded": {
+        "content": "The repository exists with documentation, but critical gaps prevent confident reproduction. The paper-to-code connection is unverifiable: while training code and evaluation code are present, there is no clear link between the paper's version and the repository version, making it impossible to confirm you're using the code that produced the reported results. The repository also lacks a results table with precise commands, so you cannot directly follow steps to regenerate the paper's principal outcomes. Finally, the code has never been executed in a reproducibility audit (no badge), and the repository relies on a non-archival GitHub link rather than a persistent DOI, meaning the materials could become inaccessible. Before building on this work, you should contact the authors to verify which specific commit corresponds to the paper's results and request confirmation that the provided commands reproduce the reported metrics."
       },
       "seam": "llm"
     },
@@ -244,7 +252,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThe provided metadata (title and abstract) does not contain specific information about experiment setup, hyperparameters, datasets, or environment details. This appears to be a review or overview paper on machine learning applications in cardiac imaging, rather than a paper describing a specific experimental setup."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThe provided text contains only a title and indicates that an abstract is not available. There is no information about experiment setup, hyperparameters, datasets, or environment details that can be extracted."
       },
       "seam": "llm"
     },
@@ -268,7 +276,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThe provided text is a review article abstract that discusses AI and machine learning in anesthesiology conceptually. It does not describe any specific experiment with hyperparameters, datasets, or computational environments. No empirical study setup is presented in the metadata."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a review article that discusses artificial intelligence and machine learning in anesthesiology conceptually. The abstract does not describe any specific experimental setup, hyperparameters, datasets, or computational environment used in empirical research."
       },
       "seam": "llm"
     },
@@ -276,7 +284,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.95, \"blurb\": \"Highly relevant systematic review of AI and machine learning techniques for medical image segmentation and disease classification across multiple anatomical regions and imaging modalities.\"}\n```"
+        "content": "```json\n{\n  \"score\": 0.95,\n  \"blurb\": \"Highly relevant systematic review comprehensively covering AI and machine learning techniques for medical image segmentation and disease classification across anatomical regions.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -292,7 +300,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.95, \"blurb\": \"Highly relevant comprehensive review of AI and machine learning methods for medical imaging analysis, specifically covering segmentation, classification, and diagnosis applications with state-of-the-art techniques and clinical implementation perspectives.\"}\n```"
+        "content": "```json\n{\"score\": 0.95, \"blurb\": \"Highly relevant comprehensive review of AI and machine learning methods for medical imaging analysis, including segmentation, classification, and diagnosis tasks with discussion of clinical implementation.\"}\n```"
       },
       "seam": "llm"
     },
@@ -300,7 +308,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.05,\n  \"blurb\": \"This paper discusses artificial general intelligence and theoretical approaches to building artificial scientists, but is not relevant to medical image segmentation or practical machine learning applications in healthcare.\"\n}\n```"
+        "content": "```json\n{\"score\": 0.05, \"blurb\": \"This paper discusses theoretical approaches to artificial general intelligence and artificial scientists, which is largely disconnected from the specific application domain of medical image segmentation using machine learning.\"}\n```"
       },
       "seam": "llm"
     },
@@ -332,7 +340,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.95,\n  \"blurb\": \"Highly relevant comprehensive book covering machine learning, deep learning, and CNN-based medical image segmentation with clinical applications for AI-supported disease detection.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.92,\n  \"blurb\": \"Highly relevant book covering machine learning and deep learning methods for medical image segmentation, CNN-based approaches, and AI-assisted disease detection in clinical imaging.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -340,7 +348,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.95, \"blurb\": \"Highly relevant paper demonstrating transfer learning and deep learning approaches for medical image segmentation across multiple dimensions and modalities (MR, CT, ultrasound), directly addressing core topics in the query.\"}\n```"
+        "content": "```json\n{\"score\": 0.95, \"blurb\": \"Directly addresses machine learning-based medical image segmentation using deep neural networks with transfer learning across 2D/3D modalities (MR, CT, ultrasound), demonstrating state-of-the-art results on multiple medical imaging benchmarks.\"}\n```"
       },
       "seam": "llm"
     },
@@ -356,7 +364,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a review paper that discusses artificial intelligence, machine learning, and deep learning applications in musculoskeletal imaging. The abstract does not describe any specific experiment setup, hyperparameters, datasets, or computational environment used in original research."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a review paper that describes technical backgrounds and applications of AI/ML/DL in musculoskeletal imaging. The abstract does not contain specific experimental setup details such as hyperparameters, datasets used, or computational environment specifications."
       },
       "seam": "llm"
     },
@@ -372,7 +380,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.85,\n  \"blurb\": \"Highly relevant survey on explainability techniques for deep learning-based medical image analysis, covering XAI methods and their applications across anatomical regions.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.85,\n  \"blurb\": \"Highly relevant survey on explainability methods for deep learning-based medical image analysis, directly addressing AI interpretability in a core medical imaging application area.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -380,7 +388,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.95,\n  \"blurb\": \"Directly addresses machine learning-based medical image segmentation using deep learning with semi-supervised and domain adaptation techniques for improving performance with limited labeled data.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.95,\n  \"blurb\": \"This paper directly addresses machine learning for medical image segmentation using deep learning with semi-supervised and domain adaptation techniques, demonstrating high relevance to the query across all three key topics.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -388,7 +396,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.15, \"blurb\": \"Paper focuses on machine learning in precision and genomic medicine rather than medical image segmentation, making it tangentially related to the query at best.\"}\n```"
+        "content": "```json\n{\"score\": 0.25, \"blurb\": \"While this paper discusses machine learning and artificial intelligence in medicine, it focuses on precision and genomic medicine rather than medical image segmentation, making it only tangentially relevant to the query.\"}\n```"
       },
       "seam": "llm"
     },
@@ -396,7 +404,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThe provided metadata (title and abstract note) does not contain information about experimental setup, hyperparameters, datasets, or environment. This appears to be a review or overview paper on AI/ML in cardiovascular healthcare rather than a research paper with experimental methodology details."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThe provided metadata contains only a title with no abstract or technical details. There is no information about hyperparameters, datasets, or experimental environment mentioned in the text."
       },
       "seam": "llm"
     },
@@ -404,7 +412,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.85,\n  \"blurb\": \"Directly addresses machine learning and deep learning applications in medical imaging, which aligns well with the query's focus on ML-based medical image analysis and AI in healthcare.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.95,\n  \"blurb\": \"This paper directly addresses machine learning and deep learning applications in medical imaging, which is highly relevant to all query terms including segmentation and artificial intelligence.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -420,7 +428,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.65,\n  \"blurb\": \"This paper addresses AI and machine learning applications in cardiovascular healthcare, which relates to medical imaging and segmentation but lacks specificity on image segmentation techniques.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.65,\n  \"blurb\": \"The paper addresses AI and machine learning applications in cardiovascular healthcare, which is relevant to medical imaging and AI, though it lacks explicit focus on image segmentation methods.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -436,7 +444,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```"
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a review paper that discusses machine learning approaches for COVID-19 detection and segmentation in medical imaging. The abstract does not provide specific experimental setup details such as hyperparameters, datasets used, or computational environment specifications. It is a methodological overview rather than a report of a specific experimental study."
       },
       "seam": "llm"
     },
@@ -444,7 +452,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.95, \"blurb\": \"Highly relevant paper presenting MIScnn, an open-source Python framework for building medical image segmentation pipelines using deep learning and convolutional neural networks with state-of-the-art models like 3D U-Net.\"}\n```"
+        "content": "```json\n{\"score\": 0.95, \"blurb\": \"Directly relevant paper presenting MIScnn, a comprehensive open-source framework for medical image segmentation using convolutional neural networks and deep learning with state-of-the-art models and automated evaluation capabilities.\"}\n```"
       },
       "seam": "llm"
     },
@@ -468,7 +476,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.65, \"blurb\": \"This paper provides broad definitions and applications of machine learning and artificial intelligence but lacks the specific focus on medical image segmentation that the query emphasizes.\"}\n```"
+        "content": "```json\n{\n  \"score\": 0.65,\n  \"blurb\": \"This paper provides general definitions and applications of machine learning and AI but lacks specific focus on medical image segmentation, which is a key component of the query.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -476,7 +484,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.62,\n  \"blurb\": \"This paper introduces a medical imaging metric (FRD) relevant to AI evaluation in medical imaging, but focuses on image distribution comparison and generation quality rather than directly addressing segmentation tasks with machine learning.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.65,\n  \"blurb\": \"This paper presents a metric for comparing medical imaging datasets using radiomics features, relevant to medical image analysis but focused on distribution comparison rather than direct segmentation or AI model development.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -492,7 +500,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.95,\n  \"blurb\": \"Directly addresses machine learning-based medical image segmentation using weakly-supervised deep learning with geometric priors and contrastive learning on 3D medical datasets.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.95,\n  \"blurb\": \"This paper directly addresses machine learning-based medical image segmentation using advanced AI techniques (geometric priors and contrastive learning) in a weakly-supervised framework, demonstrating strong relevance to all three query topics.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -536,11 +544,19 @@
       },
       "seam": "llm"
     },
+    "llm:563feedcf08a55d9e3a985f774c31c891aa53f8cb366b2da5bf1dd3c9e209154": {
+      "label": "In three or four sentences, explain this reproducibility score to a researcher d",
+      "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "recorded": {
+        "content": "This paper's reproducibility score of 0.64 indicates moderate barriers to building on the work. The most significant gap is the lack of environment documentation—without specification of dependencies, versions, or setup instructions, you'll face substantial friction reproducing the reported results even if the code runs on your machine. The \"Reproduce the Results\" category lost the most points (0.35), suggesting the paper lacks sufficient detail on hyperparameters, training procedures, or validation protocols needed to verify claims independently. While the code itself appears runnable (0.95 score), the absence of automated tests and the repository's lack of recent maintenance activity suggest limited ongoing support if you encounter implementation issues during reproduction."
+      },
+      "seam": "llm"
+    },
     "llm:5720e5625d45d1dd9391303a8104f8f29ba7c6fb87b1744f735c3cc7efbbcbe0": {
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a survey paper that reviews existing literature on active learning and human-in-the-loop deep learning for medical image analysis. The metadata provided (title and abstract) does not describe a specific experimental setup with particular hyperparameters, datasets, or computational environments used by the authors themselves."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a survey paper that reviews existing literature and techniques rather than reporting results from a specific experimental setup. The metadata provided (title and abstract) does not contain specific information about hyperparameters, datasets used, or computational environments."
       },
       "seam": "llm"
     },
@@ -548,7 +564,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.95,\n  \"blurb\": \"Highly relevant paper presenting a novel test-time generative augmentation technique using diffusion models to improve medical image segmentation accuracy and uncertainty estimation across multiple datasets and tasks.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.95,\n  \"blurb\": \"Highly relevant paper presenting a novel test-time generative augmentation approach using diffusion models to improve medical image segmentation accuracy and uncertainty estimation across multiple clinical datasets.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -556,7 +572,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.75,\n  \"blurb\": \"This paper addresses machine learning and artificial intelligence applications in cardiac imaging, which is a specific medical image domain but directly relevant to ML-based medical image analysis.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.75,\n  \"blurb\": \"Directly addresses machine learning and artificial intelligence applications in cardiac imaging, which is a specific medical image segmentation domain.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -572,7 +588,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": \"3D medical images from three applications: inter-patient brain MRI registration, atlas-to-patient brain MRI registration, and phantom-to-CT registration\",\n  \"environment\": null\n}\n```"
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": \"3D medical images from three applications: inter-patient and atlas-to-patient brain MRI registration and phantom-to-CT registration\",\n  \"environment\": null\n}\n```"
       },
       "seam": "llm"
     },
@@ -580,7 +596,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis paper is theoretical and philosophical in nature, discussing concepts related to the Fermi Paradox, AGI communication, and information compression. It does not describe an empirical experiment with specific hyperparameters, datasets, or computational environments."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis paper is a theoretical discussion/position paper on the Fermi Paradox, AGI communication, and compression theory. It contains no experimental setup, empirical studies, datasets, computational experiments, or environment specifications."
       },
       "seam": "llm"
     },
@@ -589,6 +605,14 @@
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
         "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": \"PubMed, Scopus, Web of Science, IEEE Xplore, and arXiv databases\",\n  \"environment\": null\n}\n```"
+      },
+      "seam": "llm"
+    },
+    "llm:602bf8389df82489a0e5018ceb47186086be62f8fa84ca5d72683a6118bc1934": {
+      "label": "Review the paper's manuscript and existing code against its applicable reproduci",
+      "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "recorded": {
+        "content": "# Reproducibility Review\n\n## Gaps and inconsistencies\n\n### Documentation and Setup\n1. **README lacks computational requirements**: While environment dependencies are listed, the README does not specify minimum CPU/GPU requirements, RAM requirements, or expected runtime for the case studies presented in the paper.\n\n2. **Incomplete installation verification steps**: No instructions provided to verify that the installation was successful or to run a minimal test case immediately after setup.\n\n3. **Data preprocessing details missing from documentation**: The README references data I/O and preprocessing capabilities but does not provide concrete examples of preprocessing pipeline configuration or expected data format specifications.\n\n### Code Reproducibility\n4. **Hyperparameter configuration not fully documented**: The paper mentions \"just a few lines of code\" for setup but the exact hyperparameters used for the Kidney Tumor Segmentation (KiTS) 2019 challenge experiment are not clearly specified in the code or README.\n\n5. **Random seed management not documented**: No mention of seed initialization for reproducible neural network training results; random state initialization procedures are not documented.\n\n6. **Model weights and checkpoints**: It is unclear whether pre-trained model weights are provided or whether users must train from scratch. No guidance on expected training time or convergence behavior.\n\n### Experimental Reproducibility\n7. **Case study experiment details underspecified**: The paper mentions running \"cross-validation with MIScnn on the Kidney Tumor Segmentation Challenge 2019 data set\" but the exact cross-validation fold configuration, evaluation metrics reported, and hardware used are not detailed in the repository documentation.\n\n8. **Metric calculation transparency**: Multiple metrics are mentioned in the paper abstract, but no reference implementation or detailed specification of how metrics are computed is provided in the code documentation.\n\n9. **Data versioning absent**: No specification of which exact version or snapshot of the KiTS 2019 dataset was used, or how to obtain it reproducibly.\n\n### Code Documentation\n10. **API usage examples limited**: While the README exists, inline code documentation and docstrings for key classes and methods appear minimal based on the paper's claims of \"intuitive API.\"\n\n11. **Dependency version pinning**: Environment description likely lacks exact version pinning for all transitive dependencies, particularly deep learning framework versions (TensorFlow/PyTorch specifics).\n\n12. **Configuration file examples missing**: No example configuration files shown for typical segmentation pipelines, making it difficult to reproduce the exact setup used in the paper's experiments.\n\n## Recommended improvements\n\n### Documentation\n1. **Expand README with a \"Reproducibility\" section** that includes:\n   - Minimum hardware specifications (CPU cores, GPU type/VRAM, RAM)\n   - Expected runtime for KiTS 2019 cross-validation on specified hardware\n   - Step-by-step verification test after installation\n   - Link to exact dataset version/snapshot used in the paper\n\n2. **Add a \"Getting Started\" tutorial** with a complete minimal example showing:\n   - A runnable end-to-end pipeline (even on a toy dataset)\n   - Hyperparameter configuration for the KiTS 2019 experiment\n   - Expected output format and sample results\n\n3. **Create a separate `EXPERIMENTS.md`** documenting:\n   - Exact fold configuration for cross-validation\n   - All hyperparameters (learning rate, batch size, epochs, augmentation settings, etc.)\n   - Random seeds used\n   - Complete metric definitions and how they are computed\n   - Hardware used and total training time\n\n### Code\n4. **Add seed initialization mechanism**:\n   - Expose a `set_random_seed()` function in the main API\n   - Document default random seed behavior\n   - Add warnings if seeds are not set for reproducibility\n\n5. **Create example scripts** in the repository:\n   - `examples/kits2019_example.py` showing the exact experiment from the paper\n   - `examples/minimal_example.py` for quick verification after installation\n   - Include expected output or log files to verify correct execution\n\n6. **Pin dependency versions explicitly**:\n   - Create `requirements-pin.txt` with exact versions of all dependencies\n   - Specify minimum and tested versions in `requirements.txt`\n   - Document which Python and CUDA versions were tested\n\n7. **Enhance API documentation**:\n   - Add docstrings to key classes (e.g., `Pipeline`, `Data_IO`, `Model`)\n   - Include parameter descriptions and return value specifications\n   - Add type hints where applicable\n\n8. **Provide configuration template files**:\n   - Create example YAML/JSON configuration files for common use cases\n   - Include the configuration used for the KiTS 2019 experiment\n   - Document all available configuration options\n\n### Version Control and Reproducibility\n9. **Add reproducibility metadata**:\n   - Create a `reproducibility.json` file documenting the exact software versions and parameters used for the paper's experiments\n   - Include commit hashes or tags for specific experimental versions\n\n10. **Create a test suite**:\n    - Add unit tests that can be run after installation\n    - Include integration tests with a small reference dataset\n    - Document how to run tests and expected pass/fail behavior"
       },
       "seam": "llm"
     },
@@ -612,7 +636,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a systematic review paper rather than an empirical study with an experimental setup. The metadata describes a literature review following PRISMA standards covering publications from January 2012 to February 2022, but does not specify any hyperparameters, datasets, or computational environments used in experiments."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a systematic review paper that analyzes existing literature on Explainable AI in healthcare rather than an empirical study that conducts experiments with specific hyperparameters, datasets, or computational environments."
       },
       "seam": "llm"
     },
@@ -636,7 +660,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.05, \"blurb\": \"This paper surveys creative problem solving in autonomous AI agents but does not address medical image segmentation, machine learning applications in healthcare, or medical imaging techniques.\"}\n```"
+        "content": "```json\n{\n  \"score\": 0.05,\n  \"blurb\": \"This survey on creative problem solving in autonomous AI agents is not relevant to medical image segmentation, as it focuses on general AI planning and adaptation rather than computer vision, machine learning models, or medical imaging applications.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -644,7 +668,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThe provided metadata (title and abstract) does not contain any information about hyperparameters, datasets, or experimental environment. The abstract is explicitly marked as \"(none)\", and the title alone is insufficient to extract specific experimental setup details."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThe provided metadata (title and note that abstract is none) does not contain sufficient information to extract specific experimental setup details. To extract hyperparameters, datasets, or environment specifications, the full paper text or abstract would be needed."
       },
       "seam": "llm"
     },
@@ -660,7 +684,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis paper is a review article and overview of AI/ML technologies in neurosurgery. It does not describe a specific experiment with defined hyperparameters, datasets, or computational environments. The text discusses the history and status of AI/ML in medicine and neurosurgery, provides definitions of terms, and reviews applications, but does not present experimental setup details."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a review article providing an overview of artificial intelligence and machine learning in neurosurgery. It does not present an experimental study with specific hyperparameters, datasets, or computational environments. The paper discusses the history, definitions, applications, and challenges of AI/ML technologies in neurosurgery but does not describe a conducted experiment with measurable setup parameters."
       },
       "seam": "llm"
     },
@@ -676,7 +700,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.85, \"blurb\": \"Highly relevant review covering artificial intelligence, machine learning, and deep learning applications in medical imaging with specific focus on segmentation, detection, and diagnosis tasks in musculoskeletal imaging.\"}\n```"
+        "content": "```json\n{\n  \"score\": 0.85,\n  \"blurb\": \"Highly relevant review covering artificial intelligence, machine learning, and deep learning applications in medical imaging with specific focus on segmentation, detection, and diagnosis tasks in musculoskeletal imaging.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -684,7 +708,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.35,\n  \"blurb\": \"This paper provides general validation recommendations for supervised machine learning in biology but does not specifically address medical image segmentation or artificial intelligence applications in clinical imaging.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.45,\n  \"blurb\": \"This paper provides general validation standards for supervised machine learning in biology, which is relevant to medical image segmentation methodology but does not specifically address imaging, segmentation tasks, or AI applications in clinical practice.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -692,7 +716,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.72, \"blurb\": \"This comprehensive review of AI and machine learning in neurosurgery discusses intelligent computing systems including deep learning and neural networks, with specific mentions of medical image segmentation and computer-assisted image analysis applications, making it highly relevant to the query despite its broader neurosurgical focus.\"}\n```"
+        "content": "```json\n{\"score\": 0.72, \"blurb\": \"This comprehensive review of AI and machine learning in neurosurgery discusses medical image segmentation as one application area among many clinical uses, with moderate relevance to the query's focus on ML-based medical image segmentation.\"}\n```"
       },
       "seam": "llm"
     },
@@ -724,7 +748,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": \"Nine datasets across three distinct segmentation tasks\",\n  \"environment\": null\n}\n```"
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": \"nine datasets across three distinct segmentation tasks\",\n  \"environment\": null\n}\n```"
       },
       "seam": "llm"
     },
@@ -740,7 +764,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.95, \"blurb\": \"Highly relevant paper proposing test-time adaptive CNNs with normalization sub-networks and denoising autoencoders to improve robustness of medical image segmentation across different scanners and imaging protocols.\"}\n```"
+        "content": "```json\n{\n  \"score\": 0.95,\n  \"blurb\": \"This paper directly addresses machine learning-based medical image segmentation using CNNs with a novel test-time adaptation approach to improve robustness across different imaging scanners and protocols.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -748,7 +772,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.92,\n  \"blurb\": \"Highly relevant review of machine learning and deep learning approaches for COVID-19 detection and segmentation in medical imaging (CT and X-ray), directly addressing the intersection of AI, ML, and medical image segmentation.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.92,\n  \"blurb\": \"Highly relevant review of machine learning and deep learning approaches for medical image segmentation and detection in COVID-19 radiographic and CT imaging.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -764,7 +788,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.05,\n  \"blurb\": \"This paper focuses on data source management and concept drift in machine learning for official statistics, which is unrelated to medical image segmentation applications.\"\n}\n```"
+        "content": "```json\n{\"score\": 0.05, \"blurb\": \"This paper addresses data quality and machine learning challenges in official statistics production, which is largely unrelated to medical image segmentation applications.\"}\n```"
       },
       "seam": "llm"
     },
@@ -788,7 +812,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": \"3D three-class brain tumor type classification (91 training samples, 191 testing samples); 2D nine-class cardiac semantic level classification (108 training samples, 263 testing samples)\",\n  \"environment\": null\n}\n```"
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": \"3D three-class brain tumor type classification (191 testing samples, 91 training samples); 2D nine-class cardiac semantic level classification (263 testing samples, 108 training samples)\",\n  \"environment\": null\n}\n```"
       },
       "seam": "llm"
     },
@@ -796,7 +820,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.25,\n  \"blurb\": \"This paper discusses AI categorization and learning mechanisms but focuses on theoretical frameworks rather than medical image segmentation applications.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.25,\n  \"blurb\": \"This paper discusses AI categorization and learning mechanisms (one-shot learning, YOLO) but focuses on theoretical taxonomy rather than medical image segmentation applications.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -804,7 +828,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.92,\n  \"blurb\": \"Highly relevant comprehensive review of AI and machine learning applications in medical image segmentation and radiology, covering deep learning methods, diagnostic workflows, and implementation challenges.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.92,\n  \"blurb\": \"Highly relevant comprehensive review of AI and machine learning applications in medical image analysis, with explicit focus on image segmentation alongside computer-aided diagnosis and clinical workflow optimization in radiology.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -828,7 +852,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.85, \"blurb\": \"Highly relevant review covering AI and ML applications in cancer imaging, including algorithm development, clinical implementation, and ecosystem considerations for medical image analysis tools.\"}\n```"
+        "content": "```json\n{\"score\": 0.85, \"blurb\": \"Highly relevant review of AI and ML applications in cancer imaging that covers algorithm development, clinical implementation, and ecosystem considerations, though broader in scope than focused on segmentation specifically.\"}\n```"
       },
       "seam": "llm"
     },
@@ -844,7 +868,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThe paper's title and abstract are theoretical/philosophical in nature and do not describe a specific experiment setup with hyperparameters, datasets, or computational environment details."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThe provided metadata (title and abstract) does not contain specific information about hyperparameters, datasets, or experimental environment. This appears to be a theoretical/conceptual paper discussing approaches to AGI rather than a paper describing a concrete experimental setup."
       },
       "seam": "llm"
     },
@@ -852,7 +876,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.85,\n  \"blurb\": \"This survey directly addresses deep learning for medical image analysis with emphasis on active learning and human-in-the-loop approaches, covering model development, interpretation, and clinical deployment considerations.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.85,\n  \"blurb\": \"Highly relevant survey on deep learning for medical image analysis that emphasizes active learning and human-in-the-loop approaches, directly addressing machine learning, medical imaging, and AI applications in clinical practice.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -860,7 +884,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.45, \"blurb\": \"This paper reviews explainable AI in healthcare broadly, but focuses on interpretability rather than the specific technical aspects of machine learning-based medical image segmentation.\"}\n```"
+        "content": "```json\n{\n  \"score\": 0.62,\n  \"blurb\": \"This systematic review on explainable AI in healthcare is relevant to medical AI applications but focuses on interpretability rather than the specific technical aspects of medical image segmentation methods.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -892,7 +916,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis appears to be a review or overview paper based on its title (\"Definitions, Applications, and Future Directions\"), with no abstract provided. The metadata given does not contain information about experimental setup, hyperparameters, datasets, or computational environment."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis appears to be a survey or review paper based on its title. The metadata provided (title only, with no abstract) does not contain any information about experimental setup, hyperparameters, datasets, or computational environment."
       },
       "seam": "llm"
     },
@@ -900,7 +924,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.01, \"blurb\": \"This paper discusses artificial general intelligence, the Fermi Paradox, and communication challenges with AGI, which is entirely unrelated to machine learning, medical image segmentation, or clinical applications.\"}\n```"
+        "content": "```json\n{\"score\": 0.0, \"blurb\": \"This paper discusses AGI communication and the Fermi Paradox through information compression theory, with no relevance to medical image segmentation or machine learning applications in healthcare.\"}\n```"
       },
       "seam": "llm"
     },
@@ -916,7 +940,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.35,\n  \"blurb\": \"This paper presents TransMorph, a Transformer-based model for medical image registration, which is tangentially related to the query as registration is a distinct task from segmentation and uses different methodologies.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.35,\n  \"blurb\": \"While this paper addresses medical image analysis using advanced neural network architectures, it focuses specifically on image registration rather than segmentation, making it only moderately relevant to the query.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -932,7 +956,7 @@
       "label": "In three or four sentences, explain this reproducibility score to a researcher d",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "This paper scores 0.22 on reproducibility, indicating substantial barriers to building on this work. The most critical gaps are the complete absence of a code repository and missing model-building documentation: there is no description of the model type, hyperparameter choices, validation approach, or data partitioning strategy, making it impossible to understand or recreate the modeling decisions. Additionally, no performance results with confidence intervals or subgroup analyses are reported, and data preprocessing steps are undocumented, leaving fundamental questions about data quality and model evaluation unanswered. Without access to the actual model through a repository or inspectable code, you cannot generate predictions or verify the authors' claims, severely limiting your ability to validate findings or adapt the approach for your own research."
+        "content": "This paper presents severe reproducibility challenges that would make building on it extremely difficult. The most critical gaps are the complete absence of model-building documentation (no description of model type, hyperparameter choices, or validation approach), unavailable code or model artifacts (no repository exists to inspect or reuse the trained model), and missing performance results with confidence intervals or subgroup analyses. Additionally, the data partitioning strategy and preprocessing steps are entirely unreported, preventing you from understanding how the model was developed or validating its claims independently. Unless you can obtain these materials directly from the authors, you would need to essentially reconstruct the entire study from scratch, which defeats the purpose of building incrementally on prior work."
       },
       "seam": "llm"
     },
@@ -948,7 +972,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": \"Multiple datasets across various modalities (specific dataset names not listed in metadata)\",\n  \"environment\": null\n}\n```"
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": \"Multiple datasets across various modalities (specific datasets not named in metadata)\",\n  \"environment\": null\n}\n```"
       },
       "seam": "llm"
     },
@@ -972,7 +996,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.75,\n  \"blurb\": \"Directly addresses machine learning and artificial intelligence applications in medical imaging, though with a specific focus on nuclear medicine and radiogenomics rather than general image segmentation techniques.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.75,\n  \"blurb\": \"Directly addresses machine learning and artificial intelligence applications in medical imaging, specifically focused on nuclear medicine imaging and radiomics, with strong relevance to the query's core topics.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -1004,7 +1028,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a survey paper that provides an overview of machine learning and deep learning applications in medical imaging. The metadata does not specify particular experimental hyperparameters, datasets used, or computing environments. It discusses general techniques and methods rather than reporting results from specific experiments."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a survey paper that discusses machine learning and deep learning applications in medical imaging at a high level. The abstract does not specify any particular experimental setup, hyperparameters, datasets used, or computational environment."
       },
       "seam": "llm"
     },
@@ -1012,7 +1036,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThe provided metadata (title and note that abstract is none) does not contain information about experimental setup, hyperparameters, datasets, or environment specifications."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThe provided text only contains a title and indicates there is no abstract. It does not include any information about experiment setup, hyperparameters, datasets, or the computational environment used."
       },
       "seam": "llm"
     },
@@ -1020,7 +1044,7 @@
       "label": "In three or four sentences, explain this reproducibility score to a researcher d",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "This paper has zero reproducibility potential because no code has been released whatsoever. Without access to the training scripts, evaluation code, hyperparameters, or any exercisable software, you cannot run the experiments or verify the reported results yourself. The absence of a repository, README with commands, or persistent archival means there is no starting point for reproduction—you would need to re-implement the entire methodology from scratch based solely on the paper's description. If you decide to build on this work, you should expect to invest substantial effort reverse-engineering the authors' approach rather than reproducing their exact pipeline."
+        "content": "This paper has released no code whatsoever, making reproduction impossible. The absence of any repository, README, or software means you cannot obtain the training code with hyperparameters, the evaluation code to compute reported metrics, or any scripts that generate the paper's results—each of these gaps directly prevents you from verifying or building on the work. Without even a persistent archive with a DOI or identifier, there is no way to access what the authors used, let alone run it yourself or adapt it for your own research."
       },
       "seam": "llm"
     },
@@ -1060,7 +1084,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThe provided text is a review article abstract that discusses the evolution of AI in medical imaging but does not describe a specific experimental setup with hyperparameters, datasets, or computational environment details."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis paper is a review article that discusses the evolution of AI in medical imaging. The abstract does not contain specific experimental setup details such as hyperparameters, datasets used, or computational environment specifications. The mention of \"graphical processing units\" and \"open-source and free libraries\" is descriptive rather than prescriptive of the paper's own experimental setup."
       },
       "seam": "llm"
     },
@@ -1068,7 +1092,7 @@
       "label": "In three or four sentences, explain this reproducibility score to a researcher d",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "This paper presents substantial reproducibility challenges that would make building on it difficult. The most critical gap is that no code repository exists, preventing you from inspecting or running the implementation—and even if code were available, there is no environment specification (dependencies, versions, configurations) that would let you replicate the computational setup. Additionally, the authors provide no clear reference to the datasets used, leaving you unable to obtain or verify the data inputs. Without a README or other documentation, you lack guidance on how the code should be executed or what the expected outputs are. Taken together, these gaps mean you would essentially need to reverse-engineer both the methodology and the experimental setup from the paper text alone, which is time-consuming and error-prone."
+        "content": "This paper presents severe reproducibility challenges that would make building on it extremely difficult. The most critical gap is that no code repository exists at all, meaning you cannot inspect, run, or verify the implementation—this alone makes reproducing the results nearly impossible. Additionally, the authors provide no environment specification (dependencies, versions, etc.), no dataset references, and no documentation (README), so even if you obtained the code through other means, you would lack essential information about how to set it up and run it. Before investing effort in this work, you should contact the authors directly to request the code, environment details, and data references, as the published paper alone is insufficient to build upon their results."
       },
       "seam": "llm"
     },
@@ -1076,7 +1100,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThe provided text is a book description/abstract that discusses AI methods in medical imaging at a high level, but does not contain specific information about experimental setup, hyperparameters, datasets used, or computational environments."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a book describing advancements in AI for medical imaging rather than a research paper detailing a specific experiment. The metadata does not provide specific information about hyperparameters, datasets used, or the computational environment. While it mentions that \"real clinical images\" are incorporated, no specific dataset names or characteristics are detailed in the provided text."
       },
       "seam": "llm"
     },
@@ -1108,7 +1132,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis appears to be a review or perspective paper on AI/ML in healthcare rather than an experimental study. The metadata provided (title only, no abstract) does not contain information about specific experimental setup, hyperparameters, datasets, or computational environment."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThe provided metadata (title and abstract) contains only a general overview of a topic and does not describe any specific experiment setup, hyperparameters, datasets, or environment details."
       },
       "seam": "llm"
     },
@@ -1140,7 +1164,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.15, \"blurb\": \"While this paper discusses AI and machine learning in a medical context, it focuses on anesthesiology applications and clinical decision-making rather than medical image segmentation, making it largely tangential to the query.\"}\n```"
+        "content": "```json\n{\"score\": 0.15, \"blurb\": \"While this paper discusses AI and machine learning applications in medicine, it focuses on anesthesiology clinical decision-making rather than medical image segmentation, making it largely tangential to the query's core focus.\"}\n```"
       },
       "seam": "llm"
     },
@@ -1148,7 +1172,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.65, \"blurb\": \"The paper addresses AI applications in intracoronary imaging, which is relevant to medical image segmentation but appears to focus on a specific cardiac imaging modality rather than general segmentation techniques.\"}\n```"
+        "content": "```json\n{\n  \"score\": 0.65,\n  \"blurb\": \"This paper discusses AI applications in intracoronary imaging, which is relevant to medical image analysis but focuses on a specific cardiac imaging modality rather than general segmentation techniques.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -1164,7 +1188,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.95,\n  \"blurb\": \"Highly relevant paper presenting MambaMIM, a pre-training framework using state space models (Mamba) with masked image modeling for medical image segmentation, demonstrating state-of-the-art results across multiple benchmarks.\"\n}\n```"
+        "content": "```json\n{\"score\": 0.95, \"blurb\": \"Highly relevant paper presenting MambaMIM, a pre-training framework using state space models (Mamba) with masked image modeling for medical image segmentation, achieving state-of-the-art results on multiple benchmarks.\"}\n```"
       },
       "seam": "llm"
     },
@@ -1172,7 +1196,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": \"multi-center Magnetic Resonance imaging datasets of three anatomies: brain, heart and prostate\",\n  \"environment\": null\n}\n```"
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": \"Multi-center Magnetic Resonance imaging datasets of three anatomies: brain, heart and prostate\",\n  \"environment\": null\n}\n```"
       },
       "seam": "llm"
     },
@@ -1180,7 +1204,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis paper presents recommendations and guidelines for machine learning validation in biology rather than reporting results from a specific experiment. The abstract does not mention any particular hyperparameters, datasets, or computational environment used in an experimental setup."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```"
       },
       "seam": "llm"
     },
@@ -1204,7 +1228,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.35,\n  \"blurb\": \"This paper discusses AI/ML applications in clinical development and healthcare broadly, but lacks specific focus on medical image segmentation which is the core query topic.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.35,\n  \"blurb\": \"While this paper discusses machine learning and AI in clinical development, it focuses on clinical trials and regulatory pathways rather than medical image segmentation specifically.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -1236,7 +1260,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.95,\n  \"blurb\": \"Highly relevant comprehensive review of AI and machine learning evolution in medical imaging, covering neural networks, deep learning, convolutional networks for image segmentation, and clinical applications in lesion detection and classification.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.92,\n  \"blurb\": \"Highly relevant comprehensive review of AI and machine learning applications in medical imaging, with specific coverage of neural networks, convolutional neural networks, and segmentation techniques for detecting and classifying lesions.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -1252,7 +1276,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.98, \"blurb\": \"Highly relevant comprehensive survey directly addressing deep learning techniques for medical image segmentation, covering supervised and weakly supervised approaches including backbone networks, network blocks, loss functions, and data augmentation strategies.\"}\n```"
+        "content": "```json\n{\"score\": 0.95, \"blurb\": \"Highly relevant comprehensive survey specifically focused on deep learning techniques for medical image segmentation, covering supervised and weakly supervised approaches with detailed analysis of backbone networks, network blocks, and loss functions.\"}\n```"
       },
       "seam": "llm"
     },
@@ -1276,7 +1300,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a survey paper that reviews existing XAI techniques in medical image analysis rather than presenting an original experiment with specific hyperparameters, datasets, or environmental setup details."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a survey paper that provides an overview of explainable AI techniques in medical image analysis. The abstract does not describe a specific experimental setup with hyperparameters, datasets, or computational environments. It outlines a framework for classifying XAI methods and categorizes existing research rather than reporting on a novel experiment."
       },
       "seam": "llm"
     },
@@ -1316,7 +1340,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis paper is a review article that discusses conceptual frameworks and categorizations of AI research. The metadata provided does not describe specific experimental setups, hyperparameters, datasets used, or computational environments. The abstract discusses theoretical proposals and classifications rather than empirical experiments with defined parameters."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis paper is a review article discussing theoretical categorizations and frameworks for AI development. The metadata provided does not contain specific experimental setup details such as hyperparameters, datasets used, or computational environment specifications."
       },
       "seam": "llm"
     },
@@ -1324,7 +1348,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```"
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a review article that discusses AI and ML in cancer imaging at a high level, rather than a primary research paper reporting a specific experimental setup. The metadata and abstract do not contain information about specific hyperparameters, datasets, or experimental environments."
       },
       "seam": "llm"
     },
@@ -1356,7 +1380,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.95,\n  \"blurb\": \"This paper directly addresses machine learning-based medical image segmentation using Capsule Networks as an alternative to CNNs, making it highly relevant to all three query topics.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.95,\n  \"blurb\": \"Directly addresses machine learning for medical image segmentation using Capsule Networks, a specialized AI architecture that overcomes CNN limitations in handling rotations and data scarcity.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -1364,7 +1388,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a narrative review paper that discusses AI applications to medical imaging in general terms. The metadata provided does not specify any particular hyperparameters, datasets, or computational environment used in experiments. The paper reviews literature from 1989-2021 but does not describe a specific experimental setup with concrete implementation details."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a narrative review paper that synthesizes existing literature rather than reporting an original experiment with specific hyperparameters, datasets, or computational environment details. The metadata does not contain this experimental setup information."
       },
       "seam": "llm"
     },
@@ -1388,7 +1412,15 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.95, \"blurb\": \"Highly relevant survey paper directly addressing machine learning and deep learning applications in medical imaging, including segmentation tasks and AI-based classification methods.\"}\n```"
+        "content": "```json\n{\"score\": 0.95, \"blurb\": \"Highly relevant survey paper that directly addresses machine learning and deep learning applications in medical imaging, including classification, segmentation, and autonomous decision-making for medical image analysis.\"}\n```"
+      },
+      "seam": "llm"
+    },
+    "llm:de731def7e68ff6e74a8ffef110887353fd718de82ac6696a444c65e7ec27cff": {
+      "label": "In three or four sentences, explain this reproducibility score to a researcher d",
+      "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "recorded": {
+        "content": "This paper scores well overall (0.84), indicating solid reproducibility foundations: the repository exists with documentation, licensing, and tests in place. However, the weakest area is reproducing the results (0.80), suggesting that while you can likely execute the code, you may encounter gaps in replicating the exact findings—this could mean missing hyperparameters, incomplete training details, or absent configuration files that were used in the original experiments. The \"Run the Code\" category performs better (0.95), so you should be able to get the code running, but expect to invest additional effort in reverse-engineering experimental conditions to verify whether your outputs match the published results. Before building on this work, you should contact the authors about unreported experimental details or check for supplementary materials that might fill these gaps."
       },
       "seam": "llm"
     },
@@ -1396,7 +1428,7 @@
       "label": "In three or four sentences, explain this reproducibility score to a researcher d",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "This paper presents significant barriers to reproducing its work, with a score of 0.36 indicating substantial reproducibility concerns. The most critical gap is the absence of any code repository, making it impossible to inspect or run the implementation directly (0.05 score for \"Run the Code\"). Additionally, there is no environment description provided, meaning you cannot determine what dependencies, versions, or computational setup are required to execute the work. The lack of a README or documentation compounds these issues, leaving you without guidance on how to reproduce the results or adapt the code for your own research. Before building on this paper, you would need to either contact the authors to obtain the code and environment specifications, or potentially re-implement their methods from scratch based solely on the written description—both time-intensive alternatives that substantially increase the risk of subtle methodological misunderstandings."
+        "content": "This paper presents significant barriers to reproduction that would make building on it challenging. The most critical gaps are the complete absence of a code repository and no environment specification, meaning you cannot access the actual implementation or know what dependencies and versions were used. The lack of a README compounds this problem by providing no guidance on how to run or understand the code. While the authors apparently achieved some ability to reproduce their results internally (0.50 score), the near-total inability to run their code externally (0.05 score) means you would essentially need to re-implement their methods from scratch using only the paper itself, with no way to verify your implementation matches theirs."
       },
       "seam": "llm"
     },
@@ -1405,6 +1437,14 @@
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
         "content": "```json\n{\n  \"hyperparameters\": \"temperature-scaled soft labels (α=0.7, T=3.0)\",\n  \"datasets\": null,\n  \"environment\": \"resource-constrained devices\"\n}\n```"
+      },
+      "seam": "llm"
+    },
+    "llm:e212ecd51bd2358eb74a59cbe309ed8a5b0cc956f688a82a8cb60ae6fa950d98": {
+      "label": "Review the paper's manuscript and existing code against its applicable reproduci",
+      "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "recorded": {
+        "content": "# Reproducibility Review\n\n## Gaps and inconsistencies\n\n### Critical: Code and Models Not Released\nThe manuscript states \"We release its weights and training code\" and provides a GitHub URL (github.com/speridlabs/iris-3b), but no code is currently available in the submission materials. This is the primary blocking issue for reproducibility:\n\n- **C-A1, C-A2, C-A6, C-M1–M5, C-FAIR-F2–F4, C-FAIR-A1.1, C-FAIR-I1–I2, C-FAIR-R1–R3**: All artifact-related criteria fail because artifacts are not accessible in the repository at review time\n- The paper cannot be independently reproduced without the training code, data pipeline, and model weights\n- No persistent identifiers, DOI, or version-controlled release is documented\n\n### Missing Essential Implementation Details\n\n**Training Infrastructure and Reproducibility:**\n- No complete hardware specifications (GPU types, quantities, interconnect bandwidth, precision details)\n- Data preprocessing pipeline not fully specified (e.g., aspect-ratio bucketing logic, image filtering criteria, augmentation parameters)\n- REPA loss implementation details incomplete (exact projection architecture, frozen vs. trainable components at scale)\n- Ridge regression initialization for FLUX.2 Klein conversion (Sec. 4.2) lacks algorithmic detail: how is regularization strength chosen? What are the numerical tolerances?\n\n**Model Architecture Ambiguities:**\n- \"Shared-bias adaLN\" design (Sec. 3.2) is described informally; exact parameter layout and computation unclear\n- Layerwise attention pooling for text encoding (Sec. 3.2) lacks mathematical formulation\n- PiT head \"compacts\" pixels into tokens per patch—exact compaction operation undefined\n- Timestep modulation bias initialization not specified\n\n**Optimization and Sampling:**\n- Muon optimizer setup incomplete: how are \"hidden weight matrices\" identified in a vision transformer? Implementation-dependent choices not documented\n- FlowDPM sampler details missing (step schedules, solver type, numerical stability measures)\n- EMA decay schedule across training stages not explicitly confirmed uniform\n- Why was EMA evaluated for some models (Iris-3B) but raw weights for others (FLUX.2 comparisons)? Inconsistent protocol.\n\n### Experimental Design Confounds (Acknowledged but Unresolved)\n\n**Uncontrolled Variables in Downstream Tasks:**\n- Iris-3B depth comparison (Tab. 4) mixes representation space, model size (3B vs 4B for FLUX.2 Klein), pretraining data, and compute budget. Authors note this but offer no ablation\n- Converted FLUX.2 Klein may have a \"weaker prior\" than the latent parent (acknowledged, Sec. 5.2), but this is not systematically measured (no GenEval/DPG scores for converted model)\n- Different batch sizes and LR schedules used across restoration experiments (Iris-3B vs. FLUX.2 Klein arms), reducing direct comparability\n- Iris-3B uses EMA weights; FLUX.2 Klein arms use raw weights—different evaluation protocols\n- No multiple seeds or significance testing despite high variance in single runs\n\n**Patch-Grid Artifact Not Controlled:**\n- Tab. 5 shows Iris-3B exhibits 2–2.25× higher patch-grid artifact ratio than latent baselines\n- This structural difference (overlapping vs. non-overlapping receptive fields) is a confound in dense prediction tasks, not an isolated representation-space effect\n- Proposed fix (convolutional output head) not tested, leaving the hypothesis unvalidated\n\n### Data and Evaluation Details\n\n**Pretraining Data:**\n- \"Large collection of English image-text pairs\" composition undefined: What proportion is real vs. synthetic? What synthetic generators? How are rendered-text images created and weighted?\n- 1024 stage: \"non-photographic content dominates\"—quantified how? Impact on downstream performance not analyzed\n- SFT data is \"curated\" but no dataset size, filtering criteria, or public accessibility stated\n\n**Depth Evaluation:**\n- Training data mixes Hypersim and Virtual KITTI2 at 9:1 ratio, but this ratio choice is not justified or ablated\n- \"Masked L1 term plus weighted L1 term on depth gradients\" (Eq. 5): Why the 5× weighting? Not justified or ablated\n- All three arms see \"nearly the same order\"—what are the batch-layout differences? Could this introduce systematic bias?\n\n**Restoration Evaluation:**\n- PSNR and SSIM \"computed on RGB\" but degradation pipeline uses Real-ESRGAN's \"sharpening\"—how does this interact with the loss terms (Eq. 6)? \n- Different metrics used (PSNR, SSIM, LPIPS, NIQE, MUSIQ, DeQA)—no justification for metric selection\n- Comparison against public baselines (Tab. 6) not fully matched: \"all text conditioning replaced by empty prompt\" but Iris-3B uses \"wavelet colour correction and tiling\" at inference—these modifications are uncontrolled\n\n### Ablation Study Limitations\n\n**256px Ablations (Sec. 3.1):**\n- All arms train on \"a fixed subset of pretraining data\" but size and composition of this subset not specified\n- x-prediction arm uses different timestep distribution (JiT's logit-normal (0.8, 0.8)) per citation, so the contrast \"does not isolate the prediction target\" (authors' acknowledgment, but ablation is confounded)\n- iREPA and Self-Flow are clearly inferior to REPA/DINOv2, but no investigation of why (learning rate sensitivity? spatial normalization implementation issues?)\n- Scale from 256px → 1024px not ablated; architectural choices (patch size, trunk/PiT ratio) not validated at scale\n\n### Missing Comparisons and Baselines\n\n- No comparison to concurrent work: PixelUMM (Sec. 2) and AsymFlow (Sec. 2) both address pixel-space generation and are cited but not benchmarked against\n- Latent baseline for Iris-3B depth: uses \"latent FLUX.2 Klein base 4B\" but no latent model trained from scratch with identical compute\n- Restoration comparisons do not include recent latent-based methods with matched conditioning (all baselines use different text guidance or architecture)\n\n### Reproducibility of Conversion Process\n\n- FLUX.2 Klein conversion uses \"ridge regression\" initialization (Sec. 4.2) with \"gain-matched\" regularization, but the full algorithm is underspecified:\n  - How is R² vs. gain trade-off determined precisely?\n  - How is \"gain of the parent's latent path\" computed?\n  - Probes used global batch of 8; does result scale to batch 112? Not tested\n- No code snippet, pseudocode, or reference implementation provided\n- \"Trunk LR scaled by ratio of RMS\" (Sec. 4.2): \"0.12× the head's rate\" for FLUX—how is this verified or generalized?\n\n### Documentation Gaps in Submitted Materials\n\n- No CITATION.cff, codemeta.json, or machine-readable metadata\n- No explicit license declaration in manuscript\n- No setup.py, requirements.txt, pyproject.toml, or environment specification (even hypothetically)\n- No README with reproduction steps, expected outputs, or validation protocol\n- Model checkpoint naming and versioning scheme not specified (how to identify the SFT step 665K checkpoint in a future repository?)\n\n### Statistical and Methodological Issues\n\n- Single runs throughout (depth and restoration experiments). No confidence intervals, error bars, or significance tests\n- Depth ablations compare at \"matched steps\" but loss curves (Fig. 2, 3) suggest training dynamics differ; are steps truly equivalent?\n- Per-benchmark comparisons in Tab. 4 \"go both ways and cancel in the mean\"—this is a justification for weak results, not a finding\n- Cherry-picked qualitative examples in Figs. 8, 10–13: \"We chose the images and regions after viewing the outputs\" introduces selection bias\n\n---\n\n## Recommended improvements\n\n### Immediate Actions (Required for Reproducibility)\n\n1. **Release artifacts with proper archival:**\n   - Upload complete code to a public repository (GitHub, HuggingFace, or institutional archive) with a DOI or persistent identifier\n   - Include model weights in a standard format (diffusers-compatible, .safetensors, etc.) with checksums\n   - Tag the specific commit used for the paper and link it in the manuscript\n\n2. **Create comprehensive README:**\n   - Installation instructions with pinned dependency versions (Python, PyTorch, CUDA, Transformers, Diffusers)\n   - Data download and preprocessing scripts (or links to synthetic data generation pipelines)\n   - Training commands to reproduce Iris-3B at 256px, 512px, and 1024px stages with exact hyperparameters\n   - Depth and restoration fine-tuning commands with dataset access instructions\n   - Evaluation scripts matching the paper's protocol (GenEval, DPG, depth metrics, restoration metrics)\n   - Expected outputs and timing benchmarks for validation\n\n3. **Document model versions and checkpoints:**\n   - Specify exact versions of FLUX.2 Klein, Qwen3VL4B, DINOv2B/14, and OpenCLIP models used\n   - Provide checksums or links to all parent models\n   - Document the conversion process as a reproducible script with the ridge regression algorithm in pseudocode\n\n4. **Add supplementary materials:**\n   - CITATION.cff file for software citation metadata\n   - codemeta.json with FAIR metadata\n   - LICENSE file (recommended: Apache 2.0 or MIT for reproducibility)\n\n### Manuscript Revisions\n\n5. **Clarify architecture and training details:**\n   - Formalize \"shared-bias adaLN\" with exact equations and parameter counts\n   - Provide mathematical definitions for layerwise attention pooling and PiT compaction operations\n   - Specify Muon optimizer's identification of \"hidden weight matrices\" in vision transformers (or cite implementation)\n   - Document FlowDPM sampler configuration (solver, step schedule, numerical precision)\n\n6. **Specify data preprocessing thoroughly:**\n   - Quantify pretraining data composition (% real, % synthetic, sources)\n   - Define aspect-ratio bucketing algorithm with pseudocode\n   - Justify 9:1 Hypersim:Virtual-KITTI2 ratio in depth training with ablation\n   - Provide curated SFT dataset statistics and access information (or synthetic generation protocol)\n\n7. **Add ablations for confounded variables:**\n   - Train a latent FLUX.2 Klein variant from scratch with matched Iris-3B compute and data budget to isolate representation space\n   - Test converted FLUX.2 Klein patch-grid fix (convolutional output head) on depth to validate hypothesis\n   - Ablate ridge initialization and trunk LR scaling separately on conversion across batches (8, 64, 112) to test generalization\n   - Run multiple seeds (≥3) for depth and restoration with significance testing\n\n8. **Standardize evaluation protocols:**\n   - Use consistent checkpoint selection (raw vs. EMA) across all comparisons\n   - Report GenEval/DPG/FID for converted FLUX.2 Klein to validate prior strength hypothesis\n   - Match text conditioning exactly (empty prompt for all models, no wavelet correction in Iris-3B restoration)\n   - Document all inference-time modifications (tiling, color correction) as separate ablations\n\n9. **Improve depth analysis:**\n   - Include per-benchmark comparisons with error bars and multiple seeds\n   - Decompose patch-grid artifact into a separate structured error component (not conflated with representation space)\n   - Report depth predictions on a shared scale per benchmark rather than per-image percentile normalization\n   - Extend evaluation to include sharpness metrics (e.g., gradient histograms) to test the pixel-space advantage directly\n\n10. **Expand restoration experiments:**\n    - Include comparisons with recent latent diffusion priors under identical conditioning\n    - Test restoration on blur and noise separately to isolate where pixel space might help\n    - Report metrics on held-out test sets with no cherry-picking of regions\n    - Include reference-based generation experiments (proposed future work) to test where pixel space should provide maximal advantage\n\n11. **Enhance reproducibility statements:**\n    - Add section \"Reproducibility\" listing all random seeds, hardware specs, and runtime estimates\n    - Provide a validation protocol: expected GenEval/DPG scores ±tolerance, depth/restoration benchmarks ±tolerance\n    - Document known implementation differences from cited works and their expected impact\n    - Quantify computational cost (GPU-hours, memory, training time per stage)\n\n12. **Improve figure and table clarity:**\n    - Add captions specifying evaluation protocol (e.g., \"EMA weights, 25-step FlowDPM, CFG 4.5\")\n    - Provide numerical ranges and error bands for single-run experiments (e.g., \"baseline reported as 0.50 ± unknown std\")\n    - Label all hyperparameter choices that differ between arms (batch, LR, schedule)\n\n### Longer-term Validation\n\n13. **Plan independent reproduction:**\n    - Pre-register the reproduction plan publicly (e.g., OSF Registries) before re-running experiments\n    - Commission an independent team to reproduce core results (Iris-3B pretraining to 1024px, one depth fine-tune)\n    - Report any deviations and resolve discrepancies in an erratum\n\n14. **Support downstream use:**\n    - Publish Iris-3B and converted FLUX.2 Klein on HuggingFace Model Hub with full model cards\n    - Provide zero-shot depth/restoration inference scripts for immediate use\n    - Document known limitations (patch grid, no VAE, modest compute) clearly for users\n\n---\n\n## Summary\n\nThe manuscript documents interesting negative results and useful technical details (ridge initialization for conversion, representation-alignment ablations), but **cannot currently be reproduced** because code and data are unavailable. Even with released artifacts, multiple confounds remain in the downstream comparisons, and key experimental choices lack justification. The recommended improvements prioritize (1) releasing complete, version-controlled artifacts with documentation, (2) unconfounding the downstream tasks via additional baselines and ablations, and (3) validating conclusions with multiple seeds and statistical testing. These actions would transform the work from a preprint with interesting anecdotes into a reproducible, reusable contribution to the pixel-space generation literature."
       },
       "seam": "llm"
     },
@@ -1420,7 +1460,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\"score\": 0.95, \"blurb\": \"Directly evaluates the Segment Anything Model's performance on medical image segmentation across 19 datasets, demonstrating both promising zero-shot capabilities and limitations compared to domain-specific methods.\"}\n```"
+        "content": "```json\n{\n  \"score\": 0.95,\n  \"blurb\": \"This paper directly evaluates the Segment Anything Model (SAM), a foundation model for medical image segmentation, across 19 datasets, demonstrating its zero-shot capabilities and limitations in medical imaging applications.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -1436,7 +1476,7 @@
       "label": "In three or four sentences, explain this reproducibility score to a researcher d",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "This paper scores 0.26 on reproducibility, primarily due to three critical gaps that will severely impede your ability to build on this work. The authors provide no description of how the model was built—missing essential details on model type, hyperparameter choices, and internal validation—which means you cannot understand or replicate their methodological decisions. Additionally, there is no accessible code repository or model file, so you cannot obtain the trained model itself or inspect implementation details, making independent validation impossible. Finally, performance results lack confidence intervals and subgroup analyses, and no performance plots or justifications for which metrics were chosen are reported, leaving you unable to assess whether the model would actually work for your application. Without access to either the modeling pipeline or the concrete performance evidence, reproducing or extending this work would require essentially rebuilding the entire project from scratch based on incomplete information."
+        "content": "This paper scores 0.26 on reproducibility, indicating substantial barriers to building on this work. The most critical gaps are the complete absence of a code repository and the lack of any model-building description—you cannot access the actual model, inspect its architecture, or verify its hyperparameters and training procedure. Additionally, performance results are not reported with confidence intervals or subgroup analyses, making it impossible to assess whether the model's claims hold across different populations or use cases. The paper also does not specify how data were partitioned for development versus evaluation, which is essential for understanding potential overfitting or generalization issues. Unless you contact the authors directly to obtain the model code and full performance documentation, reproducing or extending this work would require essentially rebuilding the model from scratch with only the sparse information in the paper."
       },
       "seam": "llm"
     },
@@ -1460,7 +1500,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThe provided text is a review article abstract that discusses the general contributions of machine learning and artificial intelligence in precision and genomic medicine. It does not describe a specific experiment with defined hyperparameters, datasets, or experimental environment details."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```"
       },
       "seam": "llm"
     },
@@ -1468,7 +1508,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.15,\n  \"blurb\": \"This paper focuses on clinical decision-making via Markov decision processes and dynamic networks rather than medical image segmentation, making it largely orthogonal to the query's focus on ML-based image analysis.\"\n}\n```"
+        "content": "```json\n{\"score\": 0.15, \"blurb\": \"This paper applies AI/machine learning to clinical decision-making via Markov decision processes, but focuses on treatment planning and healthcare policy rather than medical image segmentation, making it largely tangential to the query.\"}\n```"
       },
       "seam": "llm"
     },
@@ -1484,7 +1524,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.85,\n  \"blurb\": \"Highly relevant review of AI and deep learning applications in medical imaging, with specific focus on liver image analysis including segmentation and lesion detection tasks.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.85,\n  \"blurb\": \"Highly relevant review of AI and deep learning applications in medical image analysis for liver imaging, covering segmentation, detection, and classification tasks with clinical focus.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -1504,6 +1544,14 @@
       },
       "seam": "llm"
     },
+    "llm:f12e74c67eb785e6a16983d4b8c1855ab45bef4b4c97637cf33391c6bdb7e81b": {
+      "label": "In three or four sentences, explain this reproducibility score to a researcher d",
+      "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "recorded": {
+        "content": "While the repository exists and has recent activity, the work scores only 0.48 because critical reproducibility evidence cannot be verified: the training code, evaluation code, and exact hyperparameters lack documentation linking them definitively to the paper's results, and the README does not include a reproducible results table with precise commands. The code is present but unverifiable, meaning you cannot confirm whether running it would actually reproduce the reported metrics—a fundamental barrier to building on this work. Additionally, there is no archived version with a DOI, only a GitHub link, so the exact code state you're examining may disappear or change. To build on this paper responsibly, you would need to contact the authors to clarify which code version was used, obtain explicit hyperparameters, and manually verify that running the scripts reproduces the reported numbers."
+      },
+      "seam": "llm"
+    },
     "llm:f2e8fee8e2b9f5bf852923639d98f2acdf64cc1954f53e097efe0034bdce7c79": {
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
@@ -1516,7 +1564,7 @@
       "label": "Rate how relevant this paper is to the query on a 0.0-1.0 scale and give a one-s",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"score\": 0.85,\n  \"blurb\": \"Highly relevant paper on using deep learning segmentation networks to improve medical image classification with limited annotated data, demonstrating practical applications in brain tumor and cardiac image analysis.\"\n}\n```"
+        "content": "```json\n{\n  \"score\": 0.85,\n  \"blurb\": \"Directly relevant paper proposing a deep learning strategy using segmentation networks as feature extractors for medical image classification tasks with limited annotated data, demonstrating improved performance on brain tumor and cardiac classification problems.\"\n}\n```"
       },
       "seam": "llm"
     },
@@ -1548,7 +1596,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```"
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a review paper that discusses AI integration in radiology at a conceptual level. The metadata provided (title and abstract) does not mention specific experimental hyperparameters, datasets used, or computational environments. The abstract references \"case studies across multiple medical disciplines\" but does not specify which datasets or experimental setups were employed."
       },
       "seam": "llm"
     },
@@ -1564,7 +1612,7 @@
       "label": "Extract the experiment setup from this paper's metadata. Report only what the te",
       "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
       "recorded": {
-        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a review article that discusses applications of AI and ML in lung cancer immunotherapy without describing a specific experiment setup. The abstract does not provide details about hyperparameters, specific datasets used, or the computational environment where experiments were conducted."
+        "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```\n\nThis is a review article that discusses applications of AI and machine learning in lung cancer immunotherapy, but does not describe a specific experiment with defined hyperparameters, datasets, or computational environment."
       },
       "seam": "llm"
     },
@@ -1583,6 +1631,58 @@
         "content": "```json\n{\n  \"hyperparameters\": null,\n  \"datasets\": null,\n  \"environment\": null\n}\n```"
       },
       "seam": "llm"
+    },
+    "repo:362eccfe156d9bb9ceb797972d518814cd75c33ad1bc4aaa7ed44858f2e2f727": {
+      "label": "https://github.com/frankkramer-lab/MIScnn",
+      "recorded": {
+        "exists": true,
+        "failed": false,
+        "has_license": true,
+        "has_readme": true,
+        "has_tests": true,
+        "inspectable": true,
+        "recent_activity": false
+      },
+      "seam": "repo"
+    },
+    "repo:834a7189835e3331da2866949c1c05d6d5ed31bd1188a01ae9c69f77d6171f9c": {
+      "label": "https://github.com/maxiao0234/TTGA",
+      "recorded": {
+        "exists": true,
+        "failed": false,
+        "has_license": false,
+        "has_readme": true,
+        "has_tests": false,
+        "inspectable": true,
+        "recent_activity": true
+      },
+      "seam": "repo"
+    },
+    "repo:cea1050f1e6cf62798904f748903de5e56cc69f1a67627b441261b8d0f409d34": {
+      "label": "https://github.com/neerakara/test-time-adaptable-neural-networks-for-domain-generalization",
+      "recorded": {
+        "exists": true,
+        "failed": false,
+        "has_license": false,
+        "has_readme": true,
+        "has_tests": false,
+        "inspectable": true,
+        "recent_activity": false
+      },
+      "seam": "repo"
+    },
+    "repo:e6ebe46fad6f2fbaab07b58c01002301427e5aeb2de5a203d6e64d7b4d13bd6d": {
+      "label": "https://github.com/FengheTan9/MambaMIM",
+      "recorded": {
+        "exists": true,
+        "failed": false,
+        "has_license": true,
+        "has_readme": true,
+        "has_tests": false,
+        "inspectable": true,
+        "recent_activity": false
+      },
+      "seam": "repo"
     },
     "source:1a08b0652215c8ea30b3717e55914db1ac42a1d22da2653eb424d3b000c804e5": {
       "label": "arxiv|LLM in Medical research|25",
@@ -2396,7 +2496,7 @@
           "doi": "10.1016/j.media.2020.101907",
           "domain": "unknown",
           "published_date": "2020-04-09",
-          "repo_url": null,
+          "repo_url": "https://github.com/neerakara/test-time-adaptable-neural-networks-for-domain-generalization",
           "source": "arxiv",
           "source_links": [
             [
@@ -2489,7 +2589,7 @@
           "doi": "10.1016/j.media.2025.103902",
           "domain": "computer_science",
           "published_date": "2024-06-25",
-          "repo_url": null,
+          "repo_url": "https://github.com/maxiao0234/TTGA",
           "source": "arxiv",
           "source_links": [
             [
@@ -2604,7 +2704,7 @@
           "doi": "10.1016/j.media.2025.103606",
           "domain": "computer_science",
           "published_date": "2024-08-15",
-          "repo_url": null,
+          "repo_url": "https://github.com/FengheTan9/MambaMIM",
           "source": "arxiv",
           "source_links": [
             [
@@ -2714,7 +2814,7 @@
           "doi": "10.1186/s12880-020-00543-7",
           "domain": "unknown",
           "published_date": "2019-10-21",
-          "repo_url": null,
+          "repo_url": "https://github.com/frankkramer-lab/MIScnn",
           "source": "arxiv",
           "source_links": [
             [
@@ -3922,29 +4022,6 @@
           "title": "Artificial intelligence, machine learning and the evolution of healthcare"
         },
         {
-          "abstract": "In this paper, a survey has been made on the applications of intelligent computing techniques for diagnostic sciences in biomedical image classification. Several state-of-the-art Artificial Intelligence (AI) techniques for automation of biomedical image classification are investigated. This study gathers representative works that exhibit how AI is applied to the solution of very different problems related to different diagnostic science analysis. It also detects the methods of artificial intelligence that are used frequently together to solve the special problems of medicine. SVM neural network is used in almost all imaging modalities of medical image classification. Similarly fuzzy C means and improvements to it are important tool in segmentation of brain images. Various diagnostic studies like mammogram analysis, MRI brain analysis, bone and retinal analysis etc., using neural network approach result in use of back propagation network, probabilistic neural network, and extreme learning machine recurrently. Hybrid approach of GA and PSO are also commonly used for feature extraction and feature selection. Keywords: Medical Imaging, Artificial Intelligence (AI), Neural Networks (NN), Fuzzy Logic (FL), Genetic Algorithms (GA), Particle Swarm Optimization (PSO)",
-          "arxiv_id": null,
-          "authors": [
-            "Subramaniam Nachimuthu Deepa"
-          ],
-          "doi": "10.17485/ijst/2011/v4i11.35",
-          "domain": "computer_science",
-          "published_date": "2011-11-20",
-          "repo_url": null,
-          "source": "openalex",
-          "source_links": [
-            [
-              "openalex",
-              "https://doi.org/10.17485/ijst/2011/v4i11.35"
-            ],
-            [
-              "openalex",
-              "https://doi.org/10.17485/ijst/2011/v4i11.35"
-            ]
-          ],
-          "title": "A survey on artificial intelligence approaches for medical image classification"
-        },
-        {
           "abstract": "This scientific review presents a comprehensive overview of medical imaging modalities and their diverse applications in artificial intelligence (AI)-based disease classification and segmentation. The paper begins by explaining the fundamental concepts of AI, machine learning (ML), and deep learning (DL). It provides a summary of their different types to establish a solid foundation for the subsequent analysis. The prmary focus of this study is to conduct a systematic review of research articles that examine disease classification and segmentation in different anatomical regions using AI methodologies. The analysis includes a thorough examination of the results reported in each article, extracting important insights and identifying emerging trends. Moreover, the paper critically discusses the challenges encountered during these studies, including issues related to data availability and quality, model generalization, and interpretability. The aim is to provide guidance for optimizing technique selection. The analysis highlights the prominence of hybrid approaches, which seamlessly integrate ML and DL techniques, in achieving effective and relevant results across various disease types. The promising potential of these hybrid models opens up new opportunities for future research in the field of medical diagnosis. Additionally, addressing the challenges posed by the limited availability of annotated medical images through the incorporation of medical image synthesis and transfer learning techniques is identified as a crucial focus for future research efforts.",
           "arxiv_id": null,
           "authors": [
@@ -3970,6 +4047,29 @@
           "title": "Artificial Intelligence Techniques in Medical Imaging: A Systematic Review"
         },
         {
+          "abstract": "In this paper, a survey has been made on the applications of intelligent computing techniques for diagnostic sciences in biomedical image classification. Several state-of-the-art Artificial Intelligence (AI) techniques for automation of biomedical image classification are investigated. This study gathers representative works that exhibit how AI is applied to the solution of very different problems related to different diagnostic science analysis. It also detects the methods of artificial intelligence that are used frequently together to solve the special problems of medicine. SVM neural network is used in almost all imaging modalities of medical image classification. Similarly fuzzy C means and improvements to it are important tool in segmentation of brain images. Various diagnostic studies like mammogram analysis, MRI brain analysis, bone and retinal analysis etc., using neural network approach result in use of back propagation network, probabilistic neural network, and extreme learning machine recurrently. Hybrid approach of GA and PSO are also commonly used for feature extraction and feature selection. Keywords: Medical Imaging, Artificial Intelligence (AI), Neural Networks (NN), Fuzzy Logic (FL), Genetic Algorithms (GA), Particle Swarm Optimization (PSO)",
+          "arxiv_id": null,
+          "authors": [
+            "Subramaniam Nachimuthu Deepa"
+          ],
+          "doi": "10.17485/ijst/2011/v4i11.35",
+          "domain": "computer_science",
+          "published_date": "2011-11-20",
+          "repo_url": null,
+          "source": "openalex",
+          "source_links": [
+            [
+              "openalex",
+              "https://doi.org/10.17485/ijst/2011/v4i11.35"
+            ],
+            [
+              "openalex",
+              "https://doi.org/10.17485/ijst/2011/v4i11.35"
+            ]
+          ],
+          "title": "A survey on artificial intelligence approaches for medical image classification"
+        },
+        {
           "abstract": null,
           "arxiv_id": null,
           "authors": [
@@ -3991,6 +4091,72 @@
             ]
           ],
           "title": "Artificial Intelligence and Machine Learning in Cardiovascular Health Care"
+        },
+        {
+          "abstract": "Machine learning and deep learning which are the subsets of Artificial intelligence, have numerous uses in medical imaging. Advancements in machine learning and deep learning led to drastic improvements in medical imaging fields like the evaluation of risks, recognition, identification, prediction, and treatment results. The decision-making power of computers based on artificial intelligence has elevated the effectiveness and efficiency of human decisions. Techniques based on machine learning and deep learning are not only effective and efficient but also speedy. In the medical field, the stage of the diagnosed disease is of great importance as the treatment and recovery rates depend on it. So based on the best and fastest decisions given by machine learning and deep learning techniques, medical practitioners can give their services in a better way. We have given a summary of the methods used in medical imaging based on machine learning and deep learning algorithms with the benefits and pitfalls of these algorithms. These algorithms offer remarkable methods for classification, segmentation, and autonomous decision-making ability for the analysis of medical images.",
+          "arxiv_id": null,
+          "authors": [
+            "Uma Sharma",
+            "Deeksha Sharma",
+            "Pooja Pathak",
+            "Sanjay Kumar Singh",
+            "Pushpanjali Singh"
+          ],
+          "doi": "10.2174/9789815305128124010006",
+          "domain": "medicine",
+          "published_date": "2024-10-10",
+          "repo_url": null,
+          "source": "openalex",
+          "source_links": [
+            [
+              "openalex",
+              "https://doi.org/10.2174/9789815305128124010006"
+            ]
+          ],
+          "title": "Medical Imaging Using Machine Learning and Deep Learning: A Survey"
+        },
+        {
+          "abstract": "The advancement of precision medicine in medical care has led behind the conventional symptom-driven treatment process by allowing early risk prediction of disease through improved diagnostics and customization of more effective treatments. It is necessary to scrutinize overall patient data alongside broad factors to observe and differentiate between ill and relatively healthy people to take the most appropriate path toward precision medicine, resulting in an improved vision of biological indicators that can signal health changes. Precision and genomic medicine combined with artificial intelligence have the potential to improve patient healthcare. Patients with less common therapeutic responses or unique healthcare demands are using genomic medicine technologies. AI provides insights through advanced computation and inference, enabling the system to reason and learn while enhancing physician decision making. Many cell characteristics, including gene up-regulation, proteins binding to nucleic acids, and splicing, can be measured at high throughput and used as training objectives for predictive models. Researchers can create a new era of effective genomic medicine with the improved availability of a broad range of datasets and modern computer techniques such as machine learning. This review article has elucidated the contributions of ML algorithms in precision and genome medicine.",
+          "arxiv_id": null,
+          "authors": [
+            "Sameer Quazi"
+          ],
+          "doi": "10.1007/s12032-022-01711-1",
+          "domain": "medicine",
+          "published_date": "2022-06-15",
+          "repo_url": null,
+          "source": "openalex",
+          "source_links": [
+            [
+              "openalex",
+              "https://doi.org/10.1007/s12032-022-01711-1"
+            ],
+            [
+              "openalex",
+              "https://link.springer.com/content/pdf/10.1007/s12032-022-01711-1.pdf"
+            ]
+          ],
+          "title": "RETRACTED ARTICLE: Artificial intelligence and machine learning in precision and genomic medicine"
+        },
+        {
+          "abstract": "This book is designed to consider the recent advancements in hospitals to diagnose various diseases accurately using AI-supported detection procedures. This work examines recent AI-supported disease detection techniques from prominent researchers and clinicians working in the medical imaging processing domain. Within this book, the integration of various AI methods, such as soft computing, machine learning, deep learning, and other related works will be presented. Real clinical images utilizing AI are incorporated. The book also includes several chapters on machine learning, convoluted neural networks, segmentation, and deep learning-assisted two-class and multi-class classification. Part of IOP Series in Artificial Intelligence in the Biomedical Sciences. Key features • Implementation of machine-learning-assisted disease detection • Implementation of CNN (Convolutional Neural Networks) based medical image segmentation and assessment • Implementation of deep-learning-based medical data assessment • Hybridizing machine learning and deep learning features to enhance detection accuracy",
+          "arxiv_id": null,
+          "authors": [
+            "Navid Razmjooy",
+            "Venkatesan Rajinikanth"
+          ],
+          "doi": "10.1088/978-0-7503-4012-0",
+          "domain": "medicine",
+          "published_date": "2022-12-01",
+          "repo_url": null,
+          "source": "openalex",
+          "source_links": [
+            [
+              "openalex",
+              "https://doi.org/10.1088/978-0-7503-4012-0"
+            ]
+          ],
+          "title": "Frontiers of Artificial Intelligence in Medical Imaging"
         },
         {
           "abstract": "Since the past decades, more lung cancer patients have been experiencing lasting benefits from immunotherapy. It is imperative to accurately and intelligently select appropriate patients for immunotherapy or predict the immunotherapy efficacy. In recent years, machine learning (ML)-based artificial intelligence (AI) was developed in the area of medical-industrial convergence. AI can help model and predict medical information. A growing number of studies have combined radiology, pathology, genomics, proteomics data in order to predict the expression levels of programmed death-ligand 1 (PD-L1), tumor mutation burden (TMB) and tumor microenvironment (TME) in cancer patients or predict the likelihood of immunotherapy benefits and side effects. Finally, with the advancement of AI and ML, it is believed that \"digital biopsy\" can replace the traditional single assessment method to benefit more cancer patients and help clinical decision-making in the future. In this review, the applications of AI in PD-L1/TMB prediction, TME prediction and lung cancer immunotherapy are discussed.",
@@ -4021,50 +4187,30 @@
           "title": "The artificial intelligence and machine learning in lung cancer immunotherapy"
         },
         {
-          "abstract": "The advancement of precision medicine in medical care has led behind the conventional symptom-driven treatment process by allowing early risk prediction of disease through improved diagnostics and customization of more effective treatments. It is necessary to scrutinize overall patient data alongside broad factors to observe and differentiate between ill and relatively healthy people to take the most appropriate path toward precision medicine, resulting in an improved vision of biological indicators that can signal health changes. Precision and genomic medicine combined with artificial intelligence have the potential to improve patient healthcare. Patients with less common therapeutic responses or unique healthcare demands are using genomic medicine technologies. AI provides insights through advanced computation and inference, enabling the system to reason and learn while enhancing physician decision making. Many cell characteristics, including gene up-regulation, proteins binding to nucleic acids, and splicing, can be measured at high throughput and used as training objectives for predictive models. Researchers can create a new era of effective genomic medicine with the improved availability of a broad range of datasets and modern computer techniques such as machine learning. This review article has elucidated the contributions of ML algorithms in precision and genome medicine.",
+          "abstract": null,
           "arxiv_id": null,
           "authors": [
-            "Sameer Quazi"
+            "Russell J. Fedewa",
+            "Rishi Puri",
+            "Eitan Fleischman",
+            "Juhwan Lee",
+            "David S. Prabhu",
+            "David L. Wilson",
+            "D. Geoffrey Vince",
+            "Aaron J. Fleischman"
           ],
-          "doi": "10.1007/s12032-022-01711-1",
+          "doi": "10.1007/s11886-020-01299-w",
           "domain": "medicine",
-          "published_date": "2022-06-15",
+          "published_date": "2020-05-29",
           "repo_url": null,
           "source": "openalex",
           "source_links": [
             [
               "openalex",
-              "https://doi.org/10.1007/s12032-022-01711-1"
-            ],
-            [
-              "openalex",
-              "https://link.springer.com/content/pdf/10.1007/s12032-022-01711-1.pdf"
+              "https://doi.org/10.1007/s11886-020-01299-w"
             ]
           ],
-          "title": "RETRACTED ARTICLE: Artificial intelligence and machine learning in precision and genomic medicine"
-        },
-        {
-          "abstract": "Machine learning and deep learning which are the subsets of Artificial intelligence, have numerous uses in medical imaging. Advancements in machine learning and deep learning led to drastic improvements in medical imaging fields like the evaluation of risks, recognition, identification, prediction, and treatment results. The decision-making power of computers based on artificial intelligence has elevated the effectiveness and efficiency of human decisions. Techniques based on machine learning and deep learning are not only effective and efficient but also speedy. In the medical field, the stage of the diagnosed disease is of great importance as the treatment and recovery rates depend on it. So based on the best and fastest decisions given by machine learning and deep learning techniques, medical practitioners can give their services in a better way. We have given a summary of the methods used in medical imaging based on machine learning and deep learning algorithms with the benefits and pitfalls of these algorithms. These algorithms offer remarkable methods for classification, segmentation, and autonomous decision-making ability for the analysis of medical images.",
-          "arxiv_id": null,
-          "authors": [
-            "Uma Sharma",
-            "Deeksha Sharma",
-            "Pooja Pathak",
-            "Sanjay Kumar Singh",
-            "Pushpanjali Singh"
-          ],
-          "doi": "10.2174/9789815305128124010006",
-          "domain": "medicine",
-          "published_date": "2024-10-10",
-          "repo_url": null,
-          "source": "openalex",
-          "source_links": [
-            [
-              "openalex",
-              "https://doi.org/10.2174/9789815305128124010006"
-            ]
-          ],
-          "title": "Medical Imaging Using Machine Learning and Deep Learning: A Survey"
+          "title": "Artificial Intelligence in Intracoronary Imaging"
         },
         {
           "abstract": null,
@@ -4095,77 +4241,6 @@
           "title": "Hybrid Cardiac Imaging: The Role of Machine Learning and Artificial Intelligence"
         },
         {
-          "abstract": null,
-          "arxiv_id": null,
-          "authors": [
-            "Russell J. Fedewa",
-            "Rishi Puri",
-            "Eitan Fleischman",
-            "Juhwan Lee",
-            "David S. Prabhu",
-            "David L. Wilson",
-            "D. Geoffrey Vince",
-            "Aaron J. Fleischman"
-          ],
-          "doi": "10.1007/s11886-020-01299-w",
-          "domain": "medicine",
-          "published_date": "2020-05-29",
-          "repo_url": null,
-          "source": "openalex",
-          "source_links": [
-            [
-              "openalex",
-              "https://doi.org/10.1007/s11886-020-01299-w"
-            ]
-          ],
-          "title": "Artificial Intelligence in Intracoronary Imaging"
-        },
-        {
-          "abstract": "This book is designed to consider the recent advancements in hospitals to diagnose various diseases accurately using AI-supported detection procedures. This work examines recent AI-supported disease detection techniques from prominent researchers and clinicians working in the medical imaging processing domain. Within this book, the integration of various AI methods, such as soft computing, machine learning, deep learning, and other related works will be presented. Real clinical images utilizing AI are incorporated. The book also includes several chapters on machine learning, convoluted neural networks, segmentation, and deep learning-assisted two-class and multi-class classification. Part of IOP Series in Artificial Intelligence in the Biomedical Sciences. Key features • Implementation of machine-learning-assisted disease detection • Implementation of CNN (Convolutional Neural Networks) based medical image segmentation and assessment • Implementation of deep-learning-based medical data assessment • Hybridizing machine learning and deep learning features to enhance detection accuracy",
-          "arxiv_id": null,
-          "authors": [
-            "Navid Razmjooy",
-            "Venkatesan Rajinikanth"
-          ],
-          "doi": "10.1088/978-0-7503-4012-0",
-          "domain": "medicine",
-          "published_date": "2022-12-01",
-          "repo_url": null,
-          "source": "openalex",
-          "source_links": [
-            [
-              "openalex",
-              "https://doi.org/10.1088/978-0-7503-4012-0"
-            ]
-          ],
-          "title": "Frontiers of Artificial Intelligence in Medical Imaging"
-        },
-        {
-          "abstract": "INTRODUCTION AND OVERVIEW: THE ROAD TO ARTIFICIAL INTELLIGENCE “Create a model that is as sophisticated as the problem requires – but not more so.” Craig MacDonald1 The purpose of this article is to introduce artificial intelligence (AI), machine learning (ML), and related technologies to neurosurgeons, to review their current status, and to comment on the trajectory for their incorporation into neurosurgery. On the order of 25 studies explicitly utilizing AI technologies have been published in the neurosurgical literature to date. This is only the beginning.2-6 The conceptual origins of these technologies can be traced to ancient legendary androids, humanoid automatons, and mechanical imitations of animals, some of which were bestowed with a form of intelligence and even will. The history leading to AI is summarized in Table 1. Mechanical calculators have been deployed throughout recorded history. Charles Babbage, a Cambridge mathematician and inventor, conceived and designed the first computers between 1833 and 1871 to address mathematical calculation errors, but they were never successfully built. In fact, his efforts were later described as a “false dawn.”7 A number of other computing machines were created prior to World War II and proved essential to the war effort.8 One problem that had to be resolved before computers could be commercialized was command and data storage. Another was cost. In 1950, Engineering Research Associates introduced magnetic drum storage, and in 1952 both UNIVAC and IBM introduced magnetic tape.9 Both advances were seminally important. In 1950, A.M. Turing published a sentinel paper exploring whether computers might be construed as thinking. He proposed a test to determine whether they could.10,11 A wide-reaching debate ensued around whether he was right and whether, in any case, machine intelligence (as it then was called – and the term the British retained in preference to AI) was anything worth pursuing. The introduction of the term “artificial intelligence” is ascribed to John McCarthy of Dartmouth, Marvin Minsky of Harvard, Nathaniel Rochester from IBM, and Claude Shannon from Bell Telephone Laboratories who submitted a proposal for a “2 month, 10 man” workshop in 1955. When the meeting took place at Dartmouth in the summer of 1956, Allen Newell, Cliff Shaw, and Herbert Simon presented Logic Theorist, a program funded by the Research and Development (RAND) Corporation designed to mimic human problem-solving skills. This served as proof of concept for AI, and is generally acknowledged to have launched the field. Research programs emerged at Massachusetts Institute of Technology, Stanford, Carnegie Mellon University, and other institutions. Many were supported by the Defense Advanced Research Projects Agency in the US Department of Defense.12 As the field evolved, so did debates about whether AI should pursue the simulation of human reasoning, or whether the simulation of human performance sufficed. Those interested in simulating human reasoning were called neats and those focused on performance were known as scruffies.13,14 By the late 1960s, researchers began applying AI-based tools to the natural and physical sciences. This work crossed multiple scientific disciplines. One early collaboration involved the geneticist and Nobel Laureate Joshua Lederberg, the computer scientist and Turing Award Laureate Edward Feigenbaum, the chemist and National Medalist of Science and Technology Carl Djerassi (inventor of oral birth control), and the mathematician, computer scientist, and philosopher Bruce Buchanan. The project was DENDRAL, commissioned by National Aeronautics and Space Administration to encode the knowledge of expert chemists in order to infer the structures of organic compounds from mass-spectral data.15 DENDRAL was significant not only for the huge volume of data processed, but also for its emphasis on knowledge engineering (KE), a complementary field that became central to AI. KE included knowledge acquisition, validation, and representation (mapping and encoding into a knowledge base); TABLE 1. - Milestones Along the Path From Robots to AI in Medicine Pre-1946 Automatic machines and calculating device but not AI. Wondrous ancient automata described 1920s The word “robot” replaces the word “automaton” 1928 Eric, a battery-powered, aluminum-skinned robot with 11 electromagnets and a motor that could move its hands and head and be controlled remotely or by voice presented at the Model Engineer's Society in London 1930s Industrial robots introduced in the United States 1939 Elektro, a 7-foot tall, walking, talking, voice-controlled, humanoid robot weighing 120 kg presented at the World's Fair. It could smoke, speak 700 words and move its head and arms 1949 Manchester Mark 1, first stored program computer, installed. Named “The Electronic Brain” 1950 Alan Turing writes “Can Machines Think?” 1955 Logic Theorist – first AI program presented and funded by the RAND Corporation 1956 Dartmouth Summer Research Project on Artificial Intelligence 1963 DARPA funds AI at Massachusetts Institute of Technology 1965 Edward Feigenbaum introduces expert systems at Stanford (The Heuristic Programming Project) 1968 The famed science fiction writer, Arthur C. Clarke, predicts that by 2001, machines will be smarter than humans 1970s Automated, computer-assisted EKG readings 1973 Image analysis of digitized retinal angiography 1973 Expert system assistance for renal disease 1978 Mirsky and others predict no more than 3 to 8 years before human intelligence is surpassed by computers 1978 CASNET introduced for expert system computer-assisted diagnosis of glaucoma 1981 The PC is introduced with the PC DOS operating system 1980s Early investigation of machine vision adaptations to medical image analysis 1983 Two expert medical systems, the “Internist-I” and “Cadeuceus” introduced 1988 Computer-assisted resection of subcortical lesions 1988 Automated computer-assisted detection of peripheral lung lesions 1990 Human Genome Project begins 1997 An IBM computer defeats Gary Kasparove in chess 1997 Dragon Software introduces first public speech recognition system 1998 Image Checker computer-assisted diagnostic system for mammography introduced 2000 Proliferation of cheap storage and increasing computer power 2000 Introduction of DL for medical applications 2004 Early reports of computer-assisted diagnosis of retinal disease 2007 IBM Watson introduced 2010 Passage of the Patient Protection and Affordable Care Act. EMRss proliferate 2010 Computer-assisted diagnosis in endoscopy 2011 Digital assistant introduced commercially 2012 Computer-assisted segmentation of sectional brain images 2012 Computer-assisted brain tumor grading 2017 Chatbots introduced for patient intake 2018 AI trials for gastroenterology diagnosis begin 2018 FDA approves Viz.AI, AI-assisted clinical decision support system for stroke triage 2020 Stacked neural networks applied to EKG interpretation EKG, electrocardiogram; EMRs, electronic medical record. inferencing (inferring answers for the user from the knowledge stored); and explaining what information was needed or how conclusions were reached.16 Public and corporate interest in intelligent computing systems expanded during the 1980s as access to computers proliferated. AI was expected to revolutionize society. Health care was a principal focus of these expectations.17-23 Experts bickered about whether medical informatics ought to be considered as a field of computer science, engineering, or biomedicine. The intellectual identity of and control over the field mattered more than might otherwise be imagined. Edward Shortliffe, editor of the Journal of Biomedical Informatics, an early and influential contributor to AI, curtailed the debate by proposing that AI be classified as a form of biomedical informatics. This was the view that prevailed and allowed for effective crossdisciplinary collaboration.14,24,25 AI suffered from inadequate computer storage and inadequate computer power. Faith in the ability of AI to deliver solutions diminished. AI was widely perceived to have failed. A period characterized as “AI winter” descended. The field of AI became notably self-reflective, perhaps because of the sociological and ethical implications of reproducing human intelligence.14,26-28 AI was revived by the advent of the Human Genome Project in 1990. The Genome Project was accompanied by a mandate for tools to handle an unprecedented eruption of data.29 The demands of an enormous data flow reinvigorated interest in data analytics and catalyzed the development of the AI-related technologies.30-33 In 1997, scientists at the National Aeronautics and Space Administration described the problem of datasets too large to be stored in a computer's main memory. This restriction severely limited the extent of data processing that was possible.34 The scientists introduced the term “big data” to describe datasets of this magnitude. In 2001, Douglas B. Laney of the Gartner Group enlarged on this concept, characterizing big data as “high-volume, high-velocity and/or high-variety information assets that demand… innovative forms of… processing…” Volume, velocity, and variety came to be known as the 3 “Vs,” alluding to the amount of low density, unstructured data (volume); the rate at which data must be processed (velocity); and the diversity of data encountered (variety).35 Three more “Vs” were added later: value, variability, and veracity.36,37 The challenge of confronting big data is balanced by the promise of unearthing novel insights that are not otherwise accessible. DEFINITIONS AND TECHNOLOGIES The terms data mining (DM), algorithm, AI, ML, deep learning (DL), neural networks, and expert systems are defined and described in Table 2.38-42 The terms may sometimes overlap or be defined with slight variation. TABLE 2. - Definitions of Essential Terms Term Abbreviation Definition Artificial intelligence AI Describes the abilities of computer systems able to perform tasks that otherwise normally require human intelligence. Algorithm n/a Sets of rules or processes to be followed in making calculations in other problem-solving operations. Data mining DM A field of computer science focused on the properties of datasets. It can extract rules for algorithms, for example, from data. A prerequisite for other forms of data processing. Machine learning ML A subset of AI that allows systems to create algorithms capable of modifying themselves by reading structured data without human intervention after being trained, and of improving from experience without being programmed explicitly. Almost always requires structured data. If outputs are wrong, the algorithms need to be retrained by humans. Deep learning DL A subset of ML which uses neural networks and multiple layers of algorithms to reiterate a task and learn progressively in order to gradually improve outcomes. Depends on adequate but not necessarily structured data. Mimics human learning more closely. May still produced flawed outputs if the quality of data is insufficient. Neural network NN Also known as artificial neural network, and is used to describe a series of algorithms that aim to recognize underlying relationships in a set of data through processes that mimic the way the human brain operates. The algorithms adapt appropriately to changing inputs. Sometimes construed as the next evolutionary stage of ML. Expert systems n/a Refers to software programmed using AI techniques to offer advice or make decisions in such areas as medical diagnosis where the judgment of human experts is emulated. ML constitutes a subfield of AI. DL is sometimes classified as a subfield of ML (and therefore of AI) and sometimes of neural networks. Neural networks are the basis for DL algorithms. The “deep” in “deep learning” refers to the depth of the node layers in a neural network. A node is the equivalent of a neuron with multiple dendrites providing inputs for processing (translation) and an axon transmitting the output. A DL algorithm by definition must have at least 3 nodes.43,44 Effective approaches may draw from AI, ML, DL, or a combination, depending on the specific application. We adopt the term “Intelligent Computing Systems” (ICS) to refer to AI, ML, DL, neural networks, and expert systems as a group, but refer to each technology by name when discussing them individually. While the earliest clinical applications of ICS around expert systems for decision their as technologies have The number of medical ICS from in 2010 to in of in the field or DM but and DM AND DM is defined as a field of computer science focused on the properties of datasets and the of large datasets to and that may not be It the as a term used to refer to the or of information from structured and unstructured was by the Corporation in in the but terms had It also became known by an in Data introduced in and was as “The problem by the is of data are too to and into other forms that might be more example, a more example, a or model of the that the or more example, a model for the of the of the is the of specific for and The term was by but it been by the later Table TABLE - DM and DM ML 1. DM the properties of datasets. datasets are to or and of that may be or applied to the of or The of DM is an for ML. ML is a of AI that the of the algorithms on which it to inputs without being explicitly programmed to ML on DM 2. DM is a of information from datasets. ML uses datasets to improve its data processing algorithms. DM is a at ML is a at outcomes. DM is deployed to data in ML algorithms in data can be without or human DM requires human to and techniques to extract ML is designed to DM is a as it requires analysis to be by a human ML uses the techniques as DM to learn and to adapt to DM to which and techniques are ML uses AI, neural networks, and algorithms to its Data to ML, DM can on of data. ML requires large of data presented in AND AI AI on the of software designed for data analysis and on the basis of large of structured and data. algorithms are on datasets and then datasets. Algorithm outputs are then after which the algorithm can be or and inputs can to can be or in and or algorithms not to with and to be by the algorithms may or as data are processed and may be by the that the algorithm is capable of and is an but a challenge from the because the algorithm first presented for may be from the into for medical must be prior to using called and The of and is in Table and not necessarily to clinical TABLE - Software and of test whether software early in development whether the software the and in the and software and the and user and on Software and and not focus on Software and and software essential Essential on and of a system with no prior knowledge of its and the of the applications of AI in or data as inputs. The AI algorithms are on that the data to a a or a an algorithm might be designed to the that a of on a is with a whether the is or a form of that in and became in the of clinical In are the basis for what is to as clinical In the performance of AI on a diagnostic task is a judgment the This test of its clinical its clinical its clinical value, its are an essential of ML ML is a of AI which and algorithms. The term was first used by Arthur in to describe algorithms the ability to learn without being explicitly computers to ML is the basis for advances image and While ML may to be a of algorithms, it is not always for as ML not or DL DL is a subset of ML. It promise in from to and voice Many that DL is the next in ML and that it will have an in in the applications of DL have been early and AI and other forms of ML, DL is a may be The software and algorithms in ICS may be by and An of the intellectual for software in the US is in Table The for software the are in the TABLE - of Protection Term years from the of the earliest US or to which is an to or an or an in the to An must be or to be and not and to than or of or any and is May not be a (as to an An must be and not and other in be medical may be by both and used with or in medical may for and of the have or work of be into a and must be must an and not an and computer and The around software is and may in the from the and the can can or but must be in other than the but about the it is to will be any or any combination, used or to be used to and the of or from those of and to the of the and on and for not is in the US for and The is not or by any ICS Many studies have the quality and of ICS in the and interpretation of large datasets and in clinical decision AI been successfully deployed for applications from image interpretation to the of and glaucoma diagnosis in decision support in and and clinical The ability to improve and is widely The National of Medicine to and detection as the The of AI in and is also The introduction of ICS into medical been than A review published in 2020 that only and 10 medical from the US and Administration explicitly neurosurgical were least a of the problem is with the and of the FDA The FDA is with software that as a medical that may be deployed on or other computing or that a in the or control of a ICS for will be to by the software those for may be or even not at medical device software are not to review to introduce in the software are in the early may have the form of a but with or called are still not to be even after they are launched This from that by the medical device where and are more and are by a using computer is a of some computer It can be by human before being into in machine which is only by the can be to the program and is generally and with that the user from to or in is public and designed to to to improve Software are about the with which their may be or if the is published and widely that the is to that in the may be of the in the of medical to clinical designed to be or into a medical algorithms must generally be to for This is a for and may be perceived as a to intellectual the with algorithms and ML, the FDA This for to algorithms on the basis of learning and still to and the for by the FDA have been by device A of using ML and AI through a 8 the and through a have the in order to set a and ICS – TO THE As of only neurosurgical studies using ML or This number may not be of the because to the or neurosurgeons, the neurosurgical The for this number may to in and neurosurgical as as in the clinical image and and clinical trials have of applications for and are commercially Almost can be from that It is to have and and a AI and DM applications the history medical expert systems support diagnostic processing solutions and systems offer and in and technologies in machine and image the resection of and later machine vision and expert systems offer analysis in or at least at systems and and medical ML and control to the medical intelligent and AI technologies support and clinical Table some principal and clinical applications and applications TABLE - and of ICS in applications Automated analysis trials Computer-assisted review Image applications system Human Electronic medical analysis systems Chatbots for Patient care decision support control systems tasks ICS ICS both and scientific The to and The of and are an because the of algorithms used in ICS is not necessarily in It is to determine a DL model a specific As a are that may clinical have been around the need for when ICS is The ethical implications of ICS are only to be are or as a form of with solutions than as While this is the of the current it is to increasing as ICS The of ICS in to be are areas in which ICS the data analytics big decision diagnostic image and clinical trials and It is to and describe the algorithms that are ICS are to of and in the way as other medical the of AI in on and or into algorithms. with a of the that may will require as AI more widely This did not any or The have no or interest in any of the or described in this from in the",
-          "arxiv_id": null,
-          "authors": [
-            "Teodoro Forcht Dagi",
-            "Fred G. Barker",
-            "Jacob Lowell Glass"
-          ],
-          "doi": "10.1093/neuros/nyab170",
-          "domain": "medicine",
-          "published_date": "2021-04-16",
-          "repo_url": null,
-          "source": "openalex",
-          "source_links": [
-            [
-              "openalex",
-              "https://doi.org/10.1093/neuros/nyab170"
-            ],
-            [
-              "openalex",
-              "https://www.ncbi.nlm.nih.gov/pmc/articles/8600171"
-            ]
-          ],
-          "title": "Machine Learning and Artificial Intelligence in Neurosurgery: Status, Prospects, and Challenges"
-        },
-        {
           "abstract": "Abstract Deep learning has been widely used for medical image segmentation and a large number of papers has been presented recording the success of deep learning in the field. A comprehensive thematic survey on medical image segmentation using deep learning techniques is presented. This paper makes two original contributions. Firstly, compared to traditional surveys that directly divide literatures of deep learning on medical image segmentation into many groups and introduce literatures in detail for each group, we classify currently popular literatures according to a multi‐level structure from coarse to fine. Secondly, this paper focuses on supervised and weakly supervised learning approaches, without including unsupervised approaches since they have been introduced in many old surveys and they are not popular currently. For supervised learning approaches, we analyse literatures in three aspects: the selection of backbone networks, the design of network blocks, and the improvement of loss functions. For weakly supervised learning approaches, we investigate literature according to data augmentation, transfer learning, and interactive segmentation, separately. Compared to existing surveys, this survey classifies the literatures very differently from before and is more convenient for readers to understand the relevant rationale and will guide them to think of appropriate improvements in medical image segmentation based on deep learning approaches.",
           "arxiv_id": null,
           "authors": [
@@ -4192,6 +4267,31 @@
             ]
           ],
           "title": "Medical image segmentation using deep learning: A survey"
+        },
+        {
+          "abstract": "INTRODUCTION AND OVERVIEW: THE ROAD TO ARTIFICIAL INTELLIGENCE “Create a model that is as sophisticated as the problem requires – but not more so.” Craig MacDonald1 The purpose of this article is to introduce artificial intelligence (AI), machine learning (ML), and related technologies to neurosurgeons, to review their current status, and to comment on the trajectory for their incorporation into neurosurgery. On the order of 25 studies explicitly utilizing AI technologies have been published in the neurosurgical literature to date. This is only the beginning.2-6 The conceptual origins of these technologies can be traced to ancient legendary androids, humanoid automatons, and mechanical imitations of animals, some of which were bestowed with a form of intelligence and even will. The history leading to AI is summarized in Table 1. Mechanical calculators have been deployed throughout recorded history. Charles Babbage, a Cambridge mathematician and inventor, conceived and designed the first computers between 1833 and 1871 to address mathematical calculation errors, but they were never successfully built. In fact, his efforts were later described as a “false dawn.”7 A number of other computing machines were created prior to World War II and proved essential to the war effort.8 One problem that had to be resolved before computers could be commercialized was command and data storage. Another was cost. In 1950, Engineering Research Associates introduced magnetic drum storage, and in 1952 both UNIVAC and IBM introduced magnetic tape.9 Both advances were seminally important. In 1950, A.M. Turing published a sentinel paper exploring whether computers might be construed as thinking. He proposed a test to determine whether they could.10,11 A wide-reaching debate ensued around whether he was right and whether, in any case, machine intelligence (as it then was called – and the term the British retained in preference to AI) was anything worth pursuing. The introduction of the term “artificial intelligence” is ascribed to John McCarthy of Dartmouth, Marvin Minsky of Harvard, Nathaniel Rochester from IBM, and Claude Shannon from Bell Telephone Laboratories who submitted a proposal for a “2 month, 10 man” workshop in 1955. When the meeting took place at Dartmouth in the summer of 1956, Allen Newell, Cliff Shaw, and Herbert Simon presented Logic Theorist, a program funded by the Research and Development (RAND) Corporation designed to mimic human problem-solving skills. This served as proof of concept for AI, and is generally acknowledged to have launched the field. Research programs emerged at Massachusetts Institute of Technology, Stanford, Carnegie Mellon University, and other institutions. Many were supported by the Defense Advanced Research Projects Agency in the US Department of Defense.12 As the field evolved, so did debates about whether AI should pursue the simulation of human reasoning, or whether the simulation of human performance sufficed. Those interested in simulating human reasoning were called neats and those focused on performance were known as scruffies.13,14 By the late 1960s, researchers began applying AI-based tools to the natural and physical sciences. This work crossed multiple scientific disciplines. One early collaboration involved the geneticist and Nobel Laureate Joshua Lederberg, the computer scientist and Turing Award Laureate Edward Feigenbaum, the chemist and National Medalist of Science and Technology Carl Djerassi (inventor of oral birth control), and the mathematician, computer scientist, and philosopher Bruce Buchanan. The project was DENDRAL, commissioned by National Aeronautics and Space Administration to encode the knowledge of expert chemists in order to infer the structures of organic compounds from mass-spectral data.15 DENDRAL was significant not only for the huge volume of data processed, but also for its emphasis on knowledge engineering (KE), a complementary field that became central to AI. KE included knowledge acquisition, validation, and representation (mapping and encoding into a knowledge base); TABLE 1. - Milestones Along the Path From Robots to AI in Medicine Pre-1946 Automatic machines and calculating device but not AI. Wondrous ancient automata described 1920s The word “robot” replaces the word “automaton” 1928 Eric, a battery-powered, aluminum-skinned robot with 11 electromagnets and a motor that could move its hands and head and be controlled remotely or by voice presented at the Model Engineer's Society in London 1930s Industrial robots introduced in the United States 1939 Elektro, a 7-foot tall, walking, talking, voice-controlled, humanoid robot weighing 120 kg presented at the World's Fair. It could smoke, speak 700 words and move its head and arms 1949 Manchester Mark 1, first stored program computer, installed. Named “The Electronic Brain” 1950 Alan Turing writes “Can Machines Think?” 1955 Logic Theorist – first AI program presented and funded by the RAND Corporation 1956 Dartmouth Summer Research Project on Artificial Intelligence 1963 DARPA funds AI at Massachusetts Institute of Technology 1965 Edward Feigenbaum introduces expert systems at Stanford (The Heuristic Programming Project) 1968 The famed science fiction writer, Arthur C. Clarke, predicts that by 2001, machines will be smarter than humans 1970s Automated, computer-assisted EKG readings 1973 Image analysis of digitized retinal angiography 1973 Expert system assistance for renal disease 1978 Mirsky and others predict no more than 3 to 8 years before human intelligence is surpassed by computers 1978 CASNET introduced for expert system computer-assisted diagnosis of glaucoma 1981 The PC is introduced with the PC DOS operating system 1980s Early investigation of machine vision adaptations to medical image analysis 1983 Two expert medical systems, the “Internist-I” and “Cadeuceus” introduced 1988 Computer-assisted resection of subcortical lesions 1988 Automated computer-assisted detection of peripheral lung lesions 1990 Human Genome Project begins 1997 An IBM computer defeats Gary Kasparove in chess 1997 Dragon Software introduces first public speech recognition system 1998 Image Checker computer-assisted diagnostic system for mammography introduced 2000 Proliferation of cheap storage and increasing computer power 2000 Introduction of DL for medical applications 2004 Early reports of computer-assisted diagnosis of retinal disease 2007 IBM Watson introduced 2010 Passage of the Patient Protection and Affordable Care Act. EMRss proliferate 2010 Computer-assisted diagnosis in endoscopy 2011 Digital assistant introduced commercially 2012 Computer-assisted segmentation of sectional brain images 2012 Computer-assisted brain tumor grading 2017 Chatbots introduced for patient intake 2018 AI trials for gastroenterology diagnosis begin 2018 FDA approves Viz.AI, AI-assisted clinical decision support system for stroke triage 2020 Stacked neural networks applied to EKG interpretation EKG, electrocardiogram; EMRs, electronic medical record. inferencing (inferring answers for the user from the knowledge stored); and explaining what information was needed or how conclusions were reached.16 Public and corporate interest in intelligent computing systems expanded during the 1980s as access to computers proliferated. AI was expected to revolutionize society. Health care was a principal focus of these expectations.17-23 Experts bickered about whether medical informatics ought to be considered as a field of computer science, engineering, or biomedicine. The intellectual identity of and control over the field mattered more than might otherwise be imagined. Edward Shortliffe, editor of the Journal of Biomedical Informatics, an early and influential contributor to AI, curtailed the debate by proposing that AI be classified as a form of biomedical informatics. This was the view that prevailed and allowed for effective crossdisciplinary collaboration.14,24,25 AI suffered from inadequate computer storage and inadequate computer power. Faith in the ability of AI to deliver solutions diminished. AI was widely perceived to have failed. A period characterized as “AI winter” descended. The field of AI became notably self-reflective, perhaps because of the sociological and ethical implications of reproducing human intelligence.14,26-28 AI was revived by the advent of the Human Genome Project in 1990. The Genome Project was accompanied by a mandate for tools to handle an unprecedented eruption of data.29 The demands of an enormous data flow reinvigorated interest in data analytics and catalyzed the development of the AI-related technologies.30-33 In 1997, scientists at the National Aeronautics and Space Administration described the problem of datasets too large to be stored in a computer's main memory. This restriction severely limited the extent of data processing that was possible.34 The scientists introduced the term “big data” to describe datasets of this magnitude. In 2001, Douglas B. Laney of the Gartner Group enlarged on this concept, characterizing big data as “high-volume, high-velocity and/or high-variety information assets that demand… innovative forms of… processing…” Volume, velocity, and variety came to be known as the 3 “Vs,” alluding to the amount of low density, unstructured data (volume); the rate at which data must be processed (velocity); and the diversity of data encountered (variety).35 Three more “Vs” were added later: value, variability, and veracity.36,37 The challenge of confronting big data is balanced by the promise of unearthing novel insights that are not otherwise accessible. DEFINITIONS AND TECHNOLOGIES The terms data mining (DM), algorithm, AI, ML, deep learning (DL), neural networks, and expert systems are defined and described in Table 2.38-42 The terms may sometimes overlap or be defined with slight variation. TABLE 2. - Definitions of Essential Terms Term Abbreviation Definition Artificial intelligence AI Describes the abilities of computer systems able to perform tasks that otherwise normally require human intelligence. Algorithm n/a Sets of rules or processes to be followed in making calculations in other problem-solving operations. Data mining DM A field of computer science focused on the properties of datasets. It can extract rules for algorithms, for example, from data. A prerequisite for other forms of data processing. Machine learning ML A subset of AI that allows systems to create algorithms capable of modifying themselves by reading structured data without human intervention after being trained, and of improving from experience without being programmed explicitly. Almost always requires structured data. If outputs are wrong, the algorithms need to be retrained by humans. Deep learning DL A subset of ML which uses neural networks and multiple layers of algorithms to reiterate a task and learn progressively in order to gradually improve outcomes. Depends on adequate but not necessarily structured data. Mimics human learning more closely. May still produced flawed outputs if the quality of data is insufficient. Neural network NN Also known as artificial neural network, and is used to describe a series of algorithms that aim to recognize underlying relationships in a set of data through processes that mimic the way the human brain operates. The algorithms adapt appropriately to changing inputs. Sometimes construed as the next evolutionary stage of ML. Expert systems n/a Refers to software programmed using AI techniques to offer advice or make decisions in such areas as medical diagnosis where the judgment of human experts is emulated. ML constitutes a subfield of AI. DL is sometimes classified as a subfield of ML (and therefore of AI) and sometimes of neural networks. Neural networks are the basis for DL algorithms. The “deep” in “deep learning” refers to the depth of the node layers in a neural network. A node is the equivalent of a neuron with multiple dendrites providing inputs for processing (translation) and an axon transmitting the output. A DL algorithm by definition must have at least 3 nodes.43,44 Effective approaches may draw from AI, ML, DL, or a combination, depending on the specific application. We adopt the term “Intelligent Computing Systems” (ICS) to refer to AI, ML, DL, neural networks, and expert systems as a group, but refer to each technology by name when discussing them individually. While the earliest clinical applications of ICS around expert systems for decision their as technologies have The number of medical ICS from in 2010 to in of in the field or DM but and DM AND DM is defined as a field of computer science focused on the properties of datasets and the of large datasets to and that may not be It the as a term used to refer to the or of information from structured and unstructured was by the Corporation in in the but terms had It also became known by an in Data introduced in and was as “The problem by the is of data are too to and into other forms that might be more example, a more example, a or model of the that the or more example, a model for the of the of the is the of specific for and The term was by but it been by the later Table TABLE - DM and DM ML 1. DM the properties of datasets. datasets are to or and of that may be or applied to the of or The of DM is an for ML. ML is a of AI that the of the algorithms on which it to inputs without being explicitly programmed to ML on DM 2. DM is a of information from datasets. ML uses datasets to improve its data processing algorithms. DM is a at ML is a at outcomes. DM is deployed to data in ML algorithms in data can be without or human DM requires human to and techniques to extract ML is designed to DM is a as it requires analysis to be by a human ML uses the techniques as DM to learn and to adapt to DM to which and techniques are ML uses AI, neural networks, and algorithms to its Data to ML, DM can on of data. ML requires large of data presented in AND AI AI on the of software designed for data analysis and on the basis of large of structured and data. algorithms are on datasets and then datasets. Algorithm outputs are then after which the algorithm can be or and inputs can to can be or in and or algorithms not to with and to be by the algorithms may or as data are processed and may be by the that the algorithm is capable of and is an but a challenge from the because the algorithm first presented for may be from the into for medical must be prior to using called and The of and is in Table and not necessarily to clinical TABLE - Software and of test whether software early in development whether the software the and in the and software and the and user and on Software and and not focus on Software and and software essential Essential on and of a system with no prior knowledge of its and the of the applications of AI in or data as inputs. The AI algorithms are on that the data to a a or a an algorithm might be designed to the that a of on a is with a whether the is or a form of that in and became in the of clinical In are the basis for what is to as clinical In the performance of AI on a diagnostic task is a judgment the This test of its clinical its clinical its clinical value, its are an essential of ML ML is a of AI which and algorithms. The term was first used by Arthur in to describe algorithms the ability to learn without being explicitly computers to ML is the basis for advances image and While ML may to be a of algorithms, it is not always for as ML not or DL DL is a subset of ML. It promise in from to and voice Many that DL is the next in ML and that it will have an in in the applications of DL have been early and AI and other forms of ML, DL is a may be The software and algorithms in ICS may be by and An of the intellectual for software in the US is in Table The for software the are in the TABLE - of Protection Term years from the of the earliest US or to which is an to or an or an in the to An must be or to be and not and to than or of or any and is May not be a (as to an An must be and not and other in be medical may be by both and used with or in medical may for and of the have or work of be into a and must be must an and not an and computer and The around software is and may in the from the and the can can or but must be in other than the but about the it is to will be any or any combination, used or to be used to and the of or from those of and to the of the and on and for not is in the US for and The is not or by any ICS Many studies have the quality and of ICS in the and interpretation of large datasets and in clinical decision AI been successfully deployed for applications from image interpretation to the of and glaucoma diagnosis in decision support in and and clinical The ability to improve and is widely The National of Medicine to and detection as the The of AI in and is also The introduction of ICS into medical been than A review published in 2020 that only and 10 medical from the US and Administration explicitly neurosurgical were least a of the problem is with the and of the FDA The FDA is with software that as a medical that may be deployed on or other computing or that a in the or control of a ICS for will be to by the software those for may be or even not at medical device software are not to review to introduce in the software are in the early may have the form of a but with or called are still not to be even after they are launched This from that by the medical device where and are more and are by a using computer is a of some computer It can be by human before being into in machine which is only by the can be to the program and is generally and with that the user from to or in is public and designed to to to improve Software are about the with which their may be or if the is published and widely that the is to that in the may be of the in the of medical to clinical designed to be or into a medical algorithms must generally be to for This is a for and may be perceived as a to intellectual the with algorithms and ML, the FDA This for to algorithms on the basis of learning and still to and the for by the FDA have been by device A of using ML and AI through a 8 the and through a have the in order to set a and ICS – TO THE As of only neurosurgical studies using ML or This number may not be of the because to the or neurosurgeons, the neurosurgical The for this number may to in and neurosurgical as as in the clinical image and and clinical trials have of applications for and are commercially Almost can be from that It is to have and and a AI and DM applications the history medical expert systems support diagnostic processing solutions and systems offer and in and technologies in machine and image the resection of and later machine vision and expert systems offer analysis in or at least at systems and and medical ML and control to the medical intelligent and AI technologies support and clinical Table some principal and clinical applications and applications TABLE - and of ICS in applications Automated analysis trials Computer-assisted review Image applications system Human Electronic medical analysis systems Chatbots for Patient care decision support control systems tasks ICS ICS both and scientific The to and The of and are an because the of algorithms used in ICS is not necessarily in It is to determine a DL model a specific As a are that may clinical have been around the need for when ICS is The ethical implications of ICS are only to be are or as a form of with solutions than as While this is the of the current it is to increasing as ICS The of ICS in to be are areas in which ICS the data analytics big decision diagnostic image and clinical trials and It is to and describe the algorithms that are ICS are to of and in the way as other medical the of AI in on and or into algorithms. with a of the that may will require as AI more widely This did not any or The have no or interest in any of the or described in this from in the",
+          "arxiv_id": null,
+          "authors": [
+            "Teodoro Forcht Dagi",
+            "Fred G. Barker",
+            "Jacob Lowell Glass"
+          ],
+          "doi": "10.1093/neuros/nyab170",
+          "domain": "medicine",
+          "published_date": "2021-04-16",
+          "repo_url": null,
+          "source": "openalex",
+          "source_links": [
+            [
+              "openalex",
+              "https://doi.org/10.1093/neuros/nyab170"
+            ],
+            [
+              "openalex",
+              "https://www.ncbi.nlm.nih.gov/pmc/articles/8600171"
+            ]
+          ],
+          "title": "Machine Learning and Artificial Intelligence in Neurosurgery: Status, Prospects, and Challenges"
         }
       ],
       "seam": "source"
