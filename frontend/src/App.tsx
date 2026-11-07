@@ -11,7 +11,6 @@ import ResultSkeleton from "./components/ResultSkeleton";
 import PaperDetail from "./components/PaperDetail";
 import GenerationsList from "./components/GenerationsList";
 import ArtifactView from "./components/ArtifactView";
-import ReviewView from "./components/ReviewView";
 import type { ClaimRead } from "./api/writer";
 import ClaimForm from "./components/writer/ClaimForm";
 import ClaimsList from "./components/writer/ClaimsList";
@@ -88,48 +87,31 @@ function Authed() {
 
 function Writer() {
   const [selected, setSelected] = useState<ClaimRead | null>(null);
-  const [report, setReport] = useState<GenerationRead | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
   return (
     <div className="min-h-screen bg-paper text-ink">
-      <div className={`mx-auto px-6 py-12 ${report ? "max-w-6xl" : "max-w-3xl"}`}>
+      <div className="mx-auto max-w-3xl px-6 py-12">
         <AuthBar
           onHome={() => {
-            setReport(null);
             setSelected(null);
             setRefreshKey((k) => k + 1);
           }}
         />
 
         <main id="main" tabIndex={-1} className="outline-none">
-        {report && (
-          <>
-            <button
-              onClick={() => setReport(null)}
-              className="mb-6 text-sm text-accent hover:underline"
-            >
-              Back to your paper
-            </button>
-            <ReviewView generation={report} />
-          </>
-        )}
         {selected ? (
-          // Hidden, not unmounted, while the report is open: keeps the finished job on screen.
-          <div hidden={report !== null}>
-            <ClaimWorkspace
-              claimId={selected.id}
-              onBack={() => {
-                setSelected(null);
-                setRefreshKey((k) => k + 1);
-              }}
-              onDeleted={() => {
-                setSelected(null);
-                setRefreshKey((k) => k + 1);
-              }}
-              onOpenReport={setReport}
-            />
-          </div>
+          <ClaimWorkspace
+            claimId={selected.id}
+            onBack={() => {
+              setSelected(null);
+              setRefreshKey((k) => k + 1);
+            }}
+            onDeleted={() => {
+              setSelected(null);
+              setRefreshKey((k) => k + 1);
+            }}
+          />
         ) : (
           <>
             <header className="mb-8">
@@ -170,11 +152,7 @@ function Reader() {
           <AuthBar onHome={() => setView({ name: "search" })} />
         </div>
         <main id="main" tabIndex={-1} className="outline-none">
-          <PaperDetail
-            id={view.id}
-            onBack={() => setView({ name: "search" })}
-            onOpenReport={(g) => setView({ name: "artifact", generation: g })}
-          />
+          <PaperDetail id={view.id} onBack={() => setView({ name: "search" })} />
         </main>
       </div>
     );
@@ -205,11 +183,7 @@ function Reader() {
   if (view.name === "artifact") {
     return (
       <div className="min-h-screen bg-paper text-ink">
-        <div
-          className={`mx-auto px-6 py-12 ${
-            view.generation.case === "review" ? "max-w-6xl" : "max-w-3xl"
-          }`}
-        >
+        <div className="mx-auto max-w-3xl px-6 py-12">
           <AuthBar onHome={() => setView({ name: "search" })} />
           <main id="main" tabIndex={-1} className="outline-none">
             <button

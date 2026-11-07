@@ -13,18 +13,16 @@ import SourceUpload from "./SourceUpload";
 import ConfirmDelete from "./ConfirmDelete";
 import GenerateButton from "../GenerateButton";
 import JobStatusView from "../JobStatusView";
-import type { GenerationRead, JobRead } from "../../api/codegen";
+import type { JobRead } from "../../api/codegen";
 
 export default function ClaimWorkspace({
   claimId,
   onBack,
   onDeleted,
-  onOpenReport,
 }: {
   claimId: string;
   onBack: () => void;
   onDeleted: () => void;
-  onOpenReport: (g: GenerationRead) => void;
 }) {
   const [claim, setClaim] = useState<ClaimDetail | null>(null);
   const [error, setError] = useState(false);
@@ -116,11 +114,7 @@ export default function ClaimWorkspace({
       <div className="flex flex-col gap-3">
         <h2 className="text-sm font-medium text-ink">Reproducibility review</h2>
         {reviewJob ? (
-          <JobStatusView
-            job={reviewJob}
-            onRetry={() => setReviewJob(null)}
-            onOpenReport={onOpenReport}
-          />
+          <JobStatusView job={reviewJob} onRetry={() => setReviewJob(null)} />
         ) : (
           <GenerateButton paperRef={claim.paper_ref} genCase="review" onStarted={setReviewJob} />
         )}

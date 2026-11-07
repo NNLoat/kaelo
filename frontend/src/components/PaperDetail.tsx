@@ -8,7 +8,7 @@ import {
   type PaperDetail as Detail,
   type ReproducibilityBreakdown,
 } from "../api/papers";
-import type { Case, GenerationRead, JobRead } from "../api/codegen";
+import type { Case, JobRead } from "../api/codegen";
 import { useAuth } from "./AuthProvider";
 import ScoreBar from "./ScoreBar";
 import SourceBadges from "./SourceBadges";
@@ -21,15 +21,7 @@ type State =
   | { kind: "not_found" }
   | { kind: "error" };
 
-export default function PaperDetail({
-  id,
-  onBack,
-  onOpenReport,
-}: {
-  id: number;
-  onBack: () => void;
-  onOpenReport: (g: GenerationRead) => void;
-}) {
+export default function PaperDetail({ id, onBack }: { id: number; onBack: () => void }) {
   const [state, setState] = useState<State>({ kind: "loading" });
 
   async function load() {
@@ -75,18 +67,12 @@ export default function PaperDetail({
         </div>
       )}
 
-      {state.kind === "ready" && <Body paper={state.paper} onOpenReport={onOpenReport} />}
+      {state.kind === "ready" && <Body paper={state.paper} />}
     </div>
   );
 }
 
-function Body({
-  paper,
-  onOpenReport,
-}: {
-  paper: Detail;
-  onOpenReport: (g: GenerationRead) => void;
-}) {
+function Body({ paper }: { paper: Detail }) {
   return (
     <article className="flex flex-col gap-8">
       <header className="flex flex-col gap-3">
@@ -174,18 +160,12 @@ function Body({
         )}
       </section>
 
-      <CodegenSection paper={paper} onOpenReport={onOpenReport} />
+      <CodegenSection paper={paper} />
     </article>
   );
 }
 
-function CodegenSection({
-  paper,
-  onOpenReport,
-}: {
-  paper: Detail;
-  onOpenReport: (g: GenerationRead) => void;
-}) {
+function CodegenSection({ paper }: { paper: Detail }) {
   const { mode } = useAuth();
   const [job, setJob] = useState<JobRead | null>(null);
   const [reviewJob, setReviewJob] = useState<JobRead | null>(null);
@@ -207,11 +187,7 @@ function CodegenSection({
       <div>
         <h2 className="mb-2 text-sm font-semibold text-ink">Reproducibility review</h2>
         {reviewJob ? (
-          <JobStatusView
-            job={reviewJob}
-            onRetry={() => setReviewJob(null)}
-            onOpenReport={onOpenReport}
-          />
+          <JobStatusView job={reviewJob} onRetry={() => setReviewJob(null)} />
         ) : (
           <GenerateButton paperRef={paperRef} genCase="review" onStarted={setReviewJob} />
         )}

@@ -8,21 +8,11 @@ import {
   type JobRead,
 } from "../api/codegen";
 import ArtifactView from "./ArtifactView";
-import { ReviewSummary } from "./ReviewView";
 
 const MIN_INTERVAL = 1500;
 const MAX_INTERVAL = 8000;
 
-export default function JobStatusView({
-  job,
-  onRetry,
-  onOpenReport,
-}: {
-  job: JobRead;
-  onRetry: () => void;
-  // When set, a finished review shows a summary with a link instead of the full report.
-  onOpenReport?: (g: GenerationRead) => void;
-}) {
+export default function JobStatusView({ job, onRetry }: { job: JobRead; onRetry: () => void }) {
   const [state, setState] = useState<JobRead>(job);
   const [generation, setGeneration] = useState<GenerationRead | null>(null);
   const [loadError, setLoadError] = useState(false);
@@ -121,8 +111,5 @@ export default function JobStatusView({
     );
   }
   if (!generation) return <p className="text-sm text-muted">Loading result…</p>;
-  if (generation.case === "review" && onOpenReport) {
-    return <ReviewSummary generation={generation} onOpen={() => onOpenReport(generation)} />;
-  }
   return <ArtifactView generation={generation} />;
 }
