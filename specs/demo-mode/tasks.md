@@ -292,6 +292,31 @@ demo. There is no frontend change, no table and no migration.
       user confirms.
     - _Requirements: 4.2, 6.5, 6.6, 7.1, 7.3, 7.5_
 
+- [x] 10. Amendment — record code generation and review
+  - [x] 10.1 Wrap the codegen client
+    - In `backend/app/core/codegen.py` make `_client()` return
+      `wrap_chat(lambda: ChatBedrock(..., max_tokens=...))`, keeping `lru_cache`. Delete
+      the obsolete "codegen is never recorded" test.
+    - _Requirements: 5.4_
+
+  - [x]* 10.2 Write property test — recorded code generation replays identically
+    - **Property 14** in `backend/tests/test_demo_codegen.py`: for any files, score and
+      review, record then replay (live client built only if called) returns equal values
+      with zero live calls; `CODEGEN_MOCK=true` writes nothing; a Writer's Review Report
+      replays through `run_job` to an identical Generation and the prompt is never stored.
+    - _Requirements: 5.4, 7.7_
+
+  - [x] 10.3 Record generations without UI clicks
+    - `scripts/demo-env.sh` sets `CODEGEN_MOCK=false`. `scripts/demo-record.sh` runs the
+      jobs in `demo/generations.txt` after the searches (format in the design); new
+      `demo/generations.txt` lists the MIScnn review and the Writer's Iris-3B review.
+    - _Requirements: 7.3, 7.7_
+
+  - [x] 10.4 Update docs
+    - `demo/SCRIPT.md`, README "Demo mode", `.env.example`, `compose.yaml` comment and
+      ADR 0010 say codegen is recorded.
+    - _Requirements: 7.5_
+
 ## Task Dependency Graph
 
 ```json
@@ -304,7 +329,8 @@ demo. There is no frontend change, no table and no migration.
     { "id": 4, "tasks": ["5", "4.6", "6.4", "6.5", "8.1", "8.2"] },
     { "id": 5, "tasks": ["7", "8.3"] },
     { "id": 6, "tasks": ["9.1"] },
-    { "id": 7, "tasks": ["9.2"] }
+    { "id": 7, "tasks": ["10.1", "10.2", "10.3", "10.4"] },
+    { "id": 8, "tasks": ["9.2"] }
   ]
 }
 ```

@@ -43,11 +43,13 @@ orchestration) and Business Logic (the Cassette and the seam wrappers).
 **Assumptions** (settled with the user): the frontend is unchanged and its default
 sort stays as it is; switching it to *Final score* must give the same order as the
 backend response. A Cassette miss in `replay` falls back to live rather than
-failing. Code generation is not recorded; it follows the existing `CODEGEN_MOCK`
-setting.
+failing. Code generation, code scoring and review are recorded like every other
+Bedrock call (amended: they were first left to `CODEGEN_MOCK`, but the demo needs the
+real Review Report); `CODEGEN_MOCK` still bypasses them when set.
 
-Out of scope: any frontend change (including the default sort key); recording or
-replaying code generation and review (use `CODEGEN_MOCK`); changing the score
+Out of scope: any frontend change (including the default sort key); recording the
+Writer-workspace upload flow's own data (only the Review Report generated from it
+is recorded); changing the score
 formulas, weights, or the Standards-Conformance roll-up; making the live
 (`off`) path deterministic; recording the Writer-workspace upload flow; a UI to
 manage Cassettes; and encrypting or redacting Cassette content beyond excluding
@@ -154,7 +156,7 @@ that nothing live can reorder the demo's results.
 1. THE Source_Seam SHALL wrap each source adapter's `fetch`, keying on the adapter name, the effective query, the result limit, and the configured source domains.
 2. THE LLM_Seam SHALL wrap every Bedrock `invoke` made by `expand_query`, `assess_relevance`, `extract_setup`, and `explain`, keying on the full prompt text.
 3. THE Repo_Seam SHALL wrap the GitHub repository inspection, keying on the repository URL, and SHALL record the resulting repository signals.
-4. THE Seam_Wrappers SHALL NOT wrap code generation, code scoring, or review; those SHALL continue to follow `CODEGEN_MOCK` regardless of Demo_Mode.
+4. THE LLM_Seam SHALL also wrap every Bedrock `invoke` made by code generation (`generate`), code scoring (`score`) and review (`review`) in `core/codegen.py`, keying on the full prompt text; WHERE `CODEGEN_MOCK` is true, THE mock SHALL still return before any Seam is reached, so nothing is recorded.
 5. THE Seam_Wrappers SHALL be applied at the call sites' existing boundaries without changing the signatures of `expand_query`, `assess_relevance`, `extract_setup`, `explain`, `inspect_repo`, or the adapters' `fetch`.
 6. WHERE a paper has no repository URL, THE Repo_Seam SHALL return the existing not-inspectable result without a Cassette lookup.
 
@@ -185,8 +187,9 @@ rehearse from a written script, so that every run of the demo starts identically
 2. WHEN `scripts/demo-reset.sh` completes, THE database SHALL contain no papers, scores or generations, so that paper ids are assigned from the same starting point on every run.
 3. THE Demo_Tooling SHALL provide `scripts/demo-record.sh`, which starts the backend with `DEMO_MODE=record`, runs each query listed in `demo/queries.txt` through the Search_API, and exits non-zero if any query fails.
 4. THE `scripts/demo-record.sh` SHALL print, for each query, the ordered titles and Final_Scores returned, so the presenter can review them before committing the Cassette.
-5. THE Demo_Tooling SHALL provide `demo/SCRIPT.md`, listing the scripted queries in the order to present them, the expected top results for each, the settings the demo requires (`DEMO_MODE=replay`, `QUERY_EXPANSION_ENABLED`, `CODEGEN_MOCK=true`), and the steps to re-record.
+5. THE Demo_Tooling SHALL provide `demo/SCRIPT.md`, listing the scripted queries in the order to present them, the expected top results for each, the settings the demo requires (`DEMO_MODE=replay`, `QUERY_EXPANSION_ENABLED=false`, `CODEGEN_MOCK=false`), and the steps to re-record.
 6. THE Demo_Tooling SHALL NOT change the Cassette unless `demo-record.sh` is run.
+7. WHEN `demo-record.sh` has run the queries, THE script SHALL run each generation listed in `demo/generations.txt` through the Codegen_API without any UI action: a `reader` line starts the named case for the one paper whose title contains the given fragment; a `writer` line claims the given reference, uploads the given PDF and starts a `review`. THE script SHALL wait for each job to finish and exit non-zero if a job is refused, fails, is cancelled or times out, or if a title fragment matches other than exactly one paper.
 
 ### Requirement 8: Safety and Defaults (Backend)
 

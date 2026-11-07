@@ -4,11 +4,11 @@
 # (spec demo-mode, R7)
 
 export QUERY_EXPANSION_ENABLED=false   # no LLM query rewrite
-export CODEGEN_MOCK=true               # canned code generation, not recorded
+export CODEGEN_MOCK=false              # real code generation/review, answered from the Cassette
 
 # Fixed, non-secret, local-only demo account (username 3-32, password 8-128 chars).
 DEMO_USER="demo"
-DEMO_PASSWORD="demo-password-1"
+DEMO_PASSWORD="demo-password"
 API="http://localhost:${BACKEND_PORT:-8000}"
 
 wait_healthy() {  # poll GET /health, at most 120 s

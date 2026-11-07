@@ -259,12 +259,17 @@ def wrap_chat(build) -> _CassetteChat | ChatBedrock:
 
 The three modules' existing `_client()` functions keep their names and
 signatures (tests monkeypatch `llm._client`, `extractor._client`,
-`explainer._client`) and change only their body, from `return ChatBedrock(...)` to
+`explainer._client`, and since the amendment `core/codegen._client`) and change only their body, from `return ChatBedrock(...)` to
 `return wrap_chat(lambda: ChatBedrock(...))`. `_content_text` is imported
 lazily inside `encode` to avoid an import cycle with `services/llm.py`. In `off`
 `wrap_chat` returns the real client, so behavior and the existing `lru_cache` on
-`llm._client` are unaffected. `core/codegen.py`'s `_client` is **not** touched
-(R5.4).
+`llm._client` are unaffected. `core/codegen.py`'s `_client` is wrapped the same way, keeping
+`max_tokens` and its own `lru_cache` (R5.4); that module therefore imports the Cassette
+seam, the one service dependency it has. The `codegen_mock` early returns in `generate`,
+`score` and `review` sit before the client is reached, so the mock never touches the
+Cassette. Codegen prompts hold only the experiment setup, paper title/abstract, repo link,
+per-criterion results and (Writer) manuscript text, all of which are replayed or
+deterministic, so keys are stable. The Cassette stores the reply, never the prompt.
 
 **Source seam (R5.1).** `scoring._adapters()` returns
 `[wrap_source(a) for a in _ADAPTERS]`; `wrap_source` returns the adapter itself
@@ -352,7 +357,7 @@ during rehearsal, and every expected failure is already handled inside
 ### 5. Demo tooling (R7)
 
 A shared `scripts/demo-env.sh` exports the settings both scripts use so record and
-replay always agree: `QUERY_EXPANSION_ENABLED=false`, `CODEGEN_MOCK=true`, and the
+replay always agree: `QUERY_EXPANSION_ENABLED=false`, `CODEGEN_MOCK=false`, and the
 `DEMO_MODE` each script sets. Shell environment overrides `.env` for compose
 interpolation, so the scripts do not edit `.env`.
 
@@ -368,6 +373,12 @@ interpolation, so the scripts do not edit `.env`.
   `title  final-score` table via a small `python3 -c` JSON parse; exits non-zero on
   any non-200 or empty result; finally `chown`s the Cassette to the invoking user
   (the container writes as root).
+- **`demo/generations.txt`** (R7.7): `reader | query | case | title fragment` and
+  `writer | reference | pdf` lines. After the searches `demo-record.sh` starts each
+  job through `POST /api/codegen/jobs` (a writer line first claims the reference and
+  uploads the PDF via `/api/writer/claims`), polls `GET /api/codegen/jobs/{id}` every 3 s
+  for up to 10 minutes, and fails on `refused`/`failed`/`cancelled`/timeout. The title
+  fragment must match exactly one paper.
 - **`demo/queries.txt`**, **`demo/SCRIPT.md`** (R7.5): the query list in
   presentation order; per query the expected top results, the required settings,
   which sort the presenter uses (the frontend defaults to *Relevance*; the script
@@ -497,6 +508,15 @@ fail the test) returns three identical responses: same cards, order and values.
 
 **Validates: R4.1, R4.2, R6.5**
 
+### Property 14: Recorded code generation replays identically
+
+*For any* generated files, artifact score and review text returned by a fake Bedrock,
+`generate`, `score` and `review` recorded under `record` return equal values under
+`replay` with every live call made to fail the test, and a recorded Review Report for a
+Writer's claim replays through the job worker to an identical Generation.
+
+**Validates: R5.4, R7.7**
+
 ## API Endpoint Contracts
 
 No endpoint is added or changed. `POST /api/papers/search` keeps its request and
@@ -572,8 +592,8 @@ testcontainer database with fake adapters and fake chat clients, and a
 - `record` writes the file on the first stored entry, and a second `record` of
   the same call leaves one entry (R3.3, R3.5).
 - A paper with no repository URL performs no Repo-seam lookup (R5.6).
-- `core/codegen.py` is unaffected: codegen still follows `CODEGEN_MOCK` in every
-  mode (R5.4).
+- `core/codegen.py` is wrapped (R5.4); with `CODEGEN_MOCK=true` it still returns the mock
+  and writes nothing.
 - The startup log line is emitted for `record`/`replay` and not for `off` (R8.3).
 
 ### Integration / smoke tests

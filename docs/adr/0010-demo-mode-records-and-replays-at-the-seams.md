@@ -30,6 +30,8 @@ and sorted by a total order, so it never returns stale or `pending` scores.
   does not invalidate a recording. Changing a prompt template or a source query
   does: re-record.
 - A replay miss falls back to live and logs a warning rather than failing the
-  demo. Code generation is not recorded; the demo uses `CODEGEN_MOCK`.
+  demo. Code generation, code scoring and review are recorded too (amended): the
+  demo shows the real Review Report. `CODEGEN_MOCK=true` still bypasses them and
+  writes nothing.
 - Record/replay is single-process and writes the file whole (not safe for
   concurrent writers); fine for a presenter, wrong for production.

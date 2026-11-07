@@ -5,7 +5,6 @@ Bedrock or GitHub: every real boundary is replaced by a local fake, and a fake t
 must not run raises.
 """
 
-import inspect
 import json
 import os
 import tempfile
@@ -17,7 +16,6 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from app.core import codegen
 from app.models.paper import PaperDomain
 from app.services import llm, scoring
 from app.services.demo import cassette, seams
@@ -244,16 +242,3 @@ def test_no_repo_url_does_no_lookup(mode, url, tmp_path, monkeypatch) -> None:
         sig = inspector.inspect_repo(url)
     assert sig.inspectable is False and sig.failed is False
     assert not (tmp_path / "c.json").exists()
-
-
-# --- Code generation is not recorded -----------------------------------------
-
-
-def test_codegen_is_never_recorded(tmp_path, monkeypatch) -> None:
-    assert "wrap_chat" not in inspect.getsource(codegen)
-    monkeypatch.setattr(codegen, "_client", lambda: _Chat('{"score": 0.7, "rationale": "ok"}'))
-    path = tmp_path / "c.json"
-    for mode in ("record", "replay"):
-        with demo(mode, path):
-            assert codegen.score([codegen.GenFile(path="a.py", content="x = 1")]).score == 0.7
-    assert not path.exists()

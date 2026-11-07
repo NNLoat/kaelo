@@ -158,7 +158,9 @@ scripts/demo-record.sh   # run demo/queries.txt live, write the Cassette, print 
 scripts/demo-reset.sh    # empty DB, DEMO_MODE=replay, demo account (demo / demo-password-1)
 ```
 
-The scripts set `QUERY_EXPANSION_ENABLED=false` and `CODEGEN_MOCK=true` themselves.
+The scripts set `QUERY_EXPANSION_ENABLED=false` and `CODEGEN_MOCK=false` themselves.
+`demo-record.sh` also runs the code-generation/review jobs listed in
+`demo/generations.txt`, so replay can answer them.
 Both run `docker compose down -v`, so they **wipe the local database**. The
 presenter's walkthrough is in `demo/SCRIPT.md`.
 

@@ -16,7 +16,7 @@ Set by `scripts/demo-env.sh`; you never edit `.env` for the demo.
 | --- | --- | --- |
 | `DEMO_MODE` | `replay` | answer from the Cassette (`demo-reset.sh` sets it) |
 | `QUERY_EXPANSION_ENABLED` | `false` | no LLM query rewrite |
-| `CODEGEN_MOCK` | `true` | code generation returns a canned artifact, not recorded |
+| `CODEGEN_MOCK` | `false` | code generation and review are real, answered from the Cassette |
 
 ## Before you present
 
@@ -35,8 +35,9 @@ Set by `scripts/demo-env.sh`; you never edit `.env` for the demo.
 
 The frontend opens on **Relevance**. Show that order first; then click **Final
 score**: the list must not reorder (the backend already returns Final Score order).
-For code generation, open a paper without a repo and generate; it returns the mock
-artifact.
+Review Reports are recorded for the pairs listed in `demo/generations.txt` (the MIScnn
+paper, and the Writer's `demo/Iris3B-demo.pdf`); anything else you generate on stage
+goes live and needs network and AWS.
 
 ## Re-record
 
@@ -45,8 +46,9 @@ credentials in `.env` and Bedrock access.
 
 1. Edit `demo/queries.txt`.
 2. `rm demo/fixtures/cassette.json` for a clean file (record keeps old entries).
-3. `scripts/demo-record.sh` runs each query live (slow: scoring is inline) and
-   prints the ordered titles with Final Scores. Review them.
+3. `scripts/demo-record.sh` runs each query live (slow: scoring is inline), prints
+   the ordered titles with Final Scores, then runs every job in
+   `demo/generations.txt` (no UI clicks; each takes a minute or so). Review them.
 4. Happy with the order? `git add demo/fixtures/cassette.json && git commit`.
    Fill in the expected-results column above.
 5. `scripts/demo-reset.sh` and rehearse again in replay.
