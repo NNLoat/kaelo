@@ -192,7 +192,7 @@ of Papers.
 
 #### Acceptance Criteria
 
-1. THE Search_System SHALL provide one Source_Adapter per configured Source (OpenAlex and arXiv), each issuing the query against its external index and mapping native records into the common pre-merge paper shape of title, authors, abstract, publication date, identifiers (DOI and/or arXiv id), source links, and repository link when the Source exposes one.
+1. THE Search_System SHALL provide one Source_Adapter per configured Source (OpenAlex and arXiv), each issuing the query against its external index and mapping native records into the common pre-merge paper shape of title, authors, abstract, publication date, identifiers (DOI and/or arXiv id), source links, and repository link when the Source exposes one. Neither Source has a repository field, so an adapter takes it from the first GitHub link in the abstract (`find_repo_url`).
 2. WHEN a Source_Adapter receives records from its Source, THE Source_Adapter SHALL restrict results to the Computer Science and Medicine domains per the configured source scope.
 3. WHEN Merge_Dedup receives candidate records that share a normalized identifier (same DOI, or same arXiv id) or a matching normalized title with overlapping authors, THE Merge_Dedup SHALL collapse them into a single Paper that records every contributing Source and retains the richer non-empty value for each field.
 4. WHEN Merge_Dedup produces a Paper from records of more than one Source, THE Merge_Dedup SHALL record every contributing Source on that Paper so that each is shown as a Source badge.

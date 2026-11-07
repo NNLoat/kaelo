@@ -12,7 +12,7 @@ from xml.etree import ElementTree as ET
 import httpx
 
 from app.models.paper import PaperDomain
-from app.services.sources.base import SourceError, SourceRecord
+from app.services.sources.base import SourceError, SourceRecord, find_repo_url
 
 _API_URL = "https://export.arxiv.org/api/query"
 _ATOM = "{http://www.w3.org/2005/Atom}"
@@ -85,7 +85,7 @@ class ArxivAdapter:
             doi=doi,
             arxiv_id=arxiv_id,
             source_links=links,
-            repo_url=None,
+            repo_url=find_repo_url(abstract),
             domain=_domain(entry),
         )
 
