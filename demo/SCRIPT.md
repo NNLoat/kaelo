@@ -21,7 +21,7 @@ Set by `scripts/demo-env.sh`; you never edit `.env` for the demo.
 ## Before you present
 
 1. `scripts/demo-reset.sh`: wipes the database, starts the stack in replay and
-   registers the account `demo` / `demo-password-1` (local only, not a secret).
+   registers the account `demo` / `demo-password` (local only, not a secret).
    Run it before every rehearsal and right before going on stage so paper ids and
    state start identical.
 2. Open <http://localhost:5173> and log in as `demo`.

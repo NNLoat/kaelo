@@ -5,7 +5,7 @@ One story, four features. About 280 spoken words; don't improvise.
 ## Before you go on stage
 
 1. `scripts/demo-record.sh` has been run **after** repo-link detection landed, and the Cassette is committed.
-2. Run `scripts/demo-reset.sh` just before. Log in as `demo` / `demo-password-1`.
+2. Run `scripts/demo-reset.sh` just before. Log in as `demo` / `demo-password`.
 3. Clipboard: the query `Machine Learning Medical Image Segmentation Artificial Intelligence`. Note the writer reference `arxiv:2610.09450` and the PDF location `demo/Iris3B-demo.pdf` (kept local, gitignored).
 4. Keep a screen recording as a fallback.
 
