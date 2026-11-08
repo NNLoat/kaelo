@@ -127,7 +127,7 @@ flows, what's left, operational gotchas).
   full). Codegen helper tests passed in-agent; same host-pytest caveat as above.
   Note: if a configured model's output ceiling is below 8192, lower
   `CODEGEN_MAX_TOKENS`.
-- [ ] **Rotate the leaked AWS key** `AKIA6HF7RX3XVOANFSIE` still present in `.env`.
+- [x] **Rotate the leaked AWS key.** Rotated; the old key is rejected by AWS.
 
 ## The workflow (for reference)
 

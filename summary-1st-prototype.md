@@ -77,7 +77,6 @@ codegen Task 12 needs mock-mode + cancel verified in the browser after PR #19.
 - **Mock mode:** `CODEGEN_MOCK=true` (wired through compose + `.env.example`)
   makes generation return a canned artifact with no Bedrock call — use it for
   deterministic frontend testing.
-- **Rotate the AWS key.** `.env` still contains a leaked key
-  (`AKIA6HF7RX3XVOANFSIE`) — rotate before sharing the repo.
+- **Rotate the AWS key.** Done: the leaked key was rotated and AWS rejects the old one.
 - **Backend gate:** `cd backend && uv run pytest` → 132 passed (testcontainers
   Postgres 17, run on host). No automated frontend test gate — UI is manual.
