@@ -51,3 +51,6 @@ dist/
 
 # npx skills — other agents' generated dirs
 .claude/
+
+# Local-only demo manuscript (18 MB)
+demo/Iris3B-demo.pdf

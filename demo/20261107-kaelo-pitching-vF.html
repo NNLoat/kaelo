@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Kaelo Pitch Slides</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: one 16:9 stage scaled to the viewport; type sized in container units so every slide keeps its proportions from a phone to a projector.
+   Deliberately single light theme: it mirrors the Kaelo app (paper, ink, teal) and projects cleanly. */
+:root {
+  --paper: #f8fafc;      /* app background */
+  --card: #ffffff;
+  --ink: #0f172a;        /* app ink */
+  --muted: #5b6b7d;      /* app muted, nudged darker for projection */
+  --hairline: #e2e8f0;
+  --accent: #1c6b5a;     /* Kaelo teal */
+  --accent-strong: #15584a;
+  --accent-tint: #a9d3c7;
+  --neutral-bar: #7f8d99;
+  --stage-out: #e9eef2;  /* letterbox around the stage */
+  --serif: Georgia, "Times New Roman", "Noto Serif Thai", serif;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Noto Sans Thai", sans-serif;
+  color-scheme: light;
+}
+html, body { height: 100%; }
+body {
+  background: var(--stage-out);
+  color: var(--ink);
+  font-family: var(--sans);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 12px;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.stage {
+  container-type: inline-size;
+  position: relative;
+  width: min(100%, calc((100vh - 24px) * 16 / 9));
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--paper);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, .08), 0 12px 40px rgba(15, 23, 42, .08);
+  border-radius: 6px;
+  overflow: hidden;
+}
+:fullscreen .stage, .stage:fullscreen { border-radius: 0; box-shadow: none; }
+
+.slide {
+  position: absolute; inset: 0;
+  padding: 6cqw 7cqw 5.5cqw;
+  display: flex; flex-direction: column;
+  opacity: 0; visibility: hidden;
+  transition: opacity .35s ease, visibility .35s;
+}
+.slide.active { opacity: 1; visibility: visible; }
+
+.step { transition: opacity .4s ease, transform .4s ease; }
+.step.pending { opacity: 0; transform: translateY(1.2cqw); }
+
+.eyebrow {
+  font: 600 1.15cqw/1 var(--sans);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted);
+}
+.refs {
+  margin-top: auto;
+  border-top: 1px solid var(--hairline);
+  padding-top: 1.2cqw;
+  display: grid; gap: .45cqw;
+  font: 1.05cqw/1.45 var(--sans);
+  color: var(--muted);
+}
+.refs i { font-style: italic; }
+sup.cite { font: 600 .55em/0 var(--sans); color: var(--accent); vertical-align: super; margin-left: .15em; }
+
+/* 1 · Newton */
+.s-quote { justify-content: center; align-items: center; text-align: center; }
+.s-quote blockquote { margin: 0; max-width: 86cqw; }
+.s-quote .q {
+  font: italic 400 4.6cqw/1.25 var(--serif);
+  text-wrap: balance;
+  color: var(--ink);
+}
+.s-quote .q .mark { color: var(--accent); font-style: normal; }
+.s-quote cite {
+  display: block; margin-top: 3cqw;
+  font: normal 600 1.6cqw/1.3 var(--sans); color: var(--ink);
+}
+.s-quote cite span { display: block; font-weight: 400; color: var(--muted); font-size: 1.25cqw; margin-top: .4cqw; }
+.s-quote .rule { width: 6cqw; height: 2px; background: var(--accent); margin: 0 auto 3.2cqw; border-radius: 2px; }
+
+/* 7 · Close (mirrors slide 1) */
+.s-close .echo { margin: 0 0 1.4cqw; font: italic 400 1.9cqw/1.3 var(--serif); color: var(--muted); }
+.s-close .hero-word { font: 400 13cqw/1 var(--serif); color: var(--accent); letter-spacing: -.01em; }
+.s-close .cta { margin: 1.6cqw auto 0; font: 400 3cqw/1.25 var(--serif); color: var(--ink); max-width: 60cqw; text-wrap: balance; }
+.s-close .sign { margin-top: 3.6cqw; display: grid; gap: .8cqw; justify-items: center; }
+.s-close .sign .names { font: 600 1.2cqw/1.4 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--ink); }
+.s-close .sign .team { font: 1.15cqw/1.4 var(--sans); color: var(--muted); }
+
+/* 2 · Statistics */
+.s-stats h2 { font: 400 3.6cqw/1.15 var(--serif); margin: 1.2cqw 0 0; text-wrap: balance; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 5cqw; margin-top: 4cqw; }
+.stat { display: grid; gap: 1.4cqw; align-content: start; min-width: 0; }
+.stat .num { font: 400 9cqw/.95 var(--serif); color: var(--accent); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.stat .num small { font-size: .42em; color: var(--ink); margin-left: .2em; }
+.stat p { margin: 0; font: 1.75cqw/1.4 var(--sans); max-width: 34cqw; }
+.units { display: grid; gap: .45cqw; margin-top: .6cqw; }
+.units.ten { grid-template-columns: repeat(10, 2.1cqw); }
+.units.days { grid-template-columns: repeat(14, 1.25cqw); gap: .35cqw; }
+.units span { aspect-ratio: 1; border-radius: .25cqw; background: var(--hairline); }
+.units span.on { background: var(--accent); }
+.units span.half { background: linear-gradient(90deg, var(--accent) 50%, var(--hairline) 50%); }
+.units-cap { font: 1.05cqw/1.3 var(--sans); color: var(--muted); }
+
+/* 3 · Question */
+.s-ask { justify-content: center; align-items: flex-start; text-align: left; gap: 2.6cqw; }
+.s-ask .rule { width: 6cqw; height: 2px; background: var(--accent); border-radius: 2px; transition: opacity .35s ease; }
+.s-ask h2 { margin: 0; font: 400 5.2cqw/1.18 var(--serif); max-width: 78cqw; text-wrap: balance; transition: opacity .35s ease; }
+.s-ask h2 em { font-style: italic; color: var(--accent); }
+.s-ask .wordmark {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font: 400 13cqw/1 var(--serif); color: var(--accent); letter-spacing: -.01em;
+  transition: opacity .5s ease .2s;
+}
+.s-ask .wordmark.pending { transform: none; }
+.s-ask.revealed h2 { opacity: 0; }
+.s-ask.revealed .rule { opacity: 0; }
+
+/* 4 · Placeholder */
+.s-hold { justify-content: center; align-items: center; text-align: center; }
+.hold {
+  border: 2px dashed var(--hairline); border-radius: 1cqw;
+  padding: 5cqw 7cqw; display: grid; gap: 1.4cqw; color: var(--muted);
+}
+.hold strong { font: 400 3.6cqw/1.1 var(--serif); color: var(--ink); }
+.hold span { font: 1.6cqw/1.4 var(--sans); }
+
+/* 5 · Timeline */
+.s-plan h2, .s-impact h2 { font: 400 3.6cqw/1.15 var(--serif); margin: 1.2cqw 0 0; text-wrap: balance; }
+.timeline { margin-top: 4cqw; display: grid; grid-template-columns: 3fr 3fr 6fr; gap: 1.2cqw; }
+.phase { display: grid; grid-template-rows: auto auto auto 1fr; gap: 1.1cqw; min-width: 0; }
+.phase .bar { height: .7cqw; border-radius: .35cqw; background: var(--accent-tint); }
+.phase:first-child .bar { background: var(--accent); }
+.phase:nth-child(2) .bar { background: #5f9e8d; }
+.phase .when { font: 600 1.2cqw/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-variant-numeric: tabular-nums; }
+.phase h3 { margin: 0; font: 400 2.5cqw/1.15 var(--serif); }
+.phase p { margin: 0; font: 1.5cqw/1.45 var(--sans); max-width: 38cqw; }
+.chips { display: flex; flex-wrap: wrap; gap: .6cqw; margin-top: .8cqw; }
+.chip {
+  font: 600 1.2cqw/1 var(--sans); padding: .55cqw .9cqw; border-radius: 99px;
+  border: 1px solid var(--hairline); background: var(--card); color: var(--ink);
+}
+.chip.key { border-color: var(--accent); color: var(--accent-strong); }
+.axis { margin-top: 2.6cqw; display: grid; grid-template-columns: repeat(12, 1fr); border-top: 1px solid var(--hairline); }
+.axis span { font: 1cqw/1 var(--sans); color: var(--muted); padding-top: .7cqw; font-variant-numeric: tabular-nums; }
+
+/* 5 · Gantt */
+.gantt { margin-top: 1.8cqw; display: flex; flex-direction: column; }
+.g-row { display: grid; grid-template-columns: 38cqw 1fr; align-items: center; border-bottom: 1px solid var(--hairline); padding-block: .8cqw; }
+.g-row:last-child { border-bottom: 0; }
+.g-head { padding-block: 0 .6cqw; align-items: end; }
+.g-head .g-label { font: 600 1.05cqw/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.g-label { display: grid; gap: .35cqw; padding-right: 2cqw; min-width: 0; }
+.g-label .when { font: 600 .95cqw/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.g-label h3 { margin: 0; font: 400 1.95cqw/1.1 var(--serif); }
+.g-label p { margin: 0; font: 1.15cqw/1.35 var(--sans); }
+.g-label .chips { margin-top: .2cqw; gap: .5cqw; }
+.g-label .chip { font-size: 1.05cqw; padding: .4cqw .75cqw; }
+.g-scale { display: grid; gap: .5cqw; }
+.g-quarters, .g-months, .g-track { display: grid; grid-template-columns: repeat(12, 1fr); }
+.g-quarters span { grid-column: span 3; font: 600 1.05cqw/1 var(--sans); color: var(--ink); padding-left: .5cqw; border-left: 1px solid var(--hairline); }
+.g-months span { font: 1cqw/1 var(--sans); color: var(--muted); text-align: center; font-variant-numeric: tabular-nums; }
+.g-track {
+  align-self: stretch; align-items: center;
+  background-image: repeating-linear-gradient(to right, var(--hairline) 0 1px, transparent 1px calc(100% / 12));
+}
+.g-bar {
+  height: 3cqw; margin-inline: .15cqw; border-radius: .5cqw;
+  background: var(--accent); color: #ffffff;
+  display: flex; align-items: center; padding-inline: 1cqw;
+  font: 600 1.25cqw/1 var(--sans); white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+
+/* 6 · Impact */
+.chart { margin-top: 2.6cqw; width: 100%; max-width: 100%; height: auto; display: block; }
+.chart text { font-family: var(--sans); }
+.legend { display: flex; flex-wrap: wrap; gap: 2.4cqw; font: 1.2cqw/1 var(--sans); color: var(--muted); margin-top: .6cqw; }
+.legend span { display: inline-flex; align-items: center; gap: .6cqw; }
+.legend i { width: 1.6cqw; height: .9cqw; border-radius: .2cqw; display: inline-block; }
+
+
+/* 4a–4c · Solution, AI, Kiro (from kaelo-slides) */
+.s-sol h2, .s-ai h2, .s-kiro h2 { font: 400 3.4cqw/1.15 var(--serif); margin: 1.1cqw 0 0; text-wrap: balance; }
+.k-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.2cqw; margin-top: 2cqw; align-items: stretch; }
+.k-card { background: var(--card); border: 1px solid var(--hairline); border-top: .35cqw solid var(--accent); border-radius: .8cqw; padding: 1.4cqw 1.7cqw; display: flex; flex-direction: column; gap: .7cqw; min-width: 0; box-shadow: 0 1px 2px rgba(15,23,42,.05); }
+.k-card.alt { border-top-color: #5f9e8d; }
+.k-card h3 { margin: 0; font: 400 2cqw/1.15 var(--serif); }
+.k-msg { margin: 0; font: italic 400 1.6cqw/1.25 var(--serif); color: var(--accent); }
+.k-note { margin: 0; font: 1.05cqw/1.35 var(--sans); color: var(--muted); font-style: italic; }
+.k-small { margin: 0; font: 1.1cqw/1.4 var(--sans); color: var(--muted); }
+.k-small b { color: var(--ink); }
+.k-res { margin-bottom: .6cqw; display: flex; gap: 1.2cqw; align-items: center; }
+.k-score { flex: none; width: 5cqw; height: 5cqw; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: #fff; font: 400 2.3cqw/1 var(--serif); font-variant-numeric: tabular-nums; }
+.k-scorewrap { flex: none; display: grid; justify-items: center; gap: .5cqw; }
+.k-eq { font: 600 1cqw/1 var(--sans); color: var(--accent-strong); white-space: nowrap; }
+.k-formula { background: #eef6f3; border-radius: .6cqw; padding: .6cqw 1cqw; font: 1.1cqw/1.4 var(--sans); color: var(--ink); }
+.k-formula b:last-child { color: var(--accent-strong); }
+.k-res b { font: 600 1.3cqw/1.3 var(--sans); }
+.k-pills { display: flex; gap: .5cqw; margin-top: .4cqw; }
+.k-pill { font: 600 .95cqw/1 var(--sans); padding: .35cqw .7cqw; border-radius: 99px; border: 1px solid var(--hairline); color: var(--ink); background: var(--paper); }
+.k-pill.g { border-color: var(--accent); color: var(--accent-strong); }
+.k-bar { display: grid; grid-template-columns: 11cqw 1fr 3cqw; align-items: center; gap: .8cqw; font: 1.1cqw/1 var(--sans); color: var(--muted); }
+.k-bar .t { height: .7cqw; border-radius: .35cqw; background: var(--hairline); }
+.k-bar i { display: block; height: 100%; border-radius: .35cqw; background: var(--accent); }
+.k-bar b { color: var(--ink); font-variant-numeric: tabular-nums; text-align: right; }
+.k-code { margin: 0; background: var(--ink); color: #d7e2f2; padding: .8cqw 1.1cqw; border-radius: .6cqw; font: 1.1cqw/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; }
+.k-code .bad { background: rgba(248,113,113,.35); }
+.k-code .add { color: var(--accent-tint); }
+.k-sug { border-left: .3cqw solid var(--accent); background: #eef6f3; padding: .55cqw .9cqw; border-radius: 0 .5cqw .5cqw 0; font: 1.1cqw/1.4 var(--sans); color: var(--ink); }
+.k-sug code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .95em; }
+.k-foot { margin-top: auto; padding-top: 1cqw; border-top: 1px solid var(--hairline); font: 1.05cqw/1.4 var(--sans); color: var(--muted); }
+
+.k-legend { display: flex; flex-wrap: wrap; gap: 1.2cqw; margin-top: 1.6cqw; }
+.k-lg { font: 600 1.1cqw/1 var(--sans); padding: .5cqw 1cqw; border-radius: 99px; border: 1.5px solid; color: var(--ink); }
+.k-lg.llm, .k-st.llm { border-color: var(--accent); background: #e6f2ee; }
+.k-lg.det, .k-st.det { border-color: var(--ink); background: var(--card); }
+.k-lg.ext, .k-st.ext { border-color: var(--neutral-bar); border-style: dashed; background: #f1f4f6; }
+.k-groups { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8cqw; margin-top: 1.6cqw; }
+.k-grp { display: flex; flex-direction: column; gap: .8cqw; background: #eef2f5; border-radius: .8cqw; padding: 1.1cqw; min-width: 0; }
+.k-gh { font: 400 1.9cqw/1.15 var(--serif); padding-bottom: .6cqw; border-bottom: 2px solid var(--ink); }
+.k-gh span { display: block; font: 1.1cqw/1.35 var(--sans); color: var(--muted); margin-top: .3cqw; }
+.k-st { border: 1.5px solid; border-radius: .6cqw; padding: .6cqw .9cqw; }
+.k-st b { display: block; font: 600 1.3cqw/1.3 var(--sans); }
+.k-st small { font: 1.1cqw/1.35 var(--sans); color: var(--muted); }
+.k-rule { margin: 1.6cqw 0 0; text-align: center; font: 400 1.9cqw/1.3 var(--serif); }
+.k-rule b { color: var(--accent); font-weight: 400; font-style: italic; }
+
+.k-kc { background: var(--card); border: 1px solid var(--hairline); border-left: .3cqw solid var(--accent); border-radius: .6cqw; padding: .6cqw 1cqw; display: flex; flex-direction: column; gap: .25cqw; }
+.k-kc b { font: 600 1.3cqw/1.3 var(--sans); }
+.k-kc small { font: 1.05cqw/1.35 var(--sans); color: var(--muted); }
+.k-kc small b { font: 600 1.05cqw/1.35 var(--sans); color: var(--ink); }
+.k-kc em { font: 600 1.1cqw/1.3 var(--sans); color: var(--accent-strong); font-style: normal; }
+.k-modes { display: grid; grid-template-columns: auto 1fr 1fr; gap: 1.4cqw; align-items: center; margin-top: 1.8cqw; }
+.k-modes .k-gh { border: 0; padding: 0; font-size: 1.7cqw; white-space: nowrap; }
+
+/* Divider before the live demo */
+.s-demo { justify-content: center; align-items: center; text-align: center; gap: 2.6cqw; }
+.s-demo .rule { width: 6cqw; height: 2px; background: var(--accent); border-radius: 2px; }
+.s-demo h2 { margin: 0; font: 400 7cqw/1.1 var(--serif); letter-spacing: -.01em; text-wrap: balance; }
+.s-demo h2 em { font-style: italic; color: var(--accent); }
+
+/* Brand mark (slides after the reveal) */
+.brand { position: absolute; top: 5.4cqw; right: 7cqw; font: 400 2.1cqw/1 var(--serif); color: var(--accent); letter-spacing: -.01em; }
+
+/* Controls */
+.nav {
+  position: absolute; right: 1.6cqw; bottom: 1.4cqw; z-index: 5;
+  display: flex; align-items: center; gap: .8cqw;
+  opacity: .35; transition: opacity .2s;
+}
+.stage:hover .nav, .nav:focus-within { opacity: 1; }
+.nav button {
+  font: 600 1.2cqw/1 var(--sans); color: var(--ink); background: var(--card);
+  border: 1px solid var(--hairline); border-radius: .5cqw; padding: .6cqw .9cqw; cursor: pointer;
+  min-width: 2.6cqw;
+}
+.nav button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.count { font: 1.1cqw/1 var(--sans); color: var(--muted); font-variant-numeric: tabular-nums; min-width: 4cqw; text-align: right; }
+.who { position: absolute; left: 7cqw; bottom: 1.8cqw; font: 600 1cqw/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); opacity: .7; }
+
+@media (prefers-reduced-motion: reduce) {
+  .slide, .step { transition: none; }
+}
+</style>
+
+<main class="stage" id="stage" aria-roledescription="slide deck" aria-label="Kaelo pitch, presenter 1 slides">
+
+  <!-- 1 · Opening quote -->
+  <section class="slide s-quote active" aria-label="Slide 1: Newton quote">
+    <blockquote>
+      <div class="rule"></div>
+      <p class="q"><span class="mark">“</span>If I have seen further, it is by standing on the shoulders of giants.<span class="mark">”</span></p>
+      <cite>Isaac Newton<span>Letter to Robert Hooke, 1675</span></cite>
+    </blockquote>
+  </section>
+
+  <!-- 2 · Statistics -->
+  <section class="slide s-stats" aria-label="Slide 2: reproducibility statistics">
+    <span class="eyebrow">The reproducibility problem</span>
+    <h2>The shoulders we stand on are shaking.</h2>
+    <div class="stats">
+      <div class="stat">
+        <div class="num">&gt;70%</div>
+        <p>of researchers have tried and failed to reproduce another scientist’s experiments.<sup class="cite">1</sup></p>
+        <div class="units ten" aria-hidden="true">
+          <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span>
+        </div>
+        <span class="units-cap">Survey of 1,576 researchers</span>
+      </div>
+      <div class="stat step pending">
+        <div class="num">53.5<small>days</small></div>
+        <p>median time to reproduce one machine-learning paper, even when the attempt succeeds.<sup class="cite">2</sup></p>
+        <div class="units days" id="days" aria-hidden="true"></div>
+        <span class="units-cap">One square per day</span>
+      </div>
+    </div>
+    <div class="refs">
+      <div>[1] Baker M. 1,500 scientists lift the lid on reproducibility. <i>Nature</i>. 2016;533:452–454.</div>
+      <div>[2] Raff E. Research reproducibility as a survival analysis. <i>Proceedings of AAAI-21</i>. 2021.</div>
+    </div>
+  </section>
+
+  <!-- 3 · Question + reveal -->
+  <section class="slide s-ask" aria-label="Slide 3: the question">
+    <div class="rule"></div>
+    <h2>What if Mahidol’s research could be <em>steady shoulders</em> for the next generation?</h2>
+    <div class="wordmark step pending" aria-label="Kaelo">Kaelo</div>
+  </section>
+
+  <!-- 4a · Our solution -->
+  <section class="slide s-sol" aria-label="Slide 4: our solution">
+    <span class="brand" aria-hidden="true">Kaelo</span>
+    <span class="eyebrow">Our solution</span>
+    <h2>One account, two modes.</h2>
+    <div class="k-grid">
+      <div class="k-card step pending">
+        <h3>Reader: finds and evaluates others’ papers</h3>
+        <p class="k-msg">“Find papers you can actually rebuild.”</p>
+        <p class="k-note">Query: “graph neural network for drug-target interaction”</p>
+        <div class="k-res"><div class="k-scorewrap"><div class="k-score">82</div><span class="k-eq">= 0.82 of 1.00</span></div><div>
+          <b>Example Paper A: GNN-based Drug-Target Prediction</b>
+          <div class="k-pills"><span class="k-pill">Computer Science</span><span class="k-pill g">code found</span></div></div></div>
+        <div class="k-bar"><span>Install &amp; Set Up</span><div class="t"><i style="width:90%"></i></div><b>0.90</b></div>
+        <div class="k-bar"><span>Match the Paper</span><div class="t"><i style="width:75%"></i></div><b>0.75</b></div>
+        <div class="k-bar"><span>Documentation</span><div class="t"><i style="width:85%"></i></div><b>0.85</b></div>
+        <div class="k-formula"><b>Score (S)</b> = 0.30·S<sub>Q</sub> + 0.70·S<sub>D</sub> = 0.30·0.85 + 0.70·0.81 = <b>0.82</b></div>
+        <div class="k-formula"><b>Final score</b> = 0.7·relevance + 0.3·S = 0.7·0.90 + 0.3·0.82 = <b>0.88</b></div>
+        <p class="k-small">S is code-based: Q = code quality, D = paper-to-code match (weighted higher, since a repo that contradicts the paper is not reproducible). The final score only orders the results.</p>
+      </div>
+      <div class="k-card alt step pending">
+        <h3>Writer: checks their own paper</h3>
+        <p class="k-msg">“See your reproducibility gaps and how to fix them.”</p>
+        <p class="k-note">Input: train.py (manuscript says lr 0.001, 100 epochs, seed 42)</p>
+<pre class="k-code">lr = 0.01
+<span class="bad">epochs = 50</span>
+<span class="bad">model = Net()  # no seed set</span></pre>
+        <div class="k-sug"><b>Match the Paper:</b> <code>lr</code> is 0.01, paper says 0.001. <code>epochs</code> is 50, paper says 100.</div>
+        <div class="k-sug"><b>Install &amp; Set Up:</b> no fixed random seed, no dependency file.</div>
+<pre class="k-code"><span class="add">+ torch.manual_seed(42)
++ lr, epochs = 0.001, 100</span></pre>
+        <p class="k-small">Suggestion for every gap. Generated code is unverified and never executed.</p>
+      </div>
+    </div>
+    <div class="k-foot step pending">Illustrative mock built from the scoring rules (scoring_rule.md v1.2). Titles and numbers are examples.</div>
+  </section>
+
+  <!-- 4a+ · Demo divider -->
+  <section class="slide s-demo" aria-label="Slide 5: live demo">
+    <span class="brand" aria-hidden="true">Kaelo</span>
+    <div class="rule"></div>
+    <h2>Let’s see it <em>in action.</em></h2>
+  </section>
+
+  <!-- 4b · How AI is used -->
+  <section class="slide s-ai" aria-label="Slide 6: how AI is used">
+    <span class="brand" aria-hidden="true">Kaelo</span>
+    <span class="eyebrow">How AI is used</span>
+    <h2>Where the LLM is used in the Reader flow.</h2>
+    <div class="k-legend step pending"><span class="k-lg llm">LLM (Bedrock via LangChain)</span><span class="k-lg det">Deterministic code</span><span class="k-lg ext">External source</span></div>
+    <div class="k-groups">
+      <div class="k-grp step pending"><div class="k-gh">A. Search<span>LLM rewrites the query and explains each match</span></div>
+        <div class="k-st llm"><b>Query</b><small>Expand natural-language query into search terms</small></div>
+        <div class="k-st ext"><b>Search</b><small>OpenAlex + arXiv, merge, de-duplicate</small></div>
+        <div class="k-st llm"><b>Blurb</b><small>One-line relevance explanation</small></div>
+        <div class="k-st det"><b>Rank</b><small>0.7 relevance + 0.3 reproducibility</small></div></div>
+      <div class="k-grp step pending"><div class="k-gh">B. Score<span>LLM collects evidence; code computes the number</span></div>
+        <div class="k-st ext"><b>Inspect</b><small>GitHub repo: README, license, tests</small></div>
+        <div class="k-st llm"><b>Evidence</b><small>Per-criterion status + note, Experiment Setup</small></div>
+        <div class="k-st det"><b>Score</b><small>Fixed weights, Q/D formula</small></div>
+        <div class="k-st llm"><b>Explain</b><small>Prose written from the breakdown</small></div></div>
+      <div class="k-grp step pending"><div class="k-gh">C. Generate<span>LLM writes code only when the user opts in</span></div>
+        <div class="k-st llm"><b>Generate / Align</b><small>Code + README from Experiment Setup and manuscript</small></div>
+        <div class="k-st det"><b>Guardrail</b><small>Marked unverified, never executed, never feeds the paper score</small></div></div>
+    </div>
+    <p class="k-rule step pending">The LLM supplies evidence, <b>never the number.</b></p>
+  </section>
+
+  <!-- 4c · Kiro -->
+  <section class="slide s-kiro" aria-label="Slide 7: Kiro features used">
+    <span class="brand" aria-hidden="true">Kaelo</span>
+    <span class="eyebrow">Built with Kiro</span>
+    <h2>Kiro features used in Kaelo.</h2>
+    <div class="k-modes"><div class="k-gh">Kiro modes used</div>
+      <div class="k-kc"><b>Spec mode</b><small>Feature work: requirements, design, tasks, then run task by task</small></div>
+      <div class="k-kc"><b>Ask mode</b><small>Small fixes and questions, with ponytail and no spec</small></div></div>
+    <div class="k-groups">
+      <div class="k-grp step pending"><div class="k-gh">A. Define<span>Set shared context before any code</span></div>
+        <div class="k-kc"><b>Steering</b><small>product, tech, structure, workflow</small><em>Always-on scope and rules</em></div>
+        <div class="k-kc"><b>Skills (5)</b><small><b>grill-with-docs, grilling:</b> interrogate requirements<br><b>domain-modeling:</b> glossary + ADRs<br><b>ponytail:</b> minimal diffs<br><b>frontend-design:</b> UI and tokens</small><em>Shared via git, pinned to upstream commits</em></div></div>
+      <div class="k-grp step pending"><div class="k-gh">B. Plan<span>Turn ideas into reviewable steps</span></div>
+        <div class="k-kc"><b>Specs</b><small>requirements, design, tasks</small><em>5 features, one PR per layer</em></div>
+        <div class="k-kc"><b>Hooks</b><small>spec-nudge on prompt submit</small><em>Asks for a spec when a change is feature work</em></div></div>
+      <div class="k-grp step pending"><div class="k-gh">C. Build &amp; record<span>Implement, verify, keep the reasons</span></div>
+        <div class="k-kc"><b>Agent + ponytail skill</b><small>UI, backend, business logic</small><em>Minimal diffs; 132 backend tests pass</em></div>
+        <div class="k-kc"><b>Docs</b><small>9 ADRs + glossary</small><em>Decisions survive team turnover</em></div></div>
+    </div>
+  </section>
+
+  <!-- 5 · Timeline -->
+  <section class="slide s-plan" aria-label="Slide 8: rollout timeline">
+    <span class="brand" aria-hidden="true">Kaelo</span>
+    <span class="eyebrow">Implementation readiness</span>
+    <h2>Ready for Mahidol in three phases.</h2>
+    <div class="gantt" role="table" aria-label="Rollout plan by month">
+      <div class="g-row g-head" role="row">
+        <span class="g-label" role="columnheader">Phase</span>
+        <div class="g-scale" aria-hidden="true">
+          <div class="g-months"><span>M1</span><span>M2</span><span>M3</span><span>M4</span><span>M5</span><span>M6</span><span>M7</span><span>M8</span><span>M9</span><span>M10</span><span>M11</span><span>M12</span></div>
+        </div>
+      </div>
+
+      <div class="g-row step pending" role="row">
+        <div class="g-label" role="cell">
+          <span class="when">Phase 1</span>
+          <h3>Integrate</h3>
+          <p>Integrate with Mahidol’s systems, with the MU IT Division.</p>
+          <div class="chips"><span class="chip key">MARVIS</span><span class="chip">MU IT Account</span></div>
+        </div>
+        <div class="g-track" role="cell"><div class="g-bar" style="grid-column: 1 / 4">Months 1–3</div></div>
+      </div>
+
+      <div class="g-row step pending" role="row">
+        <div class="g-label" role="cell">
+          <span class="when">Phase 2</span>
+          <h3>Pilot &amp; measure</h3>
+          <p>Pilot in faculties whose standards Kaelo already supports.</p>
+          <div class="chips"><span class="chip">ICT</span><span class="chip">Engineering</span><span class="chip">Medicine</span></div>
+        </div>
+        <div class="g-track" role="cell"><div class="g-bar" style="grid-column: 4 / 7">Months 4–6</div></div>
+      </div>
+
+      <div class="g-row step pending" role="row">
+        <div class="g-label" role="cell">
+          <span class="when">Phase 3</span>
+          <h3>Scale across Mahidol</h3>
+          <p>Add each field’s standard, without rebuilding the system.</p>
+        </div>
+        <div class="g-track" role="cell"><div class="g-bar" style="grid-column: 7 / 13">Months 7–12</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · Impact -->
+  <section class="slide s-impact" aria-label="Slide 9: expected impact">
+    <span class="brand" aria-hidden="true">Kaelo</span>
+    <span class="eyebrow">Expected impact</span>
+    <h2>At least 21 hours back, per researcher, every year.</h2>
+
+    <svg class="chart" viewBox="0 0 1000 270" role="img" aria-labelledby="chart-title chart-desc">
+      <title id="chart-title">Hours per researcher per year spent finding papers</title>
+      <desc id="chart-desc">Today about 70 hours a year. With Kaelo about 49 hours a year, so at least 21 hours are saved.</desc>
+      <!-- scale: x = 230 + hours * 9  (0–80 h) -->
+      <g stroke="#e2e8f0" stroke-width="1">
+        <line x1="230" y1="14" x2="230" y2="222"/><line x1="410" y1="14" x2="410" y2="222"/>
+        <line x1="590" y1="14" x2="590" y2="222"/><line x1="770" y1="14" x2="770" y2="222"/>
+        <line x1="950" y1="14" x2="950" y2="222"/>
+      </g>
+      <g font-size="15" fill="#5b6b7d" text-anchor="middle">
+        <text x="230" y="246">0</text><text x="410" y="246">20</text><text x="590" y="246">40</text>
+        <text x="770" y="246">60</text><text x="950" y="246">80</text>
+      </g>
+      <text x="230" y="267" font-size="14" fill="#5b6b7d">Hours per researcher per year spent finding papers</text>
+
+      <g font-size="19" fill="#0f172a" font-weight="600" text-anchor="end">
+        <text x="212" y="58">Today</text>
+        <text x="212" y="188">With Kaelo</text>
+      </g>
+
+      <!-- Today: ~70.4 h -->
+      <rect x="230" y="30" width="634" height="44" rx="4" fill="#c5cfd8"><title>Today: about 70 hours a year</title></rect>
+      <text x="876" y="58" font-size="18" fill="#0f172a" font-weight="600">≈70 h</text>
+
+      <!-- With Kaelo, conservative case (30% less effort): ~49.3 h -->
+      <rect x="230" y="160" width="444" height="44" rx="4" fill="#1c6b5a"><title>With Kaelo: about 49 hours a year (30% less effort)</title></rect>
+      <text x="686" y="188" font-size="18" fill="#0f172a" font-weight="600">≈49 h</text>
+
+      <!-- Original level guide -->
+      <line x1="864" y1="80" x2="864" y2="210" stroke="#7f8d99" stroke-width="2" stroke-dasharray="5 5"/>
+
+      <!-- Saving arrow: from 70 h back to 49 h -->
+      <line x1="858" y1="128" x2="686" y2="128" stroke="#1c6b5a" stroke-width="3"/>
+      <path d="M674 128 l12 -7 v14 z" fill="#1c6b5a"/>
+      <line x1="674" y1="136" x2="674" y2="156" stroke="#1c6b5a" stroke-width="1.5"/>
+      <text x="769" y="114" font-size="22" fill="#15584a" text-anchor="middle" font-weight="700">≈21 h saved</text>
+    </svg>
+
+
+    <div class="refs">
+      <div>Estimate, to be measured in the pilot. Today: ~22 articles a month × 16 min searching each ≈ 70 h a year.<sup class="cite">3</sup> With Kaelo: 30% less effort, the low end of results reported for AI-assisted screening.<sup class="cite">4</sup></div>
+      <div>[3] Tenopir C, Volentine R, King DW. Scholarly reading and the value of academic library collections. <i>Insights</i>. 2012;25(2):130–149. · [4] O’Mara-Eves A, et al. Using text mining for study identification in systematic reviews. <i>Systematic Reviews</i>. 2015;4:5.</div>
+    </div>
+  </section>
+
+  <!-- 7 · Close -->
+  <section class="slide s-quote s-close" aria-label="Slide 10: closing">
+    <blockquote>
+      <div class="rule"></div>
+      <p class="echo">“…standing on the shoulders of giants.”</p>
+      <div class="hero-word">Kaelo</div>
+      <p class="cta">Let’s build shoulders the next generation can stand on.</p>
+      <div class="sign">
+        <span class="names">Noppachanin Kongsathitporn · Pisut Manorat · Krisanakorn Rugbumroong</span>
+        <span class="team">Mahidol AI Community 2026 · Track B</span>
+      </div>
+    </blockquote>
+  </section>
+
+  <nav class="nav" aria-label="Slide controls">
+    <button type="button" id="prev" aria-label="Previous">←</button>
+    <span class="count" id="count" aria-live="polite">1 / 10</span>
+    <button type="button" id="next" aria-label="Next">→</button>
+    <button type="button" id="fs" aria-label="Full screen">⤢</button>
+  </nav>
+</main>
+
+<script>
+(function () {
+  const slides = [...document.querySelectorAll('.slide')];
+  const count = document.getElementById('count');
+  let i = 0;
+
+  // 53.5-day grid: 53 full squares and one half, in two-week rows
+  const days = document.getElementById('days');
+  for (let d = 0; d < 56; d++) {
+    const s = document.createElement('span');
+    if (d < 53) s.className = 'on'; else if (d === 53) s.className = 'half';
+    days.appendChild(s);
+  }
+
+  const steps = (n) => [...slides[n].querySelectorAll('.step')];
+  function sync(n) {
+    slides[n].classList.toggle('revealed', !!slides[n].querySelector('.wordmark.step:not(.pending)'));
+  }
+  function setSteps(n, revealAll) {
+    steps(n).forEach((el) => el.classList.toggle('pending', !revealAll));
+    sync(n);
+  }
+  function show(n, revealAll) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) => {
+      s.classList.toggle('active', k === i);
+      s.setAttribute('aria-hidden', k === i ? 'false' : 'true');
+    });
+    setSteps(i, revealAll);
+    count.textContent = (i + 1) + ' / ' + slides.length;
+    try { history.replaceState(null, '', '#s' + (i + 1)); } catch (e) {}
+  }
+  function next() {
+    const pending = steps(i).find((el) => el.classList.contains('pending'));
+    if (pending) { pending.classList.remove('pending'); sync(i); return; }
+    if (i < slides.length - 1) show(i + 1, false);
+  }
+  function prev() {
+    const shown = steps(i).filter((el) => !el.classList.contains('pending'));
+    if (shown.length) { shown[shown.length - 1].classList.add('pending'); sync(i); return; }
+    if (i > 0) show(i - 1, true);
+  }
+
+  document.getElementById('next').addEventListener('click', next);
+  document.getElementById('prev').addEventListener('click', prev);
+  document.getElementById('fs').addEventListener('click', () => {
+    const el = document.documentElement;
+    try {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+    } catch (e) {}
+  });
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }
+    else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') show(0, false);
+    else if (e.key === 'End') show(slides.length - 1, true);
+    else if (e.key === 'f' || e.key === 'F') document.getElementById('fs').click();
+  });
+  let x0 = null;
+  document.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 40) (dx < 0 ? next : prev)();
+    x0 = null;
+  });
+
+  const m = /^#s(\d+)$/.exec(location.hash);
+  show(m ? parseInt(m[1], 10) - 1 : 0, !!m);
+})();
+</script>
+
+</body>
+</html>
