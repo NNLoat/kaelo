@@ -38,7 +38,7 @@ _Avoid_: Repro score, rating
 
 **Final Score**:
 The blended ranking score for a search result: a weighted combination of text
-relevance and the Reproducibility Score (default 0.7 relevance / 0.3 repro,
+relevance and the Reproducibility Score (default 0.3 relevance / 0.7 repro,
 weight in config). Results are sorted by Final Score, and all component scores
 are shown to the user.
 
