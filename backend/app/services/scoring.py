@@ -15,6 +15,7 @@ from app.core.config import get_settings
 from app.db.session import engine
 from app.models.paper import Paper, PaperDomain, ScoreStatus
 from app.services import ranking
+from app.services.demo.seams import wrap_source
 from app.services.llm import PaperSummary, assess_relevance, expand_query
 from app.services.merge import MergedPaper, merge_dedup
 from app.services.reproducibility import score_reproducibility
@@ -34,7 +35,7 @@ class SearchResult:
 
 
 def _adapters() -> list[SourceAdapter]:
-    return _ADAPTERS
+    return [wrap_source(a) for a in _ADAPTERS]
 
 
 def run_search(query: str, session: Session) -> SearchResult:
@@ -46,10 +47,12 @@ def run_search(query: str, session: Session) -> SearchResult:
     """
     settings = get_settings()
 
-    try:
-        effective_query = expand_query(query)
-    except Exception:
-        effective_query = query  # fall back to the raw query (R8.2)
+    effective_query = query  # fall back to the raw query on failure (R8.2)
+    if settings.query_expansion_enabled:
+        try:
+            effective_query = expand_query(query)
+        except Exception:
+            pass
 
     groups: list[list] = []
     failed: list[str] = []
@@ -116,6 +119,12 @@ def schedule_scoring(paper_ids: list[int], query: str, tasks: BackgroundTasks) -
     """Queue one background scoring job per paper (R5.1)."""
     for pid in paper_ids:
         tasks.add_task(run_scoring_for_paper, pid, query)
+
+
+def score_inline(paper_ids: list[int], query: str) -> None:
+    """Score each paper to completion, in order (demo record/replay)."""
+    for pid in paper_ids:
+        run_scoring_for_paper(pid, query)
 
 
 def run_scoring_for_paper(paper_id: int, query: str) -> None:

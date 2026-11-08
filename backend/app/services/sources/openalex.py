@@ -11,7 +11,7 @@ from datetime import date
 import httpx
 
 from app.models.paper import PaperDomain
-from app.services.sources.base import SourceError, SourceRecord
+from app.services.sources.base import SourceError, SourceRecord, find_repo_url
 
 _API_URL = "https://api.openalex.org/works"
 
@@ -66,16 +66,17 @@ class OpenAlexAdapter:
         if oa_url:
             links.append(("openalex", oa_url))
 
+        abstract = _reconstruct_abstract(work.get("abstract_inverted_index"))
         return SourceRecord(
             source="openalex",
             title=work.get("display_name") or "",
             authors=authors,
-            abstract=_reconstruct_abstract(work.get("abstract_inverted_index")),
+            abstract=abstract,
             published_date=published_date,
             doi=doi,
             arxiv_id=None,
             source_links=links,
-            repo_url=None,
+            repo_url=find_repo_url(abstract),
             domain=_domain(work),
         )
 

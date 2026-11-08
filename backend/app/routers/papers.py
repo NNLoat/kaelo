@@ -4,6 +4,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from pydantic import BaseModel, field_validator
 from sqlmodel import Session, select
 
+from app.core.config import get_settings
 from app.db.session import get_session
 from app.models.paper import Paper, PaperRead, ReproducibilityBreakdown, ScoreCell, ScoreStatus
 from app.models.reproducibility import ReproducibilityScore
@@ -87,10 +88,17 @@ def search(
             detail={"detail": "all sources failed", "source_failure": True},
         )
 
-    scoring.schedule_scoring(result.paper_ids, payload.query, tasks)
+    if get_settings().demo_mode == "off":
+        scoring.schedule_scoring(result.paper_ids, payload.query, tasks)
+        order = ranking.sort_by_final_score
+    else:
+        # Demo record/replay: respond fully scored and sorted (spec demo-mode R6).
+        scoring.score_inline(result.paper_ids, payload.query)
+        session.expire_all()  # reload what the scoring sessions committed
+        order = ranking.sort_deterministic
 
     papers = [session.get(Paper, pid) for pid in result.paper_ids]
-    ordered = ranking.sort_by_final_score([p for p in papers if p is not None])
+    ordered = order([p for p in papers if p is not None])
     return SearchResponse(
         papers=[_card(p) for p in ordered],
         failed_sources=result.failed_sources,

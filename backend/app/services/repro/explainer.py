@@ -9,6 +9,7 @@ the caller proceeds without an explanation (R5.3).
 from langchain_aws import ChatBedrock
 
 from app.core.config import get_settings
+from app.services.demo.seams import CassetteChat, wrap_chat
 from app.services.llm import _content_text
 from app.services.repro.standards import CriterionStatus, StandardResult
 from app.services.repro.types import RepoSignals
@@ -95,6 +96,8 @@ def explain(score: float, signals: RepoSignals, result: StandardResult) -> str:
     return _content_text(resp).strip()
 
 
-def _client() -> ChatBedrock:
+def _client() -> ChatBedrock | CassetteChat:
     settings = get_settings()
-    return ChatBedrock(model=settings.bedrock_model_id, region_name=settings.aws_region)
+    return wrap_chat(
+        lambda: ChatBedrock(model=settings.bedrock_model_id, region_name=settings.aws_region)
+    )

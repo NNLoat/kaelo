@@ -9,7 +9,7 @@ and the operational gotchas.
 An AI-assisted search engine for scientific papers that scores reproducibility
 and can generate candidate code. Two roles share one account (Reader / Writer).
 Stack: FastAPI + SQLModel + Alembic (backend), Vite + React + TS + Tailwind
-(frontend), Postgres 17, Docker Compose. See `.kiro/steering/` for the full
+(frontend), Postgres 17, Docker Compose. See `CLAUDE.md` for the full
 product/tech/structure context.
 
 ## Status by spec

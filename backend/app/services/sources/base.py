@@ -5,11 +5,27 @@ metadata and links only, never full text (R7.1, R7.6). A failure or timeout
 raises ``SourceError`` so orchestration can record a failed Source (R7.5).
 """
 
+import re
 from dataclasses import dataclass, field
 from datetime import date
 from typing import Protocol
 
 from app.models.paper import PaperDomain
+
+_GITHUB_IN_TEXT = re.compile(r"github\.com/([\w.-]+)/([\w.-]+)", re.IGNORECASE)
+
+
+def find_repo_url(text: str | None) -> str | None:
+    """First GitHub repo linked in ``text``, canonicalized; None if there is none.
+
+    Neither Source exposes a repository field, so the abstract is where authors
+    put it. shortcut: GitHub only and first match wins, extend when GitLab etc. matter.
+    """
+    m = _GITHUB_IN_TEXT.search(text or "")
+    if not m:
+        return None
+    repo = m.group(2).rstrip(".,;:)").removesuffix(".git")
+    return f"https://github.com/{m.group(1)}/{repo}" if repo else None
 
 
 class SourceError(Exception):

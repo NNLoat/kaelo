@@ -20,37 +20,37 @@ dist/
 .idea/
 .vscode/
 
-# Kiro vendored-skill upstream cache (fetched by scripts/update-skills.sh)
-.kiro/skills/.upstream-cache/
+# Vendored-skill upstream cache (fetched by scripts/update-skills.sh)
+.claude/skills/.upstream-cache/
 
-# npx skills — regenerable vendored tree + its symlinks under .kiro/skills/
+# npx skills — regenerable vendored tree + its symlinks under .claude/skills/
 # (rebuild locally from skills-lock.json via `npx skills add heygen-com/hyperframes`)
 .agents/
-.kiro/skills/embedded-captions
-.kiro/skills/faceless-explainer
-.kiro/skills/figma
-.kiro/skills/general-video
-.kiro/skills/hyperframes
-.kiro/skills/hyperframes-animation
-.kiro/skills/hyperframes-audio
-.kiro/skills/hyperframes-cli
-.kiro/skills/hyperframes-core
-.kiro/skills/hyperframes-creative
-.kiro/skills/hyperframes-keyframes
-.kiro/skills/hyperframes-registry
-.kiro/skills/hyperframes-studio
-.kiro/skills/media-use
-.kiro/skills/motion-graphics
-.kiro/skills/music-to-video
-.kiro/skills/pr-to-video
-.kiro/skills/product-launch-video
-.kiro/skills/remotion-to-hyperframes
-.kiro/skills/slideshow
-.kiro/skills/talking-head-recut
-.kiro/skills/playwright-cli
+.claude/skills/embedded-captions
+.claude/skills/faceless-explainer
+.claude/skills/figma
+.claude/skills/general-video
+.claude/skills/hyperframes
+.claude/skills/hyperframes-animation
+.claude/skills/hyperframes-audio
+.claude/skills/hyperframes-cli
+.claude/skills/hyperframes-core
+.claude/skills/hyperframes-creative
+.claude/skills/hyperframes-keyframes
+.claude/skills/hyperframes-registry
+.claude/skills/hyperframes-studio
+.claude/skills/media-use
+.claude/skills/motion-graphics
+.claude/skills/music-to-video
+.claude/skills/pr-to-video
+.claude/skills/product-launch-video
+.claude/skills/remotion-to-hyperframes
+.claude/skills/slideshow
+.claude/skills/talking-head-recut
+.claude/skills/playwright-cli
 
-# npx skills — other agents' generated dirs
-.claude/
+# Claude Code local state (skills/ and settings.json are committed)
+.claude/settings.local.json
 
-# Local-only demo manuscript (18 MB)
+# Local-only demo manuscript (18 MB); scripts/demo-record.sh reads it from disk
 demo/Iris3B-demo.pdf

@@ -1,7 +1,8 @@
 """Generation_Helper and Scoring_Helper via Amazon Bedrock (LangChain).
 
 The only Bedrock callers for code-generation (docs/adr/0002). No FastAPI or
-SQLModel imports — the Codegen_API worker calls these. Generated code is never
+SQLModel use of its own — the Codegen_API worker calls these; the only service
+import is the demo-mode Cassette seam (ADR 0010). Generated code is never
 executed or compiled (R7.5); ``score`` rates the files, it does not run them.
 
 Output contract (R7.2, R7.3): ``generate`` always returns at least a README,
@@ -18,6 +19,7 @@ from functools import lru_cache
 from langchain_aws import ChatBedrock
 
 from app.core.config import get_settings
+from app.services.demo.seams import CassetteChat, wrap_chat
 
 
 class Case(str, Enum):
@@ -89,12 +91,14 @@ class GenerationError(Exception):
 
 
 @lru_cache
-def _client() -> ChatBedrock:
+def _client() -> ChatBedrock | CassetteChat:
     settings = get_settings()
-    return ChatBedrock(
-        model=settings.bedrock_model_id,
-        region_name=settings.aws_region,
-        max_tokens=settings.codegen_max_tokens,
+    return wrap_chat(
+        lambda: ChatBedrock(
+            model=settings.bedrock_model_id,
+            region_name=settings.aws_region,
+            max_tokens=settings.codegen_max_tokens,
+        )
     )
 
 

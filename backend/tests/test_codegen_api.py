@@ -268,3 +268,21 @@ def test_archive_contains_files_and_disclaimer(client: TestClient, session: Sess
         names = set(zf.namelist())
         assert names == {"DISCLAIMER.txt", "main.py"}
         assert zf.read("DISCLAIMER.txt").decode() == "UNVERIFIED"
+
+
+# Review for a Writer's unindexed paper grades the uploaded manuscript in memory
+# instead of refusing; with no claim/manuscript it still refuses (R12.5).
+def test_review_grades_manuscript_when_paper_not_indexed(client: TestClient, session: Session):
+    _register_login(client, "review_ms")
+    me = client.get("/api/auth/me").json()
+    ref = "2610.09450"
+    _writer_claim(session, me["id"], ref, source=[("train.py", "seed = 42")])
+
+    reason, inputs = api._review_inputs(session, None, ref, me["id"])
+
+    assert reason is None and inputs is not None
+    assert inputs.criteria and inputs.manuscript_text == "manuscript body"
+    assert session.exec(select(Paper)).first() is None  # nothing persisted
+
+    reason, inputs = api._review_inputs(session, None, "2610.99999", me["id"])
+    assert inputs is None and reason == "Standard evaluation unavailable for this paper."

@@ -1,0 +1,12 @@
+# Generations to record, so replay can answer them. One per line, `|`-separated.
+# Blank lines and lines starting with '#' are ignored.
+#
+#   reader | <query from queries.txt> | <case> | <title fragment>
+#       case is review, generate or align; the title fragment must match exactly
+#       one paper in that query's results (case-insensitive).
+#   writer | <paper reference>        | <manuscript PDF>
+#       claims the reference, uploads the PDF and records the Review Report.
+#
+# Only what is listed here is recorded; anything else generated on stage goes live.
+reader | Machine Learning Medical Image Segmentation Artificial Intelligence | review | MIScnn
+writer | arxiv:2610.09450 | demo/Iris3B-demo.pdf

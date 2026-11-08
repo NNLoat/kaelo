@@ -12,6 +12,7 @@ from typing import Protocol
 import httpx
 
 from app.core.config import get_settings
+from app.services.demo.seams import cached_repo
 from app.services.repro.types import RepoSignals
 
 _NOT_INSPECTABLE = RepoSignals(
@@ -132,7 +133,10 @@ def inspect_repo(repo_url: str | None) -> RepoSignals:
     if not repo_url or not repo_url.strip():
         return _NOT_INSPECTABLE
     settings = get_settings()
-    return _HOST.inspect(repo_url, timeout=settings.repo_inspect_timeout_seconds)
+    return cached_repo(
+        repo_url,
+        lambda: _HOST.inspect(repo_url, timeout=settings.repo_inspect_timeout_seconds),
+    )
 
 
 def _is_recent(pushed_at: str | None, recency_days: int) -> bool:

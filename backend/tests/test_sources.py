@@ -9,7 +9,7 @@ import pytest
 from app.services import llm
 from app.services.llm import PaperSummary
 from app.services.sources.arxiv import ArxivAdapter
-from app.services.sources.base import SourceError
+from app.services.sources.base import SourceError, find_repo_url
 from app.services.sources.openalex import OpenAlexAdapter
 
 _OPENALEX_SAMPLE = {
@@ -141,3 +141,16 @@ class _Client:
 
     def invoke(self, _):
         return _FakeResp(self._text)
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("Code: https://github.com/frankkramer-lab/MIScnn.", "https://github.com/frankkramer-lab/MIScnn"),
+        ("see (github.com/a/b.git), and github.com/c/d", "https://github.com/a/b"),
+        ("no link here", None),
+        (None, None),
+    ],
+)
+def test_find_repo_url(text, expected) -> None:
+    assert find_repo_url(text) == expected

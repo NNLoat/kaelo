@@ -129,6 +129,14 @@ working copy are not retained after unpacking.
 An external index we pull Papers from. Currently OpenAlex and arXiv.
 _Avoid_: Provider, database
 
+**Cassette**:
+The committed JSON file (`demo/fixtures/cassette.json`) holding recorded Source,
+LLM and GitHub-inspection results, so a demo in `DEMO_MODE=replay` returns
+identical results with no network or AWS access. Written only by
+`scripts/demo-record.sh`. See
+`docs/adr/0010-demo-mode-records-and-replays-at-the-seams.md`.
+_Avoid_: Fixture, snapshot, cache
+
 ## Reproducibility standards
 
 **Domain**:
